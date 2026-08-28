@@ -37,6 +37,7 @@ jobs:
         env:
           GAME_COUNT: ${{ github.event.inputs.games || '1000' }}
         run: |
+          set -o pipefail
           echo "Playing ${GAME_COUNT} deterministic full games"
           npm run stress -- "${GAME_COUNT}" 12648430 | tee stress-results.txt
           {
