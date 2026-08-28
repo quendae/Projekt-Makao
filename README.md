@@ -65,14 +65,31 @@ UI jest adaptacją dostarczonego baseline'u SKAT: ciemny cyfrowy card-room, emer
 - `js/ui.js` — renderowanie DOM i obsługa interakcji;
 - `js/ux-effects.js` — kompresja dużej ręki i krótkie animacje ruchu kart;
 - `js/main.js` — bootstrap aplikacji;
+- `rules/rules-contract.json` — maszynowy kontrakt ustalonego wariantu zasad i jawnych rozbieżności między źródłami;
+- `scripts/rules-audit.mjs` — wykonywalny audyt zgodności implementacji z kontraktem zasad;
+- `scripts/stress.mjs` — headless stress-tester pełnych partii;
+- `tests/browser/` — testy Playwright prawdziwego UI i pełnych partii rozgrywanych przez przeglądarkę;
 - `scripts/build-single.mjs` — generator jednoplikowego HTML-a;
 - `tests/rules.test.js` — testy reguł i inicjalizacji partii.
 
 `makao-single.html` jest automatycznie regenerowany przez GitHub Actions po zmianie źródeł gry.
 
-## Testy
+## Testy i automatyczni gracze
 
 ```bash
 npm test
 npm run check
+npm run rules:audit
+npm run stress -- 1000
 ```
+
+`rules:audit` rozróżnia trzy rodzaje wyników:
+
+- **BUG** — implementacja łamie ustalony wariant gry; audyt kończy się błędem;
+- **SOURCE** — świadomie wybrany wariant różni się od jednego z dwóch zaakceptowanych źródeł; jest raportowany, ale nie traktowany jako bug;
+- **REVIEW** — źródła i dotychczasowe decyzje nie rozstrzygają konkretnej interakcji jednoznacznie; wymaga decyzji autora i nie jest automatycznie „naprawiany”.
+
+GitHub Actions uruchamia również:
+
+- **Stress-test Makao games** — setki/tysiące deterministycznych pełnych partii z kontrolą integralności stanu i legalności ruchów;
+- **Browser gameplay agent** — Chromium + Playwright: klika prawdziwe karty i przyciski, rozgrywa pełne partie oraz sprawdza m.in. dostępność dużej ręki, viewport, Waleta i Asa.
