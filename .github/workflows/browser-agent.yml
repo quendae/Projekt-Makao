@@ -1,0 +1,52 @@
+name: Browser gameplay agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      games:
+        description: Number of full browser games
+        required: false
+        default: '20'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'css/**'
+      - 'js/**'
+      - 'rules/**'
+      - 'scripts/rules-audit.mjs'
+      - 'tests/browser/**'
+      - 'playwright.config.js'
+      - 'package.json'
+      - '.github/workflows/browser-agent.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  browser-agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Rule conformance audit
+        run: npm run rules:audit
+
+      - name: Syntax checks
+        run: npm run check
+
+      - name: Install Playwright test runner
+        run: npm install --no-save --no-package-lock @playwright/test@1.55.0
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Play through the real UI
+        env:
+          UI_GAME_COUNT: ${{ github.event.inputs.games || '20' }}
+        run: npx playwright test
