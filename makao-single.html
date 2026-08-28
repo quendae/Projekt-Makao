@@ -6,7 +6,62 @@
   <meta name="theme-color" content="#08110d" />
   <title>Makao — Offline</title>
   <style>
+/* ===== css/styles.css ===== */
 :root{--bg:#08110d;--panel:#111a16;--panel2:#17231d;--ink:#edf5ef;--muted:#97aa9f;--line:rgba(255,255,255,.10);--felt1:#20845a;--felt2:#176a48;--felt3:#0e4932;--felt4:#093424;--wood:#74492d;--wood2:#50301e;--gold:#d7b45e;--gold2:#e7cd78;--gold3:#bd9137;--cardw:106px;--cardh:152px;font-family:Inter,system-ui,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}*{box-sizing:border-box}html,body{min-height:100%}body{margin:0;background:linear-gradient(#0a1510,#060c09 72%);overflow:hidden}button{font:inherit;color:inherit}.hidden{display:none!important}.eyebrow{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.app-shell{min-height:100vh;display:grid;grid-template-rows:96px minmax(0,1fr)}.topbar{display:grid;grid-template-columns:260px minmax(0,1fr) auto;gap:20px;align-items:center;padding:14px 24px;background:rgba(6,12,9,.96);border-bottom:1px solid var(--line);z-index:10}.logo{font:800 30px Georgia,serif;letter-spacing:.17em}.hud-stats{display:flex;gap:10px}.hud-stat{min-width:112px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03)}.hud-stat-wide{min-width:175px}.hud-stat span{display:block;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.13em}.hud-stat strong{display:block;margin-top:5px;font-size:14px}.top-actions{display:flex;gap:8px}.game-layout{min-height:0;display:grid;grid-template-columns:330px minmax(0,1fr)}.helper-panel{min-height:0;display:grid;grid-template-rows:auto auto minmax(0,1fr);background:radial-gradient(circle at 50% 0,rgba(215,180,94,.09),transparent 26%),linear-gradient(#101b16,#0c1511);border-right:1px solid var(--line)}.helper-heading{padding:24px 24px 18px}.helper-heading h2{margin:4px 0 0;font:700 25px Georgia,serif}.helper-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 18px 14px;border-bottom:1px solid var(--line)}.helper-tab{padding:9px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--muted);cursor:pointer}.helper-tab.active{color:var(--ink);border-color:rgba(215,180,94,.35);background:rgba(215,180,94,.08)}.helper-content{min-height:0;overflow:auto;padding:18px}.helper-card{padding:16px;border:1px solid var(--line);border-radius:15px;background:rgba(0,0,0,.18)}.helper-card.emphasized{border-color:rgba(215,180,94,.34)}.helper-card strong{display:block;margin-top:5px;font:700 21px Georgia,serif}.helper-card p{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.45}.status-chip{margin-top:10px;display:flex;justify-content:space-between;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025);font-size:12px}.status-chip span{color:var(--muted)}.status-chip b{color:var(--gold2)}.status-chip.danger{border-color:rgba(204,89,100,.33)}.helper-subhead{margin:20px 2px 8px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.14em}.ranking-mini,.mini-rule-list{border-top:1px solid var(--line)}.ranking-mini p,.mini-rule-list p,.log-list p{margin:0;padding:10px 2px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px}.ranking-mini p,.mini-rule-list p{display:flex;justify-content:space-between}.table-wrap{min-width:0;min-height:0;padding:14px;background:#07100c}.wood-frame{width:100%;height:100%;padding:14px 14px 23px;border-radius:22px;background:linear-gradient(#815638,var(--wood) 58%,var(--wood2) 82%,#2d1b12);box-shadow:0 24px 70px rgba(0,0,0,.46)}.felt-table{position:relative;width:100%;height:100%;min-height:570px;overflow:hidden;border-radius:15px;background:radial-gradient(circle at 50% 26%,rgba(255,242,188,.075),transparent 26%),radial-gradient(ellipse at center,var(--felt1),var(--felt2) 38%,var(--felt3) 70%,var(--felt4));box-shadow:inset 0 0 90px rgba(0,0,0,.45)}.felt-inner-line{position:absolute;inset:16px;border:1px solid rgba(255,255,255,.1);border-radius:16px}.felt-watermark{position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.035);font:800 clamp(50px,8vw,110px) Georgia,serif;letter-spacing:.18em}.phase-ribbon{position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:6;max-width:52%;padding:8px 15px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(4,12,8,.55);font-size:11px;text-align:center}.opponent-seat{position:absolute;z-index:5;width:250px;transition:.22s}.seat-left{left:28px;top:92px}.seat-right{right:28px;top:92px}.seat-top{left:50%;top:62px;transform:translateX(-50%)}.opponent-seat.active .player-plate,.human-plate.active{border-color:var(--gold);box-shadow:0 15px 32px rgba(0,0,0,.33),0 0 30px rgba(215,180,94,.15)}.opponent-seat.finished{opacity:.62}.opponent-hand{position:relative;height:49px;margin:0 20px -7px}.mini-back{position:absolute;bottom:0;left:calc(50% - 23px + (var(--i) - 2)*7px);width:47px;height:67px;border:2px solid #e4dbc3;border-radius:5px;background:repeating-linear-gradient(135deg,#19375d 0 7px,#244d80 7px 14px);box-shadow:0 5px 10px rgba(0,0,0,.28);transform:rotate(calc((var(--i) - 2.5)*3deg))}.opponent-hand b{position:absolute;z-index:3;right:8px;bottom:1px;min-width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:#101914;border:1px solid rgba(255,255,255,.15);font-size:11px}.player-plate{min-height:72px;display:grid;grid-template-columns:52px minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 11px;border:1px solid rgba(241,215,130,.23);border-radius:15px;background:linear-gradient(rgba(19,44,32,.96),rgba(7,17,12,.97));box-shadow:0 15px 30px rgba(0,0,0,.34)}.avatar{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.2);font:800 15px Georgia,serif}.avatar-1{background:radial-gradient(circle at 35% 28%,#8da057,#4f6335 70%)}.avatar-2{background:radial-gradient(circle at 35% 28%,#8095a2,#485d69 70%)}.avatar-3{background:radial-gradient(circle at 35% 28%,#7d6e95,#4d405f 70%)}.human-avatar{background:radial-gradient(circle at 35% 28%,#b78b54,#74502f 72%)}.plate-copy strong{display:block;font:700 17px Georgia,serif}.plate-copy span{display:block;margin-top:3px;color:#9db8a7;font-size:9px;font-weight:800;letter-spacing:.12em}.card-counter{padding:6px 8px;border-radius:8px;background:rgba(0,0,0,.22);color:#e7d9ad;font-size:9px;font-weight:800}.table-center{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:4;display:grid;grid-template-columns:auto minmax(130px,180px) auto;align-items:center;gap:clamp(20px,4vw,54px)}.pile-block{display:grid;justify-items:center;gap:7px}.pile-label,.pile-count{color:rgba(237,245,239,.66);font-size:9px;font-weight:800;letter-spacing:.13em}.center-state{padding:15px 16px;border:1px solid rgba(215,180,94,.25);border-radius:14px;background:rgba(4,14,9,.38);text-align:center}.center-state strong{display:block;margin:5px 0 4px;font:700 23px Georgia,serif;color:var(--gold2)}.center-state small{color:#c1d0c6;font-size:10px}.discard-slot{width:120px;height:168px;display:grid;place-items:center;border:1px dashed rgba(255,255,255,.15);border-radius:12px}.card-face{position:relative;width:var(--cardw);height:var(--cardh);flex:0 0 var(--cardw);border:1px solid #c9cfcb;border-radius:10px;background:linear-gradient(145deg,#fff,#f2f1ec 67%,#e4e1d9);color:#171b19;box-shadow:0 13px 20px rgba(0,0,0,.27);overflow:hidden}.table-card{--cardw:120px;--cardh:168px}.corner{position:absolute;display:grid;justify-items:center;line-height:.94;font-family:Georgia,serif}.corner strong{font-size:20px}.corner span{font-size:17px}.top-corner{top:8px;left:9px}.bottom-corner{right:9px;bottom:8px;transform:rotate(180deg)}.center-pip{position:absolute;inset:0;display:grid;place-items:center;font:700 57px Georgia,serif}.suit-hearts{color:#bf2435}.suit-diamonds{color:#236ae0}.suit-clubs{color:#1e9d4a}.suit-spades{color:#14191d}.card-back{position:relative;width:120px;height:168px;border:3px solid #eee2c4;border-radius:8px;background:repeating-linear-gradient(135deg,#19375d 0 11px,#244d80 11px 22px);box-shadow:0 15px 24px rgba(0,0,0,.28)}.back-inner{position:absolute;inset:7px;display:grid;place-items:center;border:1px solid rgba(238,226,196,.8)}.back-inner span{padding:7px;background:rgba(25,55,93,.86);color:#f0e4c4;font:800 10px Georgia,serif;letter-spacing:.13em}.human-area{position:absolute;left:18px;right:18px;bottom:14px;z-index:7;height:245px;pointer-events:none}.human-plate{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:260px;pointer-events:auto}.human-hand{position:absolute;left:50%;bottom:78px;width:min(88%,950px);height:166px;transform:translateX(-50%);display:flex;align-items:flex-end;justify-content:center;pointer-events:none}.hand-card{margin-left:-24px;pointer-events:auto;transform-origin:center 125%;transform:translateY(var(--drop,0)) rotate(var(--angle,0));transition:.16s}.hand-card:first-child{margin-left:0}.hand-card.playable{cursor:pointer}.hand-card.playable:hover{transform:translateY(-14px) rotate(var(--hover-angle,0));filter:drop-shadow(0 0 10px rgba(215,180,94,.44));z-index:20}.hand-card.selected{transform:translateY(-20px) rotate(var(--selected-angle,0));box-shadow:0 0 0 3px var(--gold),0 16px 25px rgba(0,0,0,.32);z-index:25}.hand-card.disabled-card{filter:brightness(.53) saturate(.55)}.action-bar{position:absolute;left:50%;bottom:196px;transform:translateX(-50%);display:flex;gap:7px;pointer-events:auto}.btn{min-height:38px;padding:9px 13px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.2);cursor:pointer;font-size:11px;font-weight:800;transition:.13s}.btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}.btn:disabled{opacity:.38;cursor:not-allowed}.btn.primary{color:#1b1a12;border-color:#efda8f;background:linear-gradient(var(--gold2),var(--gold3))}.btn.standard{background:linear-gradient(#2a4035,#21332a)}.btn.ghost{background:rgba(7,15,11,.46)}.makao-btn{border-color:rgba(215,180,94,.4);color:var(--gold2);background:rgba(215,180,94,.07)}.makao-btn.armed{color:#1e1a10;background:linear-gradient(#f1d782,#bd9137)}.overlay{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(2,7,4,.78);backdrop-filter:blur(10px)}.overlay.open{display:grid}.menu-overlay{background:radial-gradient(circle at 50% 40%,rgba(23,106,72,.28),transparent 38%),rgba(3,9,6,.86)}.overlay-frame{width:calc(100% - 48px);height:calc(100% - 48px);display:grid;place-items:center;border:16px solid #50301e;border-radius:22px}.menu-card,.modal-card{width:min(520px,calc(100vw - 56px));padding:30px;border:1px solid rgba(215,180,94,.4);border-radius:22px;background:radial-gradient(circle at 50% 0,rgba(215,180,94,.10),transparent 28%),linear-gradient(#15231c,#0e1713);box-shadow:0 24px 70px rgba(0,0,0,.46);text-align:center}.brand-medal{width:74px;height:74px;margin:0 auto 17px;display:grid;place-items:center;border:2px solid var(--gold);border-radius:50%;background:radial-gradient(circle at 35% 30%,#20845a,#0e4932 72%);color:var(--gold2);font:700 34px Georgia,serif}.menu-card h1{margin:5px 0 8px;font:800 46px Georgia,serif;letter-spacing:.16em}.menu-lead{color:var(--muted);font-size:13px}.menu-section{margin:18px 0;padding:15px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.14);text-align:left}.menu-label{display:block;margin-bottom:10px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.14em}.segmented{display:grid;grid-template-columns:1fr 1fr;gap:7px}.segment{padding:10px;border:1px solid var(--line);border-radius:9px;background:#18231e;color:var(--muted);cursor:pointer}.segment.active{color:#1d1a10;border-color:var(--gold2);background:linear-gradient(var(--gold2),var(--gold3))}.menu-action{width:100%;margin-top:8px;min-height:49px;display:grid;grid-template-columns:32px 1fr 32px;align-items:center;border:1px solid var(--line);border-radius:12px;background:linear-gradient(#263d32,#1b2c24);cursor:pointer}.menu-action strong{text-align:left}.primary-menu{color:#1d1b12!important;background:linear-gradient(#e7cd78,#bd9137)!important}.motion-toggle{margin-top:18px;display:flex;justify-content:center;gap:8px;color:var(--muted);font-size:11px}.motion-toggle input{accent-color:var(--gold)}.modal-card{position:relative;text-align:left}.modal-card h2{margin:5px 0 8px;font:700 30px Georgia,serif}.modal-close{position:absolute;top:13px;right:13px;width:34px;height:34px;border:1px solid var(--line);border-radius:9px;background:rgba(0,0,0,.22);cursor:pointer}.choice-options{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:18px}.choice-button{min-height:62px;border:1px solid var(--line);border-radius:12px;background:#18251f;cursor:pointer;font:800 21px Georgia,serif}.suit-choice{display:flex;align-items:center;justify-content:center;gap:8px;font:12px Inter,system-ui}.suit-choice b{font:700 28px Georgia,serif}.rules-card{width:min(840px,calc(100vw - 56px))}.rules-scroll{max-height:68vh;overflow:auto}.rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.rule-grid article{padding:13px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.14)}.rule-grid strong{font:700 16px Georgia,serif;color:var(--gold2)}.rule-grid p{margin:6px 0 0;color:#bac9c0;font-size:12px;line-height:1.45}.source-note{color:var(--muted);font-size:10px}.standings{display:grid;gap:7px;margin-top:18px}.standing-row{display:grid;grid-template-columns:38px 1fr auto;align-items:center;padding:12px;border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.13)}.wide{width:100%;margin-top:18px}.toast{position:fixed;left:50%;bottom:24px;z-index:100;transform:translate(-50%,20px);padding:11px 15px;border:1px solid rgba(215,180,94,.35);border-radius:11px;background:rgba(10,19,14,.96);opacity:0;pointer-events:none;transition:.18s}.toast.show{opacity:1;transform:translate(-50%,0)}.reduce-motion *{animation-duration:.001ms!important;transition-duration:.001ms!important}@media(max-width:1180px){body{overflow:auto}.app-shell{display:block}.topbar{grid-template-columns:1fr auto}.hud-stats{grid-column:1/-1;overflow-x:auto}.game-layout{display:flex;flex-direction:column-reverse}.table-wrap{height:720px}.helper-panel{min-height:360px}}@media(max-width:820px){:root{--cardw:74px;--cardh:106px}.table-wrap{height:650px;padding:6px}.opponent-seat{width:190px}.seat-left{left:10px;top:70px}.seat-right{right:10px;top:70px}.seat-top{top:45px}.card-back,.discard-slot,.table-card{width:78px;height:110px}.table-card{--cardw:78px;--cardh:110px}.human-hand{width:96%}.action-bar{width:96%;flex-wrap:wrap}.overlay-frame{width:calc(100% - 20px);height:calc(100% - 20px);border-width:8px}.rule-grid{grid-template-columns:1fr}}@media(max-width:560px){.table-wrap{height:720px}.opponent-seat{width:145px}.seat-left{left:7px;top:87px}.seat-right{right:7px;top:87px}.seat-top{top:42px}.opponent-seat .card-counter{display:none}.table-center{top:46%;grid-template-columns:auto auto}.center-state{position:absolute;left:50%;top:-56px;width:170px;transform:translateX(-50%)}.human-hand{justify-content:flex-start;padding-left:24px;overflow-x:auto}.choice-options{grid-template-columns:repeat(2,1fr)}}
+
+/* ===== css/ux-fixes.css ===== */
+/* UX fixes layered on top of the baseline stylesheet. */
+
+/* The old clear-selection button is intentionally removed from the UI.
+   A selected card can be clicked again to deselect it. */
+#clear-btn { display: none !important; }
+
+/* Keep player controls clearly ABOVE the cards instead of overlapping them. */
+.human-area { height: 330px; }
+.human-hand { bottom: 78px; height: 166px; max-width: 100%; min-width: 0; }
+.action-bar {
+  bottom: 260px;
+  width: min(96%, 720px);
+  flex-wrap: wrap;
+  padding: 7px 9px;
+  border: 1px solid rgba(215,180,94,.18);
+  border-radius: 13px;
+  background: rgba(7,18,12,.72);
+  box-shadow: 0 12px 28px rgba(0,0,0,.22);
+  backdrop-filter: blur(7px);
+}
+
+/* Large hands should compress into the available width instead of pushing
+   the table or cards outside the viewport. JS sets the actual overlap. */
+.human-hand { overflow: visible; }
+.hand-card { min-width: 0; }
+
+/* Transient flight cards used for play/draw feedback. */
+.ux-flight-card {
+  position: fixed !important;
+  z-index: 120 !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  box-shadow: 0 20px 36px rgba(0,0,0,.38) !important;
+}
+.ux-flight-card.is-flying {
+  transition: transform .38s cubic-bezier(.2,.72,.22,1), opacity .18s ease .24s;
+}
+.ux-arriving-card { opacity: .12; }
+
+@media (max-width: 820px) {
+  .human-area { height: 272px; }
+  .human-hand { bottom: 65px; height: 125px; }
+  .action-bar { bottom: 205px; width: 96%; }
+}
+
+@media (max-width: 560px) {
+  .human-area { height: 286px; }
+  .human-hand { bottom: 76px; }
+  .action-bar { bottom: 218px; }
+}
 
   </style>
 </head>
@@ -163,7 +218,7 @@
           <article><strong>Cel</strong><p>Pozbądź się wszystkich kart. Po pierwszym zwycięzcy pozostali grają dalej o kolejne miejsca.</p></article>
           <article><strong>Zagranie</strong><p>Karta musi pasować kolorem lub wartością. Naraz wolno zagrać 1, 3 albo 4 karty tej samej wartości.</p></article>
           <article><strong>Dobieranie</strong><p>Dobierasz jedną kartę. Jeśli pasuje, działa „pierwsza karta ratuje” i możesz ją od razu zagrać.</p></article>
-          <article><strong>2 i 3</strong><p>Następny gracz dobiera odpowiednio 2 lub 3. Karę można przebić kolejną 2 lub 3 i sumować.</p></article>
+          <article><strong>2 i 3</strong><p>Karę można odbić wyłącznie 2 lub 3 pasującą kolorem albo wartością. Przy kilku kartach i kolejnych odbiciach liczy się łączna liczba oczek.</p></article>
           <article><strong>4</strong><p>Blokuje następnego gracza. Kolejna 4 przenosi i zwiększa blokadę.</p></article>
           <article><strong>Walet</strong><p>Żąda wartości od 5 do 10. Żądanie trwa do spełnienia lub przebicia innym waletem.</p></article>
           <article><strong>Dama</strong><p>„Dama na wszystko, wszystko na damę”, ale nie omija aktywnej kary, blokady ani żądania.</p></article>
@@ -279,26 +334,55 @@ function isCardLegal(card, state, playerIndex) {
   const constraint = getTurnConstraint(state, playerIndex);
   const top = topCard(state);
 
-  if (constraint.type === 'draw') return card.rank === '2' || card.rank === '3';
-  if (constraint.type === 'skip') return card.rank === '4';
-  if (constraint.type === 'jack') return card.rank === 'J' || card.rank === constraint.rank;
-  if (constraint.type === 'ace') return card.rank === 'A' || card.suit === constraint.suit;
+  if (constraint.type === 'draw') {
+    if (!(card.rank === '2' || card.rank === '3')) return false;
+    if (!top) return true;
+    return card.rank === top.rank || card.suit === top.suit;
+  }
+
+  if (constraint.type === 'skip') {
+    return card.rank === '4';
+  }
+
+  if (constraint.type === 'jack') {
+    return card.rank === 'J' || card.rank === constraint.rank;
+  }
+
+  if (constraint.type === 'ace') {
+    return card.rank === 'A' || card.suit === constraint.suit;
+  }
+
   if (!top) return true;
 
+  // Dama jest dzika wyłącznie wtedy, gdy nie działa aktywna kara/żądanie.
   if (card.rank === 'Q' || top.rank === 'Q') return true;
+
   return card.rank === top.rank || card.suit === top.suit;
 }
 
 function validateGroup(cards, state, playerIndex, { rescueOnly = false } = {}) {
-  if (!Array.isArray(cards) || !cards.length) return { ok: false, reason: 'Wybierz kartę.' };
-  if (rescueOnly && cards.length !== 1) return { ok: false, reason: 'Po dobraniu możesz zagrać tylko dobraną kartę.' };
-  if (!ALLOWED_GROUP_SIZES.includes(cards.length)) return { ok: false, reason: 'W tym wariancie można zagrać 1, 3 albo 4 karty.' };
+  if (!Array.isArray(cards) || !cards.length) {
+    return { ok: false, reason: 'Wybierz kartę.' };
+  }
+
+  if (rescueOnly && cards.length !== 1) {
+    return { ok: false, reason: 'Po dobraniu możesz zagrać tylko dobraną kartę.' };
+  }
+
+  if (!ALLOWED_GROUP_SIZES.includes(cards.length)) {
+    return { ok: false, reason: 'W tym wariancie można zagrać 1, 3 albo 4 karty.' };
+  }
 
   const rank = cards[0].rank;
-  if (!cards.every((card) => card.rank === rank)) return { ok: false, reason: 'Kilka kart naraz musi mieć tę samą wartość.' };
+  if (!cards.every((card) => card.rank === rank)) {
+    return { ok: false, reason: 'Kilka kart naraz musi mieć tę samą wartość.' };
+  }
 
   const legalStarter = cards.find((card) => isCardLegal(card, state, playerIndex));
-  if (!legalStarter) return { ok: false, reason: 'Żadna z wybranych kart nie może rozpocząć tego zagrania.' };
+  if (!legalStarter) {
+    return { ok: false, reason: 'Żadna z wybranych kart nie może rozpocząć tego zagrania.' };
+  }
+
   return { ok: true, starterId: legalStarter.id };
 }
 
@@ -311,7 +395,10 @@ function orderGroupForPlay(cards, state, playerIndex) {
 
 function getLegalGroups(hand, state, playerIndex) {
   const groups = [];
-  for (const card of hand) if (isCardLegal(card, state, playerIndex)) groups.push([card]);
+
+  for (const card of hand) {
+    if (isCardLegal(card, state, playerIndex)) groups.push([card]);
+  }
 
   const byRank = new Map();
   for (const card of hand) {
@@ -321,10 +408,16 @@ function getLegalGroups(hand, state, playerIndex) {
 
   for (const cards of byRank.values()) {
     if (cards.length >= 3) {
-      for (const triple of combinations(cards, 3)) if (validateGroup(triple, state, playerIndex).ok) groups.push(triple);
+      const triples = combinations(cards, 3);
+      for (const triple of triples) {
+        if (validateGroup(triple, state, playerIndex).ok) groups.push(triple);
+      }
     }
-    if (cards.length === 4 && validateGroup(cards, state, playerIndex).ok) groups.push([...cards]);
+    if (cards.length === 4 && validateGroup(cards, state, playerIndex).ok) {
+      groups.push([...cards]);
+    }
   }
+
   return groups;
 }
 
@@ -425,7 +518,26 @@ class MakaoGame {
   }
 
   emptyState() {
-    return { started:false, gameOver:false, botCount:2, players:[], dealerIndex:0, currentIndex:0, drawPile:[], discardPile:[], pendingDraw:null, pendingSkip:null, jackDemand:null, aceDemand:null, pendingChoice:null, drawnRescueCardId:null, makaoArmed:false, standings:[], log:[], turnNumber:1 };
+    return {
+      started: false,
+      gameOver: false,
+      botCount: 2,
+      players: [],
+      dealerIndex: 0,
+      currentIndex: 0,
+      drawPile: [],
+      discardPile: [],
+      pendingDraw: null,
+      pendingSkip: null,
+      jackDemand: null,
+      aceDemand: null,
+      pendingChoice: null,
+      drawnRescueCardId: null,
+      makaoArmed: false,
+      standings: [],
+      log: [],
+      turnNumber: 1,
+    };
   }
 
   start(botCount = 2) {
@@ -437,8 +549,20 @@ class MakaoGame {
     this.state.players = this.createPlayers(safeBotCount);
     this.state.drawPile = shuffle(createDeck());
     this.state.dealerIndex = Math.floor(Math.random() * this.state.players.length);
-    for (let round = 0; round < 5; round += 1) for (const player of this.state.players) player.hand.push(this.state.drawPile.pop());
-    do { const card = this.state.drawPile.pop(); if (!card) break; this.state.discardPile.push(card); } while (isFunctional(this.state.discardPile.at(-1)));
+
+    for (let round = 0; round < 5; round += 1) {
+      for (const player of this.state.players) {
+        player.hand.push(this.state.drawPile.pop());
+      }
+    }
+
+    // Źródła wymagają, aby pierwsza odkryta karta nie była funkcyjna.
+    do {
+      const card = this.state.drawPile.pop();
+      if (!card) break;
+      this.state.discardPile.push(card);
+    } while (isFunctional(this.state.discardPile.at(-1)));
+
     this.state.currentIndex = this.nextActiveIndex(this.state.dealerIndex);
     this.addLog(`Rozdaje ${this.state.players[this.state.dealerIndex].name}. Każdy otrzymuje 5 kart.`);
     this.addLog(`Pierwsza karta: ${cardLabel(this.state.discardPile.at(-1))}.`);
@@ -448,102 +572,433 @@ class MakaoGame {
   }
 
   createPlayers(botCount) {
-    const players = [{ id:'human', name:'Ty', isHuman:true, avatar:'TY', hand:[], finishPlace:null, blockedTurns:0 }];
-    for (let i=0;i<botCount;i+=1) players.push({ id:`bot-${i+1}`, name:BOT_NAMES[i], isHuman:false, avatar:BOT_NAMES[i][0], hand:[], finishPlace:null, blockedTurns:0 });
+    const players = [
+      {
+        id: 'human',
+        name: 'Ty',
+        isHuman: true,
+        avatar: 'TY',
+        hand: [],
+        finishPlace: null,
+        blockedTurns: 0,
+      },
+    ];
+
+    for (let i = 0; i < botCount; i += 1) {
+      players.push({
+        id: `bot-${i + 1}`,
+        name: BOT_NAMES[i],
+        isHuman: false,
+        avatar: BOT_NAMES[i].slice(0, 1).toUpperCase(),
+        hand: [],
+        finishPlace: null,
+        blockedTurns: 0,
+      });
+    }
     return players;
   }
 
-  emit(){ this.onChange(this.state); }
-  addLog(message){ this.state.log.unshift({id:`${Date.now()}-${Math.random()}`,message}); this.state.log=this.state.log.slice(0,80); }
-  activePlayerIndexes(){ return this.state.players.map((player,index)=>({player,index})).filter(({player})=>player.finishPlace==null).map(({index})=>index); }
-  nextActiveIndex(fromIndex){ const count=this.state.players.length; for(let step=1;step<=count;step+=1){const index=(fromIndex+step)%count;if(this.state.players[index]?.finishPlace==null)return index;} return fromIndex; }
-  previousActiveIndex(fromIndex){ const count=this.state.players.length; for(let step=1;step<=count;step+=1){const index=(fromIndex-step+count)%count;if(this.state.players[index]?.finishPlace==null)return index;} return fromIndex; }
-  currentPlayer(){ return this.state.players[this.state.currentIndex]; }
-  isPendingSkipFor(index){ return this.state.pendingSkip?.targetIndex===index; }
+  emit() {
+    this.onChange(this.state);
+  }
 
-  queueCurrentTurn(){
+  addLog(message) {
+    this.state.log.unshift({ id: `${Date.now()}-${Math.random()}`, message });
+    this.state.log = this.state.log.slice(0, 80);
+  }
+
+  activePlayerIndexes() {
+    return this.state.players
+      .map((player, index) => ({ player, index }))
+      .filter(({ player }) => player.finishPlace == null)
+      .map(({ index }) => index);
+  }
+
+  nextActiveIndex(fromIndex) {
+    const count = this.state.players.length;
+    for (let step = 1; step <= count; step += 1) {
+      const index = (fromIndex + step) % count;
+      if (this.state.players[index]?.finishPlace == null) return index;
+    }
+    return fromIndex;
+  }
+
+  previousActiveIndex(fromIndex) {
+    const count = this.state.players.length;
+    for (let step = 1; step <= count; step += 1) {
+      const index = (fromIndex - step + count) % count;
+      if (this.state.players[index]?.finishPlace == null) return index;
+    }
+    return fromIndex;
+  }
+
+  currentPlayer() {
+    return this.state.players[this.state.currentIndex];
+  }
+
+  queueCurrentTurn() {
     clearTimeout(this.timer);
-    if(!this.state.started||this.state.gameOver||this.state.pendingChoice)return;
-    const player=this.currentPlayer();
-    if(!player||player.finishPlace!=null){this.state.currentIndex=this.nextActiveIndex(this.state.currentIndex);this.emit();return this.queueCurrentTurn();}
-    if(player.blockedTurns>0&&!this.isPendingSkipFor(this.state.currentIndex)){player.blockedTurns-=1;this.addLog(`${player.name} traci kolejkę.`);this.emit();this.timer=setTimeout(()=>this.endTurn(this.state.currentIndex),UI_DELAYS.blockedTurn);return;}
-    if(!player.isHuman)this.timer=setTimeout(()=>this.runBotTurn(this.state.currentIndex),UI_DELAYS.botThink);
-  }
+    if (!this.state.started || this.state.gameOver || this.state.pendingChoice) return;
 
-  humanCanAct(){ const player=this.currentPlayer(); return Boolean(this.state.started&&!this.state.gameOver&&!this.state.pendingChoice&&player?.isHuman&&player.finishPlace==null&&player.blockedTurns===0); }
-  toggleMakao(){ if(!this.humanCanAct())return; this.state.makaoArmed=!this.state.makaoArmed; this.emit(); }
+    const player = this.currentPlayer();
+    if (!player || player.finishPlace != null) {
+      this.state.currentIndex = this.nextActiveIndex(this.state.currentIndex);
+      this.emit();
+      return this.queueCurrentTurn();
+    }
 
-  humanPlay(cardIds){
-    if(!this.humanCanAct())return{ok:false,reason:'Teraz nie jest Twoja tura.'};
-    const playerIndex=this.state.currentIndex, player=this.state.players[playerIndex];
-    const cards=cardIds.map(id=>player.hand.find(card=>card.id===id)).filter(Boolean);
-    if(this.state.drawnRescueCardId&&(cards.length!==1||cards[0].id!==this.state.drawnRescueCardId))return{ok:false,reason:'Po dobraniu możesz zagrać tylko dobraną kartę albo zakończyć turę.'};
-    const validation=validateGroup(cards,this.state,playerIndex,{rescueOnly:Boolean(this.state.drawnRescueCardId)});
-    if(!validation.ok)return validation;
-    this.playCards(playerIndex,cards,{fromRescue:Boolean(this.state.drawnRescueCardId)}); return{ok:true};
-  }
+    if (player.blockedTurns > 0 && !this.isPendingSkipFor(this.state.currentIndex)) {
+      player.blockedTurns -= 1;
+      this.addLog(`${player.name} traci kolejkę.`);
+      this.emit();
+      this.timer = setTimeout(() => this.endTurn(this.state.currentIndex), UI_DELAYS.blockedTurn);
+      return;
+    }
 
-  humanDraw(){
-    if(!this.humanCanAct())return;
-    const playerIndex=this.state.currentIndex, player=this.state.players[playerIndex], constraint=getTurnConstraint(this.state,playerIndex);
-    if(constraint.type==='draw'){const amount=this.state.pendingDraw.amount;this.state.pendingDraw=null;this.drawCards(playerIndex,amount);this.addLog(`${player.name} dobiera ${amount} kart za karę.`);this.endTurn(playerIndex);return;}
-    if(constraint.type==='skip'){this.acceptSkip(playerIndex);return;}
-    if(this.state.drawnRescueCardId)return;
-    const drawn=this.drawCards(playerIndex,1)[0]; if(!drawn){this.endTurn(playerIndex);return;}
-    this.addLog(`${player.name} dobiera kartę.`);
-    if(isCardLegal(drawn,this.state,playerIndex)){this.state.drawnRescueCardId=drawn.id;this.onMessage('Pierwsza karta ratuje — możesz zagrać dobraną kartę albo spasować.');this.emit();}else this.endTurn(playerIndex);
-  }
-
-  humanPassAfterDraw(){ if(!this.humanCanAct()||!this.state.drawnRescueCardId)return; this.addLog('Nie zagrywasz dobranej karty.'); this.endTurn(this.state.currentIndex); }
-  acceptSkip(playerIndex){ if(this.state.pendingSkip?.targetIndex!==playerIndex)return; const player=this.state.players[playerIndex], count=this.state.pendingSkip.count; this.state.pendingSkip=null; player.blockedTurns+=Math.max(0,count-1); this.addLog(`${player.name} przyjmuje blokadę: ${count}.`); this.endTurn(playerIndex); }
-
-  playCards(playerIndex,cards,{fromRescue=false}={}){
-    const player=this.state.players[playerIndex], constraintBefore=getTurnConstraint(this.state,playerIndex), ordered=fromRescue?[...cards]:orderGroupForPlay(cards,this.state,playerIndex), rank=ordered[0].rank;
-    if(constraintBefore.type==='jack'&&(rank===this.state.jackDemand?.rank||rank==='J'))this.state.jackDemand=null;
-    for(const card of ordered){const i=player.hand.findIndex(h=>h.id===card.id);if(i>=0)player.hand.splice(i,1);this.state.discardPile.push(card);}
-    this.state.drawnRescueCardId=null; this.addLog(`${player.name} zagrywa ${ordered.map(cardLabel).join(', ')}.`);
-    const needed=isMakaoRequired(player.hand.length), declared=!player.isHuman||this.state.makaoArmed;
-    if(needed&&declared)this.addLog(player.hand.length===0?`${player.name}: „Makao i po makale!”`:`${player.name}: „Makao!”`);
-    else if(needed&&!declared){this.addLog(`STOP MAKAO! ${player.name} dobiera 5 kart.`);this.drawCards(playerIndex,5);this.onMessage('STOP MAKAO — brak deklaracji. Dobierasz 5 kart.');}
-    this.applyCardEffects(playerIndex,ordered,constraintBefore);
-    if(player.hand.length===0)this.finishPlayer(playerIndex);
-    this.state.makaoArmed=false; this.emit(); if(!this.state.gameOver&&!this.state.pendingChoice)this.endTurn(playerIndex);
-  }
-
-  applyCardEffects(playerIndex,cards,constraintBefore){
-    const rank=cards[0].rank, nextIndex=this.nextActiveIndex(playerIndex);
-    if(rank==='2'||rank==='3'){const added=Number(rank)*cards.length;if(constraintBefore.type==='draw'&&this.state.pendingDraw){this.state.pendingDraw.amount+=added;this.state.pendingDraw.targetIndex=nextIndex;}else this.state.pendingDraw={amount:added,targetIndex:nextIndex};this.addLog(`Kara dobierania rośnie do ${this.state.pendingDraw.amount}.`);return;}
-    if(rank==='4'){const added=cards.length;if(constraintBefore.type==='skip'&&this.state.pendingSkip){this.state.pendingSkip.count+=added;this.state.pendingSkip.targetIndex=nextIndex;}else this.state.pendingSkip={count:added,targetIndex:nextIndex};this.addLog(`Blokada: ${this.state.pendingSkip.count}.`);return;}
-    if(rank==='J'){const player=this.state.players[playerIndex];if(player.isHuman)this.state.pendingChoice={type:'jack',actorIndex:playerIndex};else{const demand=chooseJackDemand(player.hand);this.state.jackDemand={rank:demand,byIndex:playerIndex};this.addLog(`${player.name} żąda wartości ${demand}.`);}return;}
-    if(rank==='A'){const player=this.state.players[playerIndex];if(player.isHuman)this.state.pendingChoice={type:'ace',actorIndex:playerIndex};else{const suit=chooseAceSuit(player.hand);this.state.aceDemand={suit,targetIndex:nextIndex,byIndex:playerIndex};this.addLog(`${player.name} żąda koloru: ${suitLabel(suit)}.`);}return;}
-    if(rank==='K'){
-      if(cards.some(c=>c.suit==='hearts')){const target=this.nextActiveIndex(playerIndex);if(target!==playerIndex){this.drawCards(target,5);this.state.players[target].blockedTurns+=1;this.addLog(`K♥: ${this.state.players[target].name} dobiera 5 kart i traci turę.`);}}
-      if(cards.some(c=>c.suit==='spades')){const target=this.previousActiveIndex(playerIndex);if(target!==playerIndex){this.drawCards(target,5);this.addLog(`K♠: ${this.state.players[target].name} dobiera 5 kart.`);}}
+    if (!player.isHuman) {
+      this.timer = setTimeout(() => this.runBotTurn(this.state.currentIndex), UI_DELAYS.botThink);
     }
   }
 
-  choosePending(value){
-    const choice=this.state.pendingChoice;if(!choice)return;const actorIndex=choice.actorIndex,actor=this.state.players[actorIndex];
-    if(choice.type==='jack'){this.state.jackDemand={rank:value,byIndex:actorIndex};this.addLog(`${actor.name} żąda wartości ${value}.`);}
-    if(choice.type==='ace'){const targetIndex=this.nextActiveIndex(actorIndex);this.state.aceDemand={suit:value,targetIndex,byIndex:actorIndex};this.addLog(`${actor.name} żąda koloru: ${suitLabel(value)}.`);}
-    this.state.pendingChoice=null;this.emit();if(!this.state.gameOver)this.endTurn(actorIndex);
+  isPendingDrawFor(playerIndex) {
+    return this.state.pendingDraw?.targetIndex === playerIndex;
   }
 
-  drawCards(playerIndex,count){const drawn=[];for(let i=0;i<count;i+=1){recycleDiscardIntoDrawPile(this.state);const card=this.state.drawPile.pop();if(!card)break;this.state.players[playerIndex].hand.push(card);drawn.push(card);}return drawn;}
-
-  runBotTurn(playerIndex){
-    if(this.state.gameOver||this.state.pendingChoice||this.state.currentIndex!==playerIndex)return;const bot=this.state.players[playerIndex];if(!bot||bot.isHuman||bot.finishPlace!=null)return;
-    const constraint=getTurnConstraint(this.state,playerIndex),play=chooseBotPlay(bot,this.state,playerIndex);
-    if(play){this.playCards(playerIndex,play);return;}
-    if(constraint.type==='draw'){const amount=this.state.pendingDraw.amount;this.state.pendingDraw=null;this.drawCards(playerIndex,amount);this.addLog(`${bot.name} dobiera ${amount} kart za karę.`);this.emit();this.endTurn(playerIndex);return;}
-    if(constraint.type==='skip'){this.acceptSkip(playerIndex);return;}
-    const drawn=this.drawCards(playerIndex,1)[0];this.addLog(`${bot.name} dobiera kartę.`);this.emit();
-    if(drawn&&isCardLegal(drawn,this.state,playerIndex))this.timer=setTimeout(()=>{if(!this.state.gameOver&&this.state.currentIndex===playerIndex)this.playCards(playerIndex,[drawn],{fromRescue:true});},UI_DELAYS.botAfterDraw);else this.endTurn(playerIndex);
+  isPendingSkipFor(playerIndex) {
+    return this.state.pendingSkip?.targetIndex === playerIndex;
   }
 
-  finishPlayer(playerIndex){const player=this.state.players[playerIndex];if(player.finishPlace!=null)return;player.finishPlace=this.state.standings.length+1;this.state.standings.push(playerIndex);this.addLog(`${player.name} zajmuje ${player.finishPlace}. miejsce.`);const active=this.activePlayerIndexes();if(active.length===1){const lastIndex=active[0],last=this.state.players[lastIndex];last.finishPlace=this.state.standings.length+1;this.state.standings.push(lastIndex);this.addLog(`${last.name} zajmuje ${last.finishPlace}. miejsce.`);this.state.gameOver=true;this.state.pendingChoice=null;this.addLog('Koniec partii.');}}
+  humanCanAct() {
+    const player = this.currentPlayer();
+    return Boolean(
+      this.state.started &&
+        !this.state.gameOver &&
+        !this.state.pendingChoice &&
+        player?.isHuman &&
+        player.finishPlace == null &&
+        player.blockedTurns === 0,
+    );
+  }
 
-  endTurn(actorIndex){if(this.state.gameOver){this.emit();return;}if(this.state.aceDemand?.targetIndex===actorIndex)this.state.aceDemand=null;this.state.drawnRescueCardId=null;this.state.makaoArmed=false;this.state.currentIndex=this.nextActiveIndex(actorIndex);this.state.turnNumber+=1;this.emit();this.queueCurrentTurn();}
+  toggleMakao() {
+    if (!this.humanCanAct()) return;
+    this.state.makaoArmed = !this.state.makaoArmed;
+    this.emit();
+  }
+
+  humanPlay(cardIds) {
+    if (!this.humanCanAct()) return { ok: false, reason: 'Teraz nie jest Twoja tura.' };
+    const playerIndex = this.state.currentIndex;
+    const player = this.state.players[playerIndex];
+    const cards = cardIds.map((id) => player.hand.find((card) => card.id === id)).filter(Boolean);
+
+    if (this.state.drawnRescueCardId) {
+      if (cards.length !== 1 || cards[0].id !== this.state.drawnRescueCardId) {
+        return { ok: false, reason: 'Po dobraniu możesz zagrać tylko dobraną kartę albo zakończyć turę.' };
+      }
+    }
+
+    const validation = validateGroup(cards, this.state, playerIndex, {
+      rescueOnly: Boolean(this.state.drawnRescueCardId),
+    });
+    if (!validation.ok) return validation;
+
+    this.playCards(playerIndex, cards, { fromRescue: Boolean(this.state.drawnRescueCardId) });
+    return { ok: true };
+  }
+
+  humanDraw() {
+    if (!this.humanCanAct()) return;
+    const playerIndex = this.state.currentIndex;
+    const player = this.state.players[playerIndex];
+    const constraint = getTurnConstraint(this.state, playerIndex);
+
+    if (constraint.type === 'draw') {
+      const amount = this.state.pendingDraw.amount;
+      this.state.pendingDraw = null;
+      this.drawCards(playerIndex, amount);
+      this.addLog(`${player.name} dobiera ${amount} kart za karę.`);
+      this.endTurn(playerIndex);
+      return;
+    }
+
+    if (constraint.type === 'skip') {
+      this.acceptSkip(playerIndex);
+      return;
+    }
+
+    if (this.state.drawnRescueCardId) return;
+
+    const drawn = this.drawCards(playerIndex, 1)[0];
+    if (!drawn) {
+      this.endTurn(playerIndex);
+      return;
+    }
+
+    this.addLog(`${player.name} dobiera kartę.`);
+    if (isCardLegal(drawn, this.state, playerIndex)) {
+      this.state.drawnRescueCardId = drawn.id;
+      this.onMessage('Pierwsza karta ratuje — możesz zagrać dobraną kartę albo spasować.');
+      this.emit();
+    } else {
+      this.endTurn(playerIndex);
+    }
+  }
+
+  humanPassAfterDraw() {
+    if (!this.humanCanAct() || !this.state.drawnRescueCardId) return;
+    this.addLog('Nie zagrywasz dobranej karty.');
+    this.endTurn(this.state.currentIndex);
+  }
+
+  acceptSkip(playerIndex) {
+    if (!this.isPendingSkipFor(playerIndex)) return;
+    const player = this.state.players[playerIndex];
+    const count = this.state.pendingSkip.count;
+    this.state.pendingSkip = null;
+    player.blockedTurns += Math.max(0, count - 1);
+    this.addLog(`${player.name} przyjmuje blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.`);
+    this.endTurn(playerIndex);
+  }
+
+  playCards(playerIndex, cards, { fromRescue = false } = {}) {
+    const player = this.state.players[playerIndex];
+    const constraintBefore = getTurnConstraint(this.state, playerIndex);
+    const ordered = fromRescue ? [...cards] : orderGroupForPlay(cards, this.state, playerIndex);
+    const rank = ordered[0].rank;
+
+    // Spełnienie żądania waleta usuwa je. Walet może je zastąpić nowym.
+    if (constraintBefore.type === 'jack' && rank === this.state.jackDemand?.rank) {
+      this.state.jackDemand = null;
+    }
+    if (constraintBefore.type === 'jack' && rank === 'J') {
+      this.state.jackDemand = null;
+    }
+
+    for (const card of ordered) {
+      const handIndex = player.hand.findIndex((held) => held.id === card.id);
+      if (handIndex >= 0) player.hand.splice(handIndex, 1);
+      this.state.discardPile.push(card);
+    }
+
+    this.state.drawnRescueCardId = null;
+    this.addLog(`${player.name} zagrywa ${ordered.map(cardLabel).join(', ')}.`);
+
+    const makaoRequired = isMakaoRequired(player.hand.length);
+    const declared = !player.isHuman || this.state.makaoArmed;
+
+    if (makaoRequired && declared) {
+      this.addLog(player.hand.length === 0 ? `${player.name}: „Makao i po makale!”` : `${player.name}: „Makao!”`);
+    } else if (makaoRequired && !declared) {
+      this.addLog(`STOP MAKAO! ${player.name} dobiera 5 kart.`);
+      this.drawCards(playerIndex, 5);
+      this.onMessage('STOP MAKAO — brak deklaracji. Dobierasz 5 kart.');
+    }
+
+    this.applyCardEffects(playerIndex, ordered, constraintBefore);
+
+    if (player.hand.length === 0) {
+      this.finishPlayer(playerIndex);
+    }
+
+    this.state.makaoArmed = false;
+    this.emit();
+
+    if (!this.state.gameOver && !this.state.pendingChoice) {
+      this.endTurn(playerIndex);
+    }
+  }
+
+  applyCardEffects(playerIndex, cards, constraintBefore) {
+    const rank = cards[0].rank;
+    const nextIndex = this.nextActiveIndex(playerIndex);
+
+    if (rank === '2' || rank === '3') {
+      const added = Number(rank) * cards.length;
+      if (constraintBefore.type === 'draw' && this.state.pendingDraw) {
+        this.state.pendingDraw.amount += added;
+        this.state.pendingDraw.targetIndex = nextIndex;
+      } else {
+        this.state.pendingDraw = { amount: added, targetIndex: nextIndex };
+      }
+      this.addLog(`Kara dobierania rośnie do ${this.state.pendingDraw.amount}.`);
+      return;
+    }
+
+    if (rank === '4') {
+      const added = cards.length;
+      if (constraintBefore.type === 'skip' && this.state.pendingSkip) {
+        this.state.pendingSkip.count += added;
+        this.state.pendingSkip.targetIndex = nextIndex;
+      } else {
+        this.state.pendingSkip = { count: added, targetIndex: nextIndex };
+      }
+      this.addLog(`Blokada: ${this.state.pendingSkip.count} ${this.state.pendingSkip.count === 1 ? 'kolejka' : 'kolejki'}.`);
+      return;
+    }
+
+    if (rank === 'J') {
+      const player = this.state.players[playerIndex];
+      if (player.isHuman) {
+        this.state.pendingChoice = { type: 'jack', actorIndex: playerIndex };
+      } else {
+        const demand = chooseJackDemand(player.hand);
+        this.state.jackDemand = { rank: demand, byIndex: playerIndex };
+        this.addLog(`${player.name} żąda wartości ${demand}.`);
+      }
+      return;
+    }
+
+    if (rank === 'A') {
+      const player = this.state.players[playerIndex];
+      if (player.isHuman) {
+        this.state.pendingChoice = { type: 'ace', actorIndex: playerIndex };
+      } else {
+        const suit = chooseAceSuit(player.hand);
+        this.state.aceDemand = { suit, targetIndex: nextIndex, byIndex: playerIndex };
+        this.addLog(`${player.name} żąda koloru: ${suitLabel(suit)}.`);
+      }
+      return;
+    }
+
+    if (rank === 'K') {
+      const heartKing = cards.find((card) => card.suit === 'hearts');
+      const spadeKing = cards.find((card) => card.suit === 'spades');
+
+      if (heartKing) {
+        const targetIndex = this.nextActiveIndex(playerIndex);
+        if (targetIndex !== playerIndex) {
+          this.drawCards(targetIndex, 5);
+          this.addLog(`K♥: ${this.state.players[targetIndex].name} dobiera 5 kart.`);
+        }
+      }
+
+      if (spadeKing) {
+        const targetIndex = this.previousActiveIndex(playerIndex);
+        if (targetIndex !== playerIndex) {
+          this.drawCards(targetIndex, 5);
+          this.addLog(`K♠: ${this.state.players[targetIndex].name} dobiera 5 kart.`);
+        }
+      }
+    }
+  }
+
+  choosePending(value) {
+    const choice = this.state.pendingChoice;
+    if (!choice) return;
+    const actorIndex = choice.actorIndex;
+    const actor = this.state.players[actorIndex];
+
+    if (choice.type === 'jack') {
+      this.state.jackDemand = { rank: value, byIndex: actorIndex };
+      this.addLog(`${actor.name} żąda wartości ${value}.`);
+    }
+
+    if (choice.type === 'ace') {
+      const targetIndex = this.nextActiveIndex(actorIndex);
+      this.state.aceDemand = { suit: value, targetIndex, byIndex: actorIndex };
+      this.addLog(`${actor.name} żąda koloru: ${suitLabel(value)}.`);
+    }
+
+    this.state.pendingChoice = null;
+    this.emit();
+    if (!this.state.gameOver) this.endTurn(actorIndex);
+  }
+
+  drawCards(playerIndex, count) {
+    const drawn = [];
+    for (let i = 0; i < count; i += 1) {
+      recycleDiscardIntoDrawPile(this.state);
+      const card = this.state.drawPile.pop();
+      if (!card) break;
+      this.state.players[playerIndex].hand.push(card);
+      drawn.push(card);
+    }
+    return drawn;
+  }
+
+  runBotTurn(playerIndex) {
+    if (this.state.gameOver || this.state.pendingChoice || this.state.currentIndex !== playerIndex) return;
+    const bot = this.state.players[playerIndex];
+    if (!bot || bot.isHuman || bot.finishPlace != null) return;
+
+    const constraint = getTurnConstraint(this.state, playerIndex);
+    const play = chooseBotPlay(bot, this.state, playerIndex);
+
+    if (play) {
+      this.playCards(playerIndex, play);
+      return;
+    }
+
+    if (constraint.type === 'draw') {
+      const amount = this.state.pendingDraw.amount;
+      this.state.pendingDraw = null;
+      this.drawCards(playerIndex, amount);
+      this.addLog(`${bot.name} dobiera ${amount} kart za karę.`);
+      this.emit();
+      this.endTurn(playerIndex);
+      return;
+    }
+
+    if (constraint.type === 'skip') {
+      this.acceptSkip(playerIndex);
+      return;
+    }
+
+    const drawn = this.drawCards(playerIndex, 1)[0];
+    this.addLog(`${bot.name} dobiera kartę.`);
+    this.emit();
+
+    if (drawn && isCardLegal(drawn, this.state, playerIndex)) {
+      this.timer = setTimeout(() => {
+        if (!this.state.gameOver && this.state.currentIndex === playerIndex) {
+          this.playCards(playerIndex, [drawn], { fromRescue: true });
+        }
+      }, UI_DELAYS.botAfterDraw);
+    } else {
+      this.endTurn(playerIndex);
+    }
+  }
+
+  finishPlayer(playerIndex) {
+    const player = this.state.players[playerIndex];
+    if (player.finishPlace != null) return;
+    player.finishPlace = this.state.standings.length + 1;
+    this.state.standings.push(playerIndex);
+    this.addLog(`${player.name} zajmuje ${player.finishPlace}. miejsce.`);
+
+    const active = this.activePlayerIndexes();
+    if (active.length === 1) {
+      const lastIndex = active[0];
+      const last = this.state.players[lastIndex];
+      last.finishPlace = this.state.standings.length + 1;
+      this.state.standings.push(lastIndex);
+      this.addLog(`${last.name} zajmuje ${last.finishPlace}. miejsce.`);
+      this.state.gameOver = true;
+      this.state.pendingChoice = null;
+      this.addLog('Koniec partii.');
+    }
+  }
+
+  endTurn(actorIndex) {
+    if (this.state.gameOver) {
+      this.emit();
+      return;
+    }
+
+    // Żądanie asa dotyczy wyłącznie następnego gracza. Jeśli nie zostało
+    // zastąpione kolejnym asem, wygasa wraz z końcem jego tury.
+    if (this.state.aceDemand?.targetIndex === actorIndex) {
+      this.state.aceDemand = null;
+    }
+
+    this.state.drawnRescueCardId = null;
+    this.state.makaoArmed = false;
+    this.state.currentIndex = this.nextActiveIndex(actorIndex);
+    this.state.turnNumber += 1;
+    this.emit();
+    this.queueCurrentTurn();
+  }
 }
 
 // ===== js/ui.js =====
@@ -682,6 +1137,199 @@ class MakaoUI {
   cardWord(count){if(count===1)return'KARTA';if([2,3,4].includes(count%10)&&![12,13,14].includes(count%100))return'KARTY';return'KART';}
 }
 
+// ===== js/ux-effects.js =====
+// Visual-only UX layer: card flight animations and hand compression.
+// It deliberately does not contain Makao rules.
+
+function installUxEffects(game, ui) {
+  let previous = snapshot(game.state);
+  let humanPlayRects = [];
+
+  const playButton = document.getElementById('play-btn');
+  const hand = document.getElementById('human-hand');
+  const drawPile = document.getElementById('draw-pile');
+  const discard = document.getElementById('discard-pile');
+  const opponents = document.getElementById('opponents');
+  const motionToggle = document.getElementById('motion-toggle');
+
+  // Capture selected-card coordinates before the normal click handler mutates
+  // the hand and rerenders it.
+  playButton?.addEventListener('click', () => {
+    humanPlayRects = [...hand.querySelectorAll('.hand-card.selected')]
+      .map((element) => element.getBoundingClientRect())
+      .sort((a, b) => a.left - b.left);
+  }, true);
+
+  const baseRender = (state) => ui.render(state);
+  game.onChange = (state) => {
+    const before = previous;
+    baseRender(state);
+    requestAnimationFrame(() => {
+      compressHumanHand(hand);
+      animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects });
+      humanPlayRects = [];
+    });
+    previous = snapshot(state);
+  };
+
+  // The initial render is invoked directly from main.js, so keep the hand
+  // responsive on resize as well.
+  window.addEventListener('resize', () => requestAnimationFrame(() => compressHumanHand(hand)));
+  requestAnimationFrame(() => compressHumanHand(hand));
+}
+
+function snapshot(state) {
+  return {
+    started: Boolean(state.started),
+    currentIndex: state.currentIndex,
+    discardCount: state.discardPile?.length ?? 0,
+    playerHands: (state.players ?? []).map((player) => player.hand.map((card) => card.id)),
+  };
+}
+
+function motionEnabled(toggle) {
+  return Boolean(toggle?.checked) && !document.body.classList.contains('reduce-motion');
+}
+
+function compressHumanHand(hand) {
+  if (!hand) return;
+  const cards = [...hand.querySelectorAll('.hand-card')];
+  if (cards.length < 2) return;
+
+  // On very small screens horizontal scrolling is preferable to excessive
+  // overlap, because the baseline mobile layout already supports it.
+  if (window.innerWidth <= 560) {
+    cards.forEach((card, index) => {
+      card.style.marginLeft = index === 0 ? '0px' : '-18px';
+    });
+    return;
+  }
+
+  const available = Math.max(260, hand.clientWidth - 20);
+  const sampleWidth = cards[0].getBoundingClientRect().width || 106;
+  const step = Math.max(sampleWidth * .28, Math.min(sampleWidth * .78, (available - sampleWidth) / (cards.length - 1)));
+  const margin = Math.round(step - sampleWidth);
+
+  cards.forEach((card, index) => {
+    card.style.marginLeft = index === 0 ? '0px' : `${margin}px`;
+  });
+}
+
+function animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects }) {
+  if (!before?.started || !state.started || !motionEnabled(motionToggle)) return;
+
+  const newSnapshot = snapshot(state);
+  const actorIndex = before.currentIndex;
+  const discardDelta = newSnapshot.discardCount - before.discardCount;
+  let baseDelay = 0;
+
+  if (discardDelta > 0) {
+    const played = state.discardPile.slice(-discardDelta);
+    played.forEach((card, index) => {
+      const from = actorIndex === 0
+        ? humanPlayRects[index] ?? humanSourceRect(hand)
+        : botSourceRect(opponents, actorIndex);
+      const to = discardTargetRect(discard);
+      if (from && to) {
+        window.setTimeout(() => flyFaceCard(ui, card, from, to), index * 95);
+      }
+    });
+    baseDelay = discardDelta * 95;
+  }
+
+  newSnapshot.playerHands.forEach((ids, playerIndex) => {
+    const beforeIds = new Set(before.playerHands[playerIndex] ?? []);
+    const addedIds = ids.filter((id) => !beforeIds.has(id));
+    if (!addedIds.length) return;
+
+    // Temporarily dim the actually-added human cards so the deck->hand flight
+    // reads as the arrival instead of an instant pop-in behind the animation.
+    if (playerIndex === 0) {
+      addedIds.forEach((id) => {
+        const element = [...hand.querySelectorAll('[data-card-id]')].find((item) => item.dataset.cardId === id);
+        element?.classList.add('ux-arriving-card');
+        window.setTimeout(() => element?.classList.remove('ux-arriving-card'), baseDelay + addedIds.length * 105 + 430);
+      });
+    }
+
+    addedIds.forEach((_, index) => {
+      const from = drawPile?.getBoundingClientRect();
+      const to = playerIndex === 0 ? humanTargetRect(hand) : botTargetRect(opponents, playerIndex);
+      if (from && to) {
+        window.setTimeout(() => flyBackCard(from, to), baseDelay + index * 105);
+      }
+    });
+  });
+}
+
+function humanSourceRect(hand) {
+  const selected = hand?.querySelector('.hand-card.selected');
+  const any = selected ?? hand?.querySelector('.hand-card');
+  return any?.getBoundingClientRect() ?? hand?.getBoundingClientRect() ?? null;
+}
+
+function humanTargetRect(hand) {
+  const cards = [...(hand?.querySelectorAll('.hand-card') ?? [])];
+  return cards.at(-1)?.getBoundingClientRect() ?? hand?.getBoundingClientRect() ?? null;
+}
+
+function botSeat(opponents, playerIndex) {
+  // Bots are players 1..N and rendered in the same order.
+  return opponents?.querySelectorAll('.opponent-seat')?.[playerIndex - 1] ?? null;
+}
+
+function botSourceRect(opponents, playerIndex) {
+  const seat = botSeat(opponents, playerIndex);
+  return seat?.querySelector('.opponent-hand')?.getBoundingClientRect() ?? seat?.getBoundingClientRect() ?? null;
+}
+
+function botTargetRect(opponents, playerIndex) {
+  return botSourceRect(opponents, playerIndex);
+}
+
+function discardTargetRect(discard) {
+  return discard?.querySelector('.table-card')?.getBoundingClientRect() ?? discard?.getBoundingClientRect() ?? null;
+}
+
+function flyFaceCard(ui, card, from, to) {
+  const element = ui.makeCard(card, { table: true });
+  prepareFlight(element, from, to, 7);
+}
+
+function flyBackCard(from, to) {
+  const element = document.createElement('div');
+  element.className = 'card card-back';
+  element.innerHTML = '<div class="back-inner"><span>MAKAO</span></div>';
+  prepareFlight(element, from, to, -6);
+}
+
+function prepareFlight(element, from, to, rotation) {
+  const width = Math.max(46, Math.min(120, from.width || 106));
+  const height = Math.max(64, Math.min(168, from.height || 152));
+  const targetX = to.left + (to.width - width) / 2;
+  const targetY = to.top + (to.height - height) / 2;
+  const dx = targetX - from.left;
+  const dy = targetY - from.top;
+
+  element.classList.add('ux-flight-card');
+  element.style.left = `${from.left}px`;
+  element.style.top = `${from.top}px`;
+  element.style.width = `${width}px`;
+  element.style.height = `${height}px`;
+  element.style.transform = 'translate(0,0) rotate(0deg) scale(1)';
+  document.body.appendChild(element);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      element.classList.add('is-flying');
+      element.style.transform = `translate(${dx}px, ${dy}px) rotate(${rotation}deg) scale(.96)`;
+      element.style.opacity = '.9';
+    });
+  });
+
+  window.setTimeout(() => element.remove(), 520);
+}
+
 // ===== js/main.js =====
 let ui;
 const game = new MakaoGame({
@@ -690,7 +1338,9 @@ const game = new MakaoGame({
 });
 
 ui = new MakaoUI(game);
+installUxEffects(game, ui);
 ui.render(game.state);
+
 window.makaoGame = game;
 
   </script>
