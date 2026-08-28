@@ -29,9 +29,8 @@ export function chooseBotPlay(bot, state, playerIndex) {
   const groups = getLegalGroups(bot.hand, state, playerIndex);
   if (!groups.length) return null;
 
-  // Przy aktywnym żądaniu waleta bot powinien najpierw spełnić żądanie,
-  // jeśli ma odpowiednią wartość. W przeciwnym razie premiowanie waleta
-  // prowadziło do patologicznych, wielotysięcznych łańcuchów J -> J.
+  // Przy aktywnym żądaniu waleta bot najpierw spełnia żądanie, jeśli może.
+  // Zapobiega to samonapędzającym się łańcuchom waletów, bez zmiany zasad gry.
   const constraint = getTurnConstraint(state, playerIndex);
   let candidates = groups;
   if (constraint.type === 'jack') {
