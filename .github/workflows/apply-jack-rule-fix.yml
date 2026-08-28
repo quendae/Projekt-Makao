@@ -1,0 +1,78 @@
+name: Apply Jack rule fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-jack-rule-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch Jack rule in game engine
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'js/game.js';
+          let source = fs.readFileSync(path, 'utf8');
+
+          const oldImport = "import { BOT_NAMES, UI_DELAYS } from './constants.js';";
+          const newImport = "import { BOT_NAMES, JACK_DEMAND_RANKS, UI_DELAYS } from './constants.js';";
+          if (source.includes(oldImport)) source = source.replace(oldImport, newImport);
+
+          const oldBot = `        const demand = chooseJackDemand(player.hand);
+          this.state.jackDemand = { rank: demand, byIndex: playerIndex };
+          this.addLog(\`${'${player.name}'} żąda wartości ${'${demand}'}.\`);`;
+          const newBot = `        const demand = chooseJackDemand(player.hand);
+          if (demand) {
+            this.state.jackDemand = { rank: demand, byIndex: playerIndex };
+            this.addLog(\`${'${player.name}'} żąda wartości ${'${demand}'}.\`);
+          } else {
+            this.state.jackDemand = null;
+            this.addLog(\`${'${player.name}'} nie żąda żadnej wartości.\`);
+          }`;
+          if (!source.includes(oldBot)) throw new Error('Bot Jack block not found');
+          source = source.replace(oldBot, newBot);
+
+          const oldHuman = `    if (choice.type === 'jack') {
+            this.state.jackDemand = { rank: value, byIndex: actorIndex };
+            this.addLog(\`${'${actor.name}'} żąda wartości ${'${value}'}.\`);
+          }`;
+          const newHuman = `    if (choice.type === 'jack') {
+            if (value == null) {
+              this.state.jackDemand = null;
+              this.addLog(\`${'${actor.name}'} nie żąda żadnej wartości.\`);
+            } else {
+              const mayDemand = JACK_DEMAND_RANKS.includes(value) && actor.hand.some((card) => card.rank === value);
+              if (!mayDemand) {
+                this.onMessage('Walet może żądać tylko wartości 5–10, którą masz w ręce, albo niczego.');
+                return;
+              }
+              this.state.jackDemand = { rank: value, byIndex: actorIndex };
+              this.addLog(\`${'${actor.name}'} żąda wartości ${'${value}'}.\`);
+            }
+          }`;
+          if (!source.includes(oldHuman)) throw new Error('Human Jack block not found');
+          source = source.replace(oldHuman, newHuman);
+
+          fs.writeFileSync(path, source, 'utf8');
+          NODE
+
+      - name: Commit Jack rule fix
+        run: |
+          if git diff --quiet -- js/game.js; then
+            echo "game.js already patched"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add js/game.js
+          git commit -m "fix: enforce Jack demand from held cards"
+          git push
