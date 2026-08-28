@@ -1,5 +1,5 @@
 import { JACK_DEMAND_RANKS, SUITS } from './constants.js';
-import { getLegalGroups, orderGroupForPlay } from './rules.js';
+import { getLegalGroups, getTurnConstraint, orderGroupForPlay } from './rules.js';
 
 function scoreGroup(group, bot) {
   let score = group.length * 30;
@@ -28,8 +28,19 @@ function scoreGroup(group, bot) {
 export function chooseBotPlay(bot, state, playerIndex) {
   const groups = getLegalGroups(bot.hand, state, playerIndex);
   if (!groups.length) return null;
-  groups.sort((a, b) => scoreGroup(b, bot) - scoreGroup(a, bot));
-  return orderGroupForPlay(groups[0], state, playerIndex);
+
+  // Przy aktywnym żądaniu waleta bot powinien najpierw spełnić żądanie,
+  // jeśli ma odpowiednią wartość. W przeciwnym razie premiowanie waleta
+  // prowadziło do patologicznych, wielotysięcznych łańcuchów J -> J.
+  const constraint = getTurnConstraint(state, playerIndex);
+  let candidates = groups;
+  if (constraint.type === 'jack') {
+    const demanded = groups.filter((group) => group[0].rank === constraint.rank);
+    if (demanded.length) candidates = demanded;
+  }
+
+  candidates.sort((a, b) => scoreGroup(b, bot) - scoreGroup(a, bot));
+  return orderGroupForPlay(candidates[0], state, playerIndex);
 }
 
 export function chooseJackDemand(hand) {

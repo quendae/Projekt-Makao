@@ -358,7 +358,10 @@ export class MakaoGame {
       if (player.isHuman) {
         this.state.pendingChoice = { type: 'jack', actorIndex: playerIndex };
       } else {
-        const demand = chooseJackDemand(player.hand);
+        // Walet zagrany jako odpowiedź na aktywne żądanie kończy łańcuch
+        // wyborem „nic”. To jest dozwolona decyzja waleta i zapobiega
+        // nieskończonemu krążeniu czterech waletów między botami.
+        const demand = constraintBefore.type === 'jack' ? null : chooseJackDemand(player.hand);
         if (demand) {
           this.state.jackDemand = { rank: demand, byIndex: playerIndex };
           this.addLog(`${player.name} żąda wartości ${demand}.`);

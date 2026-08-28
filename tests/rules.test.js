@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDeck, isCardLegal, isFunctional, validateGroup } from '../js/rules.js';
 import { MakaoGame } from '../js/game.js';
-import { chooseJackDemand } from '../js/bot.js';
+import { chooseBotPlay, chooseJackDemand } from '../js/bot.js';
 
 function card(rank, suit) {
   return { id: `${rank}-${suit}`, rank, suit };
@@ -142,6 +142,24 @@ test('zaległa blokada nie omija aktywnej kary dobierania 2/3', () => {
   assert.equal(game.state.pendingDraw, null);
   assert.equal(game.state.players[2].hand.length, 3);
   assert.match(game.state.log[0].message, /traci kolejkę i dobiera 2 kart za karę/);
+});
+
+test('bot przy żądaniu waleta preferuje żądaną wartość zamiast kolejnego waleta', () => {
+  const bot = { hand: [card('J', 'hearts'), card('7', 'clubs'), card('9', 'spades')] };
+  const s = state(card('J', 'diamonds'), { jackDemand: { rank: '7', byIndex: 1 } });
+  const play = chooseBotPlay(bot, s, 0);
+  assert.equal(play[0].rank, '7');
+});
+
+test('bot odpowiadający waletem na waleta wybiera potem brak żądania', () => {
+  const game = new MakaoGame();
+  game.queueCurrentTurn = () => {};
+  game.state.started = true;
+  game.state.players = game.createPlayers(2);
+  game.state.jackDemand = { rank: '8', byIndex: 0 };
+  game.state.players[1].hand = [card('6', 'clubs')];
+  game.applyCardEffects(1, [card('J', 'hearts')], { type: 'jack', rank: '8' });
+  assert.equal(game.state.jackDemand, null);
 });
 
 test('nowa gra ma 1 gracza + 2/3 boty, po 5 kart i zwykłą kartę startową', () => {
