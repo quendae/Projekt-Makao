@@ -1,0 +1,112 @@
+name: Fix Jack loop
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-jack-loop.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch bot Jack strategy
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+
+          let bot = fs.readFileSync('js/bot.js', 'utf8');
+          bot = bot.replace(
+            "import { getLegalGroups, orderGroupForPlay } from './rules.js';",
+            "import { getLegalGroups, getTurnConstraint, orderGroupForPlay } from './rules.js';",
+          );
+          const oldChoose = `export function chooseBotPlay(bot, state, playerIndex) {
+            const groups = getLegalGroups(bot.hand, state, playerIndex);
+            if (!groups.length) return null;
+            groups.sort((a, b) => scoreGroup(b, bot) - scoreGroup(a, bot));
+            return orderGroupForPlay(groups[0], state, playerIndex);
+          }`;
+          const newChoose = `export function chooseBotPlay(bot, state, playerIndex) {
+            const groups = getLegalGroups(bot.hand, state, playerIndex);
+            if (!groups.length) return null;
+
+            // Przy aktywnym żądaniu waleta bot powinien najpierw spełnić żądanie,
+            // jeśli ma odpowiednią wartość. W przeciwnym razie premiowanie waleta
+            // prowadziło do patologicznych, wielotysięcznych łańcuchów J -> J.
+            const constraint = getTurnConstraint(state, playerIndex);
+            let candidates = groups;
+            if (constraint.type === 'jack') {
+              const demanded = groups.filter((group) => group[0].rank === constraint.rank);
+              if (demanded.length) candidates = demanded;
+            }
+
+            candidates.sort((a, b) => scoreGroup(b, bot) - scoreGroup(a, bot));
+            return orderGroupForPlay(candidates[0], state, playerIndex);
+          }`;
+          if (!bot.includes(oldChoose)) throw new Error('chooseBotPlay block not found');
+          bot = bot.replace(oldChoose, newChoose);
+          fs.writeFileSync('js/bot.js', bot, 'utf8');
+
+          let game = fs.readFileSync('js/game.js', 'utf8');
+          const oldDemand = `        const demand = chooseJackDemand(player.hand);
+                  if (demand) {`;
+          const newDemand = `        // Walet zagrany jako odpowiedź na aktywne żądanie kończy łańcuch
+                  // wyborem „nic”. To jest dozwolona decyzja waleta i zapobiega
+                  // nieskończonemu krążeniu czterech waletów między botami.
+                  const demand = constraintBefore.type === 'jack' ? null : chooseJackDemand(player.hand);
+                  if (demand) {`;
+          if (!game.includes(oldDemand)) throw new Error('Jack demand block not found');
+          game = game.replace(oldDemand, newDemand);
+          fs.writeFileSync('js/game.js', game, 'utf8');
+
+          let tests = fs.readFileSync('tests/rules.test.js', 'utf8');
+          tests = tests.replace(
+            "import { chooseJackDemand } from '../js/bot.js';",
+            "import { chooseBotPlay, chooseJackDemand } from '../js/bot.js';",
+          );
+          const marker = "test('nowa gra ma 1 gracza + 2/3 boty, po 5 kart i zwykłą kartę startową', () => {";
+          const extra = `test('bot przy żądaniu waleta preferuje żądaną wartość zamiast kolejnego waleta', () => {
+            const bot = { hand: [card('J', 'hearts'), card('7', 'clubs'), card('9', 'spades')] };
+            const s = state(card('J', 'diamonds'), { jackDemand: { rank: '7', byIndex: 1 } });
+            const play = chooseBotPlay(bot, s, 0);
+            assert.equal(play[0].rank, '7');
+          });
+
+          test('bot odpowiadający waletem na waleta wybiera potem brak żądania', () => {
+            const game = new MakaoGame();
+            game.queueCurrentTurn = () => {};
+            game.state.started = true;
+            game.state.players = game.createPlayers(2);
+            game.state.jackDemand = { rank: '8', byIndex: 0 };
+            game.state.players[1].hand = [card('6', 'clubs')];
+            game.applyCardEffects(1, [card('J', 'hearts')], { type: 'jack', rank: '8' });
+            assert.equal(game.state.jackDemand, null);
+          });
+
+          `;
+          if (!tests.includes(marker)) throw new Error('test marker not found');
+          if (!tests.includes('bot przy żądaniu waleta preferuje żądaną wartość')) {
+            tests = tests.replace(marker, extra + marker);
+          }
+          fs.writeFileSync('tests/rules.test.js', tests, 'utf8');
+          NODE
+
+      - name: Verify unit tests and stress
+        run: |
+          npm test
+          npm run check
+          npm run stress -- 1000 12648430
+
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add js/bot.js js/game.js tests/rules.test.js
+          git commit -m "fix: prevent endless Jack chains between bots"
+          git push
