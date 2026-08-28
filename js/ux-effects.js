@@ -24,9 +24,14 @@ export function installUxEffects(game, ui) {
   game.onChange = (state) => {
     const before = previous;
     baseRender(state);
+
+    // Choice controls are functional UI, not merely decoration. Enhance them
+    // synchronously so Jack's "Nic" and filtered rank choices exist in the
+    // same render frame as the modal itself.
+    enhanceChoicePanel(game, state);
+
     requestAnimationFrame(() => {
       compressHumanHand(hand);
-      enhanceChoicePanel(game, state);
       animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects });
       humanPlayRects = [];
     });
@@ -64,14 +69,17 @@ function compressHumanHand(hand) {
   const available = Math.max(260, hand.clientWidth - 24);
   const sampleWidth = cards[0].getBoundingClientRect().width || 106;
   const idealStep = (available - sampleWidth) / Math.max(1, cards.length - 1);
-  const minClickableStep = window.innerWidth <= 560 ? 44 : 48;
-  const useScrollRack = window.innerWidth <= 560 || idealStep < minClickableStep;
+
+  // A card's default click point is near its centre. If the next card begins
+  // before roughly 62% of this card's width, that centre can be covered even
+  // though a visible strip remains. Switch to a non-overlapping rack before
+  // that happens instead of merely guaranteeing a narrow visible edge.
+  const minCentreSafeStep = Math.max(62, sampleWidth * 0.64);
+  const useScrollRack = window.innerWidth <= 560 || idealStep < minCentreSafeStep;
 
   if (useScrollRack) {
-    // Once a hand needs scrolling, do NOT overlap cards at all. A previous
-    // version exposed ~48 px of every card but the next card still covered the
-    // centre hit target, so visually reachable cards were not reliably
-    // clickable. Horizontal scrolling is preferable to ambiguous hitboxes.
+    // Once a hand needs scrolling, do NOT overlap cards at all. Horizontal
+    // scrolling is preferable to ambiguous hitboxes.
     hand.classList.add('hand-scroll-mode');
     cards.forEach((card) => {
       card.style.marginLeft = '0px';
