@@ -1,4 +1,4 @@
-import { BOT_NAMES, UI_DELAYS } from './constants.js';
+import { BOT_NAMES, JACK_DEMAND_RANKS, UI_DELAYS } from './constants.js';
 import {
   cardLabel,
   createDeck,
@@ -348,8 +348,13 @@ export class MakaoGame {
         this.state.pendingChoice = { type: 'jack', actorIndex: playerIndex };
       } else {
         const demand = chooseJackDemand(player.hand);
-        this.state.jackDemand = { rank: demand, byIndex: playerIndex };
-        this.addLog(`${player.name} żąda wartości ${demand}.`);
+        if (demand) {
+          this.state.jackDemand = { rank: demand, byIndex: playerIndex };
+          this.addLog(`${player.name} żąda wartości ${demand}.`);
+        } else {
+          this.state.jackDemand = null;
+          this.addLog(`${player.name} nie żąda żadnej wartości.`);
+        }
       }
       return;
     }
@@ -395,8 +400,18 @@ export class MakaoGame {
     const actor = this.state.players[actorIndex];
 
     if (choice.type === 'jack') {
-      this.state.jackDemand = { rank: value, byIndex: actorIndex };
-      this.addLog(`${actor.name} żąda wartości ${value}.`);
+      if (value == null) {
+        this.state.jackDemand = null;
+        this.addLog(`${actor.name} nie żąda żadnej wartości.`);
+      } else {
+        const mayDemand = JACK_DEMAND_RANKS.includes(value) && actor.hand.some((card) => card.rank === value);
+        if (!mayDemand) {
+          this.onMessage('Walet może żądać tylko wartości 5–10, którą masz w ręce, albo niczego.');
+          return;
+        }
+        this.state.jackDemand = { rank: value, byIndex: actorIndex };
+        this.addLog(`${actor.name} żąda wartości ${value}.`);
+      }
     }
 
     if (choice.type === 'ace') {
