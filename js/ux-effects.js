@@ -68,10 +68,13 @@ function compressHumanHand(hand) {
   const useScrollRack = window.innerWidth <= 560 || idealStep < minClickableStep;
 
   if (useScrollRack) {
+    // Once a hand needs scrolling, do NOT overlap cards at all. A previous
+    // version exposed ~48 px of every card but the next card still covered the
+    // centre hit target, so visually reachable cards were not reliably
+    // clickable. Horizontal scrolling is preferable to ambiguous hitboxes.
     hand.classList.add('hand-scroll-mode');
-    const margin = Math.round(minClickableStep - sampleWidth);
-    cards.forEach((card, index) => {
-      card.style.marginLeft = index === 0 ? '0px' : `${margin}px`;
+    cards.forEach((card) => {
+      card.style.marginLeft = '0px';
       card.style.setProperty('--angle', '0deg');
       card.style.setProperty('--hover-angle', '0deg');
       card.style.setProperty('--selected-angle', '0deg');
