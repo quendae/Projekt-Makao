@@ -1334,7 +1334,11 @@ function botSeat(opponents, playerIndex) {
 
 function botSourceRect(opponents, playerIndex) {
   const seat = botSeat(opponents, playerIndex);
-  return seat?.querySelector('.opponent-hand')?.getBoundingClientRect() ?? seat?.getBoundingClientRect() ?? null;
+  const visibleBacks = seat ? [...seat.querySelectorAll('.mini-back')] : [];
+  return visibleBacks.at(-1)?.getBoundingClientRect()
+    ?? seat?.querySelector('.opponent-hand')?.getBoundingClientRect()
+    ?? seat?.getBoundingClientRect()
+    ?? null;
 }
 
 function botTargetRect(opponents, playerIndex) {
@@ -1347,7 +1351,11 @@ function discardTargetRect(discard) {
 
 function flyFaceCard(ui, card, from, to) {
   const element = ui.makeCard(card, { table: true });
-  prepareFlight(element, from, to, 7);
+  const compact = window.innerWidth <= 820;
+  prepareFlight(element, from, to, 7, {
+    width: compact ? 78 : 106,
+    height: compact ? 110 : 152,
+  });
 }
 
 function flyBackCard(from, to) {
@@ -1357,17 +1365,19 @@ function flyBackCard(from, to) {
   prepareFlight(element, from, to, -6);
 }
 
-function prepareFlight(element, from, to, rotation) {
-  const width = Math.max(46, Math.min(120, from.width || 106));
-  const height = Math.max(64, Math.min(168, from.height || 152));
+function prepareFlight(element, from, to, rotation, size = null) {
+  const width = size?.width ?? Math.max(46, Math.min(120, from.width || 106));
+  const height = size?.height ?? Math.max(64, Math.min(168, from.height || 152));
+  const sourceX = from.left + (from.width - width) / 2;
+  const sourceY = from.top + (from.height - height) / 2;
   const targetX = to.left + (to.width - width) / 2;
   const targetY = to.top + (to.height - height) / 2;
-  const dx = targetX - from.left;
-  const dy = targetY - from.top;
+  const dx = targetX - sourceX;
+  const dy = targetY - sourceY;
 
   element.classList.add('ux-flight-card');
-  element.style.left = `${from.left}px`;
-  element.style.top = `${from.top}px`;
+  element.style.left = `${sourceX}px`;
+  element.style.top = `${sourceY}px`;
   element.style.width = `${width}px`;
   element.style.height = `${height}px`;
   element.style.transform = 'translate(0,0) rotate(0deg) scale(1)';
