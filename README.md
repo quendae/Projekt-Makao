@@ -39,7 +39,7 @@ Ponieważ oba teksty opisują regionalne warianty Makao, rozbieżności zostały
 - 2 i 3 nakładają kary dobierania; przy aktywnej karze wolno odpowiedzieć wyłącznie 2/3 pasującą **kolorem albo wartością** do karty na wierzchu;
 - kary z kilku 2/3 sumują się według **łącznej liczby oczek** (np. trzy 2 = +6, trzy 3 = +9);
 - 4 blokuje kolejkę, a kolejna 4 może przenieść i zwiększyć blokadę;
-- walet żąda wartości 5–10;
+- walet żąda wartości 5–10, ale tylko takiej, którą zagrywający ma jeszcze w ręce; można też wybrać **„Nic”** i nie żądać żadnej wartości;
 - dama działa według „dama na wszystko, wszystko na damę”, ale **nie przełamuje aktywnej kary, blokady ani żądania**;
 - as żąda koloru dla następnego gracza;
 - K♥: +5 kart dla następnego gracza, bez dodatkowej utraty tury;

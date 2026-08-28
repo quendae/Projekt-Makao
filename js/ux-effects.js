@@ -26,6 +26,7 @@ export function installUxEffects(game, ui) {
     baseRender(state);
     requestAnimationFrame(() => {
       compressHumanHand(hand);
+      enhanceChoicePanel(game, state);
       animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects });
       humanPlayRects = [];
     });
@@ -35,7 +36,10 @@ export function installUxEffects(game, ui) {
   // The initial render is invoked directly from main.js, so keep the hand
   // responsive on resize as well.
   window.addEventListener('resize', () => requestAnimationFrame(() => compressHumanHand(hand)));
-  requestAnimationFrame(() => compressHumanHand(hand));
+  requestAnimationFrame(() => {
+    compressHumanHand(hand);
+    enhanceChoicePanel(game, game.state);
+  });
 }
 
 function snapshot(state) {
@@ -54,25 +58,86 @@ function motionEnabled(toggle) {
 function compressHumanHand(hand) {
   if (!hand) return;
   const cards = [...hand.querySelectorAll('.hand-card')];
+  hand.classList.remove('hand-scroll-mode');
   if (cards.length < 2) return;
 
-  // On very small screens horizontal scrolling is preferable to excessive
-  // overlap, because the baseline mobile layout already supports it.
-  if (window.innerWidth <= 560) {
+  const available = Math.max(260, hand.clientWidth - 24);
+  const sampleWidth = cards[0].getBoundingClientRect().width || 106;
+  const idealStep = (available - sampleWidth) / Math.max(1, cards.length - 1);
+  const minClickableStep = window.innerWidth <= 560 ? 44 : 48;
+  const useScrollRack = window.innerWidth <= 560 || idealStep < minClickableStep;
+
+  if (useScrollRack) {
+    hand.classList.add('hand-scroll-mode');
+    const margin = Math.round(minClickableStep - sampleWidth);
     cards.forEach((card, index) => {
-      card.style.marginLeft = index === 0 ? '0px' : '-18px';
+      card.style.marginLeft = index === 0 ? '0px' : `${margin}px`;
+      card.style.setProperty('--angle', '0deg');
+      card.style.setProperty('--hover-angle', '0deg');
+      card.style.setProperty('--selected-angle', '0deg');
+      card.style.setProperty('--drop', '0px');
     });
     return;
   }
 
-  const available = Math.max(260, hand.clientWidth - 20);
-  const sampleWidth = cards[0].getBoundingClientRect().width || 106;
-  const step = Math.max(sampleWidth * .28, Math.min(sampleWidth * .78, (available - sampleWidth) / (cards.length - 1)));
+  const step = Math.min(sampleWidth * .78, idealStep);
   const margin = Math.round(step - sampleWidth);
-
   cards.forEach((card, index) => {
     card.style.marginLeft = index === 0 ? '0px' : `${margin}px`;
   });
+}
+
+function enhanceChoicePanel(game, state) {
+  const modal = document.getElementById('choice-modal');
+  const options = document.getElementById('choice-options');
+  const description = document.getElementById('choice-description');
+  const choice = state.pendingChoice;
+  if (!modal || !options || !choice) return;
+
+  modal.classList.add('choice-peek-overlay');
+  const actor = state.players[choice.actorIndex];
+  if (!actor) return;
+
+  if (choice.type === 'jack') {
+    const allowed = new Map();
+    for (const card of actor.hand) {
+      if (['5', '6', '7', '8', '9', '10'].includes(card.rank)) {
+        allowed.set(card.rank, (allowed.get(card.rank) ?? 0) + 1);
+      }
+    }
+
+    options.querySelectorAll('.rank-choice').forEach((button) => {
+      const rank = button.textContent.trim();
+      const count = allowed.get(rank) ?? 0;
+      if (!count) {
+        button.remove();
+        return;
+      }
+      button.innerHTML = `<b>${rank}</b><small>${count} ${count === 1 ? 'karta' : 'karty'} w ręce</small>`;
+    });
+
+    const none = document.createElement('button');
+    none.className = 'choice-button no-demand-choice';
+    none.innerHTML = '<b>Nic</b><small>bez żądania</small>';
+    none.addEventListener('click', () => game.choosePending(null));
+    options.appendChild(none);
+
+    if (description) {
+      description.textContent = allowed.size
+        ? 'Możesz zażądać tylko wartości 5–10, którą nadal masz w ręce, albo nie żądać niczego.'
+        : 'Nie masz w ręce żadnej wartości 5–10. Wybierz „Nic”.';
+    }
+  } else if (choice.type === 'ace') {
+    const suitMap = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
+    const counts = Object.fromEntries(Object.keys(suitMap).map((suit) => [suit, actor.hand.filter((card) => card.suit === suit).length]));
+    options.querySelectorAll('.suit-choice').forEach((button) => {
+      const suit = Object.keys(suitMap).find((key) => button.classList.contains(`suit-${key}`));
+      if (!suit) return;
+      const label = button.querySelector('span')?.textContent ?? '';
+      button.innerHTML = `<b>${suitMap[suit]}</b><span>${label}<small>${counts[suit]} w ręce</small></span>`;
+    });
+    if (description) description.textContent = 'Wybierz kolor dla następnego gracza. Twoja ręka pozostaje widoczna, a liczby pokazują ile kart danego koloru masz.';
+  }
 }
 
 function animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects }) {

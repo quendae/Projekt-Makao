@@ -33,8 +33,8 @@ export function chooseBotPlay(bot, state, playerIndex) {
 }
 
 export function chooseJackDemand(hand) {
-  let bestRank = JACK_DEMAND_RANKS[0];
-  let bestCount = -1;
+  let bestRank = null;
+  let bestCount = 0;
   for (const rank of JACK_DEMAND_RANKS) {
     const count = hand.filter((card) => card.rank === rank).length;
     if (count > bestCount) {

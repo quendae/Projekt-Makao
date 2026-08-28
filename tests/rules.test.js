@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDeck, isCardLegal, isFunctional, validateGroup } from '../js/rules.js';
 import { MakaoGame } from '../js/game.js';
+import { chooseJackDemand } from '../js/bot.js';
 
 function card(rank, suit) {
   return { id: `${rank}-${suit}`, rank, suit };
@@ -94,6 +95,34 @@ test('król kier daje tylko +5 kart bez utraty tury', () => {
   game.applyCardEffects(0, [card('K', 'hearts')], { type: 'normal' });
   assert.equal(game.state.players[1].hand.length, 6);
   assert.equal(game.state.players[1].blockedTurns, 0);
+});
+
+
+test('walet może żądać tylko wartości 5–10 posiadanej w ręce, a bot może wybrać brak żądania', () => {
+  assert.equal(chooseJackDemand([card('A', 'hearts'), card('K', 'clubs')]), null);
+  assert.equal(chooseJackDemand([card('7', 'hearts'), card('7', 'clubs'), card('9', 'spades')]), '7');
+
+  let message = '';
+  const game = new MakaoGame({ onMessage: (text) => { message = text; } });
+  game.state.started = true;
+  game.state.gameOver = true;
+  game.state.players = game.createPlayers(2);
+  game.state.players[0].hand = [card('7', 'hearts'), card('A', 'clubs')];
+  game.state.pendingChoice = { type: 'jack', actorIndex: 0 };
+
+  game.choosePending('8');
+  assert.equal(game.state.pendingChoice?.type, 'jack');
+  assert.equal(game.state.jackDemand, null);
+  assert.match(message, /którą masz w ręce/);
+
+  game.choosePending('7');
+  assert.equal(game.state.jackDemand.rank, '7');
+  assert.equal(game.state.pendingChoice, null);
+
+  game.state.pendingChoice = { type: 'jack', actorIndex: 0 };
+  game.choosePending(null);
+  assert.equal(game.state.jackDemand, null);
+  assert.equal(game.state.pendingChoice, null);
 });
 
 test('nowa gra ma 1 gracza + 2/3 boty, po 5 kart i zwykłą kartę startową', () => {

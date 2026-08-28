@@ -62,13 +62,75 @@
   backdrop-filter: blur(7px);
 }
 
-/* Large hands should compress into the available width instead of pushing
-   the table or cards outside the viewport. JS sets the actual overlap. */
+/* Normal-size hands stay as a fan. When the fan would expose less than about
+   half a card, JS switches to a horizontally scrollable rack with a stable
+   44–48 px click target for every card. */
 .human-hand {
   overflow: visible;
   contain: layout;
 }
 .hand-card { min-width: 0; }
+.human-hand.hand-scroll-mode {
+  height: 190px;
+  justify-content: flex-start;
+  align-items: flex-end;
+  overflow-x: auto;
+  overflow-y: hidden;
+  contain: layout paint;
+  padding: 28px 18px 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(215,180,94,.42) rgba(0,0,0,.16);
+}
+.human-hand.hand-scroll-mode::-webkit-scrollbar { height: 7px; }
+.human-hand.hand-scroll-mode::-webkit-scrollbar-track { background: rgba(0,0,0,.16); border-radius: 99px; }
+.human-hand.hand-scroll-mode::-webkit-scrollbar-thumb { background: rgba(215,180,94,.42); border-radius: 99px; }
+.human-hand.hand-scroll-mode .hand-card { flex: 0 0 var(--cardw, 106px); }
+
+/* Jack/Ace decisions should not hide the player's own hand. The choice panel
+   floats above the hand with only a very light veil over the table. */
+#choice-modal.choice-peek-overlay {
+  place-items: end center;
+  padding: 0 18px 340px;
+  background: rgba(2,7,4,.14);
+  backdrop-filter: none;
+  pointer-events: none;
+}
+#choice-modal.choice-peek-overlay .choice-card {
+  width: min(690px, calc(100vw - 48px));
+  padding: 16px 18px;
+  pointer-events: auto;
+  background: rgba(14, 27, 21, .96);
+  box-shadow: 0 18px 48px rgba(0,0,0,.38);
+}
+#choice-modal.choice-peek-overlay .choice-card h2 { margin: 3px 0 4px; font-size: 24px; }
+#choice-modal.choice-peek-overlay .choice-card > p { margin: 5px 0 0; }
+#choice-modal.choice-peek-overlay .choice-options {
+  grid-template-columns: repeat(auto-fit, minmax(94px, 1fr));
+  gap: 7px;
+  margin-top: 11px;
+}
+#choice-modal.choice-peek-overlay .choice-button {
+  min-height: 52px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+#choice-modal.choice-peek-overlay .rank-choice,
+#choice-modal.choice-peek-overlay .no-demand-choice { flex-direction: column; gap: 2px; }
+#choice-modal.choice-peek-overlay .choice-button small {
+  display: block;
+  color: #9db8a7;
+  font: 700 9px Inter, system-ui, sans-serif;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+#choice-modal.choice-peek-overlay .suit-choice span { display: grid; gap: 2px; text-align: left; }
+#choice-modal.choice-peek-overlay .no-demand-choice {
+  border-color: rgba(215,180,94,.45);
+  color: var(--gold2, #e7cd78);
+}
 
 /* Transient flight cards used for play/draw feedback. */
 .ux-flight-card {
@@ -88,11 +150,14 @@
 @media (max-width: 820px) {
   .human-area { height: 272px; }
   .human-hand { bottom: 65px; height: 125px; contain: none; }
+  .human-hand.hand-scroll-mode { height: 146px; padding-top: 24px; }
   .action-bar {
     bottom: 205px;
     width: max-content;
     max-width: 96%;
   }
+  #choice-modal.choice-peek-overlay { padding-bottom: 270px; }
+  #choice-modal.choice-peek-overlay .choice-card { width: min(620px, calc(100vw - 28px)); }
 }
 
 @media (max-width: 560px) {
@@ -103,4 +168,6 @@
     width: max-content;
     max-width: 94%;
   }
+  #choice-modal.choice-peek-overlay { padding: 0 10px 290px; }
+  #choice-modal.choice-peek-overlay .choice-options { grid-template-columns: repeat(2, 1fr); }
 }
