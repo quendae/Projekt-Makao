@@ -1,0 +1,37 @@
+name: Build single-file HTML
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'css/**'
+      - 'js/**'
+      - 'scripts/build-single.mjs'
+      - '.github/workflows/build-single-html.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build single-file HTML
+        run: node scripts/build-single.mjs
+
+      - name: Commit generated file
+        run: |
+          if git diff --quiet -- makao-single.html; then
+            echo "makao-single.html is up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add makao-single.html
+          git commit -m "build: refresh single-file HTML"
+          git push
