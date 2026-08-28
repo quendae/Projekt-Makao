@@ -4,7 +4,13 @@ Offline'owa gra **Makao** w czystym HTML, CSS i JavaScript. Rozgrywka: **1 czło
 
 ## Uruchomienie
 
-Najprościej uruchomić katalog przez dowolny lokalny serwer HTTP, np.:
+### Jeden plik — bez instalacji
+
+Pobierz tylko `makao-single.html` i otwórz go dwuklikiem w przeglądarce. Cały CSS i JavaScript są osadzone w tym jednym pliku, więc nie wymaga on lokalnego serwera ani pobierania pozostałych plików repozytorium.
+
+### Wersja deweloperska
+
+Pełną, modułową wersję projektu najprościej uruchomić przez dowolny lokalny serwer HTTP, np.:
 
 ```bash
 python -m http.server 8080
@@ -12,7 +18,7 @@ python -m http.server 8080
 
 Następnie otworzyć `http://localhost:8080`.
 
-> Gra używa modułów ES, dlatego zalecany jest serwer HTTP zamiast otwierania `index.html` bezpośrednio przez `file://`.
+> Modułowy `index.html` używa ES Modules, dlatego dla tej wersji zalecany jest serwer HTTP. `makao-single.html` działa bezpośrednio przez `file://`.
 
 ## Ustalony wariant zasad
 
@@ -48,7 +54,8 @@ UI jest adaptacją dostarczonego baseline'u SKAT: ciemny cyfrowy card-room, emer
 
 ## Struktura
 
-- `index.html` — ekran gry, menu i modale;
+- `makao-single.html` — gotowa samowystarczalna wersja do pobrania i uruchomienia dwuklikiem;
+- `index.html` — ekran gry, menu i modale wersji modułowej;
 - `css/styles.css` — kompletna warstwa wizualna i responsywność;
 - `js/constants.js` — talia, kolory, konfiguracja;
 - `js/rules.js` — czysta walidacja zasad i grup kart;
@@ -56,7 +63,10 @@ UI jest adaptacją dostarczonego baseline'u SKAT: ciemny cyfrowy card-room, emer
 - `js/game.js` — stan partii, kolejki, kary, żądania, klasyfikacja;
 - `js/ui.js` — renderowanie DOM i obsługa interakcji;
 - `js/main.js` — bootstrap aplikacji;
+- `scripts/build-single.mjs` — generator jednoplikowego HTML-a;
 - `tests/rules.test.js` — testy reguł i inicjalizacji partii.
+
+`makao-single.html` jest automatycznie regenerowany przez GitHub Actions po zmianie źródeł gry.
 
 ## Testy
 
