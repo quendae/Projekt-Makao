@@ -161,9 +161,9 @@ export class MakaoGame {
         const amount = this.state.pendingDraw.amount;
         this.state.pendingDraw = null;
         this.drawCards(this.state.currentIndex, amount);
-        this.addLog(`${player.name} traci kolejkę i dobiera ${amount} kart za karę.`);
+        this.addLog(player.isHuman ? `Tracisz kolejkę i dobierasz ${amount} kart za karę.` : `${player.name} traci kolejkę i dobiera ${amount} kart za karę.`);
       } else {
-        this.addLog(`${player.name} traci kolejkę.`);
+        this.addLog(player.isHuman ? 'Tracisz kolejkę.' : `${player.name} traci kolejkę.`);
       }
 
       this.emit();
@@ -233,7 +233,7 @@ export class MakaoGame {
       const amount = this.state.pendingDraw.amount;
       this.state.pendingDraw = null;
       this.drawCards(playerIndex, amount);
-      this.addLog(`${player.name} dobiera ${amount} kart za karę.`);
+      this.addLog(player.isHuman ? `Dobierasz ${amount} kart za karę.` : `${player.name} dobiera ${amount} kart za karę.`);
       this.endTurn(playerIndex);
       return;
     }
@@ -251,7 +251,7 @@ export class MakaoGame {
       return;
     }
 
-    this.addLog(`${player.name} dobiera kartę.`);
+    this.addLog(player.isHuman ? 'Dobierasz kartę.' : `${player.name} dobiera kartę.`);
     if (isCardLegal(drawn, this.state, playerIndex)) {
       this.state.drawnRescueCardId = drawn.id;
       this.onMessage('Pierwsza karta ratuje — możesz zagrać dobraną kartę albo spasować.');
@@ -273,7 +273,7 @@ export class MakaoGame {
     const count = this.state.pendingSkip.count;
     this.state.pendingSkip = null;
     player.blockedTurns += Math.max(0, count - 1);
-    this.addLog(`${player.name} przyjmuje blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.`);
+    this.addLog(player.isHuman ? `Przyjmujesz blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.` : `${player.name} przyjmuje blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.`);
     this.endTurn(playerIndex);
   }
 
@@ -298,7 +298,7 @@ export class MakaoGame {
     }
 
     this.state.drawnRescueCardId = null;
-    this.addLog(`${player.name} zagrywa ${ordered.map(cardLabel).join(', ')}.`);
+    this.addLog(player.isHuman ? `Zagrywasz ${ordered.map(cardLabel).join(', ')}.` : `${player.name} zagrywa ${ordered.map(cardLabel).join(', ')}.`);
 
     const makaoRequired = isMakaoRequired(player.hand.length);
     const declared = !player.isHuman || this.state.makaoArmed;
@@ -306,7 +306,7 @@ export class MakaoGame {
     if (makaoRequired && declared) {
       this.addLog(player.hand.length === 0 ? `${player.name}: „Makao i po makale!”` : `${player.name}: „Makao!”`);
     } else if (makaoRequired && !declared) {
-      this.addLog(`STOP MAKAO! ${player.name} dobiera 5 kart.`);
+      this.addLog(player.isHuman ? 'STOP MAKAO! Dobierasz 5 kart.' : `STOP MAKAO! ${player.name} dobiera 5 kart.`);
       this.drawCards(playerIndex, 5);
       this.onMessage('STOP MAKAO — brak deklaracji. Dobierasz 5 kart.');
     }
@@ -496,7 +496,7 @@ export class MakaoGame {
     if (player.finishPlace != null) return;
     player.finishPlace = this.state.standings.length + 1;
     this.state.standings.push(playerIndex);
-    this.addLog(`${player.name} zajmuje ${player.finishPlace}. miejsce.`);
+    this.addLog(player.isHuman ? `Zajmujesz ${player.finishPlace}. miejsce.` : `${player.name} zajmuje ${player.finishPlace}. miejsce.`);
 
     const active = this.activePlayerIndexes();
     if (active.length === 1) {
@@ -504,7 +504,7 @@ export class MakaoGame {
       const last = this.state.players[lastIndex];
       last.finishPlace = this.state.standings.length + 1;
       this.state.standings.push(lastIndex);
-      this.addLog(`${last.name} zajmuje ${last.finishPlace}. miejsce.`);
+      this.addLog(last.isHuman ? `Zajmujesz ${last.finishPlace}. miejsce.` : `${last.name} zajmuje ${last.finishPlace}. miejsce.`);
       this.state.gameOver = true;
       this.state.pendingChoice = null;
       this.addLog('Koniec partii.');
