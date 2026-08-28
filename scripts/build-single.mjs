@@ -43,3 +43,5 @@ if (html.includes('type="module"') || html.includes('src="js/main.js"')) {
 
 writeFileSync('makao-single.html', html, 'utf8');
 console.log(`Wygenerowano makao-single.html (${Buffer.byteLength(html)} B)`);
+
+// Source files are canonical; this script is intentionally deterministic.
