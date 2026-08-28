@@ -62,9 +62,9 @@
   backdrop-filter: blur(7px);
 }
 
-/* Normal-size hands stay as a fan. When the fan would expose less than about
-   half a card, JS switches to a horizontally scrollable rack with a stable
-   44–48 px click target for every card. */
+/* Normal-size hands stay as a fan. When the fan would become too tight, JS
+   switches to a horizontally scrollable rack. In rack mode cards do not
+   overlap at all, so every full card remains a reliable click target. */
 .human-hand {
   overflow: visible;
   contain: layout;
@@ -74,17 +74,22 @@
   height: 190px;
   justify-content: flex-start;
   align-items: flex-end;
+  gap: 7px;
   overflow-x: auto;
   overflow-y: hidden;
   contain: layout paint;
   padding: 28px 18px 8px;
+  scroll-snap-type: x proximity;
   scrollbar-width: thin;
   scrollbar-color: rgba(215,180,94,.42) rgba(0,0,0,.16);
 }
 .human-hand.hand-scroll-mode::-webkit-scrollbar { height: 7px; }
 .human-hand.hand-scroll-mode::-webkit-scrollbar-track { background: rgba(0,0,0,.16); border-radius: 99px; }
 .human-hand.hand-scroll-mode::-webkit-scrollbar-thumb { background: rgba(215,180,94,.42); border-radius: 99px; }
-.human-hand.hand-scroll-mode .hand-card { flex: 0 0 var(--cardw, 106px); }
+.human-hand.hand-scroll-mode .hand-card {
+  flex: 0 0 var(--cardw, 106px);
+  scroll-snap-align: nearest;
+}
 
 /* Jack/Ace decisions should not hide the player's own hand. The choice panel
    floats above the hand with only a very light veil over the table. */
@@ -173,7 +178,7 @@
 @media (max-width: 820px) {
   .human-area { height: 272px; }
   .human-hand { bottom: 65px; height: 125px; contain: none; }
-  .human-hand.hand-scroll-mode { height: 146px; padding-top: 24px; }
+  .human-hand.hand-scroll-mode { height: 146px; padding-top: 24px; gap: 5px; }
   .action-bar {
     bottom: 205px;
     width: max-content;
