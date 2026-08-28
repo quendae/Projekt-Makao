@@ -26,7 +26,7 @@ jobs:
 
       - name: Commit generated file
         run: |
-          if git diff --quiet -- makao-single.html; then
+          if [ -z "$(git status --porcelain -- makao-single.html)" ]; then
             echo "makao-single.html is up to date"
             exit 0
           fi
