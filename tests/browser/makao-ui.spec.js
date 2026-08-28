@@ -31,6 +31,21 @@ function buildDeck() {
   return suits.flatMap((suit) => ranks.map((rank) => ({ id: `${rank}-${suit}`, rank, suit })));
 }
 
+async function viewportHealth(page) {
+  return page.evaluate(() => {
+    const hand = document.getElementById('human-hand')?.getBoundingClientRect();
+    const action = document.getElementById('action-bar')?.getBoundingClientRect();
+    const felt = document.getElementById('felt-table')?.getBoundingClientRect();
+    return {
+      innerHeight,
+      docHeight: document.documentElement.scrollHeight,
+      handBottom: hand?.bottom ?? 0,
+      actionBottom: action?.bottom ?? 0,
+      feltBottom: felt?.bottom ?? 0,
+    };
+  });
+}
+
 test('40-card hand stays inside viewport and remains individually reachable', async ({ page }) => {
   await ready(page);
   const deck = buildDeck();
@@ -144,4 +159,96 @@ test('Ace choice keeps hand visible and shows all four suit options with hand co
   expect(visible.handInViewport).toBe(true);
   expect(visible.noOverlap).toBe(true);
   expect(visible.handOpacity).toBeGreaterThan(0.9);
+});
+
+test('browser agent plays complete games through the real UI without layout escape', async ({ page }) => {
+  test.setTimeout(120_000);
+  const gameCount = Math.max(2, Number.parseInt(process.env.UI_GAME_COUNT ?? '12', 10) || 12);
+
+  // Keep the genuine event/timer flow, only accelerate long presentation delays.
+  await page.addInitScript(() => {
+    const nativeSetTimeout = window.setTimeout.bind(window);
+    window.setTimeout = (callback, delay = 0, ...args) => nativeSetTimeout(callback, Math.min(Number(delay) || 0, 3), ...args);
+  });
+
+  for (let gameNo = 0; gameNo < gameCount; gameNo += 1) {
+    await page.goto('/index.html');
+    await page.waitForFunction(() => Boolean(window.makaoGame));
+    const bots = gameNo % 2 === 0 ? 2 : 3;
+
+    const motion = page.locator('#motion-toggle');
+    if (await motion.isChecked()) await motion.uncheck();
+    await page.locator(`[data-bots="${bots}"]`).click();
+    await page.locator('#start-btn').click();
+
+    const deadline = Date.now() + 15_000;
+    let humanActions = 0;
+    let samples = 0;
+
+    while (Date.now() < deadline) {
+      const state = await page.evaluate(() => {
+        const game = window.makaoGame;
+        const human = game.state.players[0];
+        return {
+          gameOver: game.state.gameOver,
+          currentIndex: game.state.currentIndex,
+          pendingChoice: game.state.pendingChoice?.type ?? null,
+          canAct: game.humanCanAct(),
+          rescueId: game.state.drawnRescueCardId,
+          humanCards: human?.hand.length ?? 0,
+          turnNumber: game.state.turnNumber,
+        };
+      });
+
+      if (state.gameOver) break;
+
+      if (state.currentIndex === 0 && state.pendingChoice) {
+        await page.waitForSelector('#choice-options .choice-button', { timeout: 1000 });
+        const none = page.locator('#choice-options .no-demand-choice');
+        if (state.pendingChoice === 'jack' && await none.count()) await none.click();
+        else await page.locator('#choice-options .choice-button').first().click();
+        humanActions += 1;
+      } else if (state.currentIndex === 0 && state.canAct) {
+        if (state.rescueId) {
+          const rescue = page.locator(`#human-hand [data-card-id="${state.rescueId}"]`);
+          await rescue.scrollIntoViewIfNeeded();
+          await rescue.click();
+          if (state.humanCards <= 2 && await page.locator('#makao-btn').isEnabled()) await page.locator('#makao-btn').click();
+          await page.locator('#play-btn').click();
+        } else {
+          const playable = page.locator('#human-hand .hand-card.playable:not(.disabled-card)');
+          if (await playable.count()) {
+            const choice = playable.first();
+            await choice.scrollIntoViewIfNeeded();
+            await choice.click();
+            if (state.humanCards <= 2 && await page.locator('#makao-btn').isEnabled()) await page.locator('#makao-btn').click();
+            await page.locator('#play-btn').click();
+          } else {
+            await page.locator('#draw-btn').click();
+          }
+        }
+        humanActions += 1;
+      }
+
+      if ((humanActions + samples) % 8 === 0) {
+        const layout = await viewportHealth(page);
+        expect(layout.docHeight, `game ${gameNo + 1}: document escaped viewport`).toBeLessThanOrEqual(layout.innerHeight + 2);
+        expect(layout.handBottom, `game ${gameNo + 1}: hand escaped viewport`).toBeLessThanOrEqual(layout.innerHeight + 1);
+        expect(layout.actionBottom, `game ${gameNo + 1}: controls escaped viewport`).toBeLessThanOrEqual(layout.innerHeight + 1);
+        expect(layout.feltBottom, `game ${gameNo + 1}: table escaped viewport`).toBeLessThanOrEqual(layout.innerHeight + 1);
+        samples += 1;
+      }
+
+      await page.waitForTimeout(3);
+    }
+
+    const result = await page.evaluate(() => ({
+      gameOver: window.makaoGame.state.gameOver,
+      standings: window.makaoGame.state.standings.length,
+      players: window.makaoGame.state.players.length,
+      turnNumber: window.makaoGame.state.turnNumber,
+    }));
+    expect(result.gameOver, `browser game ${gameNo + 1} timed out at turn ${result.turnNumber}`).toBe(true);
+    expect(result.standings).toBe(result.players);
+  }
 });
