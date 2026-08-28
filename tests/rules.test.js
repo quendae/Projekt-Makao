@@ -125,6 +125,25 @@ test('walet może żądać tylko wartości 5–10 posiadanej w ręce, a bot moż
   assert.equal(game.state.pendingChoice, null);
 });
 
+test('zaległa blokada nie omija aktywnej kary dobierania 2/3', () => {
+  const game = new MakaoGame();
+  game.state.started = true;
+  game.state.players = game.createPlayers(2);
+  game.state.currentIndex = 2; // Oskar
+  game.state.players[2].hand = [card('7', 'clubs')];
+  game.state.players[2].blockedTurns = 1;
+  game.state.pendingDraw = { amount: 2, targetIndex: 2 };
+  game.state.drawPile = [card('8', 'hearts'), card('9', 'diamonds')];
+
+  game.queueCurrentTurn();
+  clearTimeout(game.timer);
+
+  assert.equal(game.state.players[2].blockedTurns, 0);
+  assert.equal(game.state.pendingDraw, null);
+  assert.equal(game.state.players[2].hand.length, 3);
+  assert.match(game.state.log[0].message, /traci kolejkę i dobiera 2 kart za karę/);
+});
+
 test('nowa gra ma 1 gracza + 2/3 boty, po 5 kart i zwykłą kartę startową', () => {
   for (const bots of [2, 3]) {
     const game = new MakaoGame();
