@@ -1,0 +1,47 @@
+name: Stress-test Makao games
+
+on:
+  workflow_dispatch:
+    inputs:
+      games:
+        description: Number of simulated games
+        required: false
+        default: '1000'
+  push:
+    branches: [main]
+    paths:
+      - 'js/**'
+      - 'tests/**'
+      - 'scripts/stress.mjs'
+      - 'package.json'
+      - '.github/workflows/stress-games.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  stress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Syntax checks
+        run: npm run check
+
+      - name: Play automated games
+        env:
+          GAME_COUNT: ${{ github.event.inputs.games || '1000' }}
+        run: |
+          echo "Playing ${GAME_COUNT} deterministic full games"
+          npm run stress -- "${GAME_COUNT}" 12648430 | tee stress-results.txt
+          {
+            echo '## Makao stress test'
+            echo '```text'
+            cat stress-results.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
