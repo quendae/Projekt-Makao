@@ -46,7 +46,16 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Play through the real UI
+      - name: Play full games and audit responsive readability
         env:
           UI_GAME_COUNT: ${{ github.event.inputs.games || '20' }}
         run: npx playwright test
+
+      - name: Upload Playwright failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failure-evidence
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7
