@@ -1,5 +1,6 @@
 import { MakaoGame } from './game.js';
 import { MakaoUI } from './ui.js';
+import { installUxEffects } from './ux-effects.js';
 
 let ui;
 const game = new MakaoGame({
@@ -8,5 +9,7 @@ const game = new MakaoGame({
 });
 
 ui = new MakaoUI(game);
+installUxEffects(game, ui);
 ui.render(game.state);
+
 window.makaoGame = game;

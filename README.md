@@ -36,12 +36,13 @@ Ponieważ oba teksty opisują regionalne warianty Makao, rozbieżności zostały
 - podstawowe zagranie: ten sam kolor albo ta sama wartość;
 - można wyłożyć **1, 3 lub 4** karty tej samej wartości; pary i schodki są wyłączone;
 - działa zasada **„pierwsza karta ratuje”**;
-- 2 i 3 nakładają kary dobierania i mogą je kumulować;
+- 2 i 3 nakładają kary dobierania; przy aktywnej karze wolno odpowiedzieć wyłącznie 2/3 pasującą **kolorem albo wartością** do karty na wierzchu;
+- kary z kilku 2/3 sumują się według **łącznej liczby oczek** (np. trzy 2 = +6, trzy 3 = +9);
 - 4 blokuje kolejkę, a kolejna 4 może przenieść i zwiększyć blokadę;
 - walet żąda wartości 5–10;
 - dama działa według „dama na wszystko, wszystko na damę”, ale **nie przełamuje aktywnej kary, blokady ani żądania**;
 - as żąda koloru dla następnego gracza;
-- K♥: +5 kart dla następnego gracza;
+- K♥: +5 kart dla następnego gracza, bez dodatkowej utraty tury;
 - K♠: +5 kart dla poprzedniego gracza;
 - K♣ i K♦ nie mają funkcji specjalnej;
 - przy jednej karcie wymagana jest deklaracja **MAKAO**; brak deklaracji i STOP MAKAO = +5 kart;
@@ -62,6 +63,7 @@ UI jest adaptacją dostarczonego baseline'u SKAT: ciemny cyfrowy card-room, emer
 - `js/bot.js` — wybór ruchów botów;
 - `js/game.js` — stan partii, kolejki, kary, żądania, klasyfikacja;
 - `js/ui.js` — renderowanie DOM i obsługa interakcji;
+- `js/ux-effects.js` — kompresja dużej ręki i krótkie animacje ruchu kart;
 - `js/main.js` — bootstrap aplikacji;
 - `scripts/build-single.mjs` — generator jednoplikowego HTML-a;
 - `tests/rules.test.js` — testy reguł i inicjalizacji partii.

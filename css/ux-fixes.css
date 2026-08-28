@@ -1,0 +1,52 @@
+/* UX fixes layered on top of the baseline stylesheet. */
+
+/* The old clear-selection button is intentionally removed from the UI.
+   A selected card can be clicked again to deselect it. */
+#clear-btn { display: none !important; }
+
+/* Keep player controls clearly ABOVE the cards instead of overlapping them. */
+.human-area { height: 330px; }
+.human-hand { bottom: 78px; height: 166px; max-width: 100%; min-width: 0; }
+.action-bar {
+  bottom: 260px;
+  width: min(96%, 720px);
+  flex-wrap: wrap;
+  padding: 7px 9px;
+  border: 1px solid rgba(215,180,94,.18);
+  border-radius: 13px;
+  background: rgba(7,18,12,.72);
+  box-shadow: 0 12px 28px rgba(0,0,0,.22);
+  backdrop-filter: blur(7px);
+}
+
+/* Large hands should compress into the available width instead of pushing
+   the table or cards outside the viewport. JS sets the actual overlap. */
+.human-hand { overflow: visible; }
+.hand-card { min-width: 0; }
+
+/* Transient flight cards used for play/draw feedback. */
+.ux-flight-card {
+  position: fixed !important;
+  z-index: 120 !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  box-shadow: 0 20px 36px rgba(0,0,0,.38) !important;
+}
+.ux-flight-card.is-flying {
+  transition: transform .38s cubic-bezier(.2,.72,.22,1), opacity .18s ease .24s;
+}
+.ux-arriving-card { opacity: .12; }
+
+@media (max-width: 820px) {
+  .human-area { height: 272px; }
+  .human-hand { bottom: 65px; height: 125px; }
+  .action-bar { bottom: 205px; width: 96%; }
+}
+
+@media (max-width: 560px) {
+  .human-area { height: 286px; }
+  .human-hand { bottom: 76px; }
+  .action-bar { bottom: 218px; }
+}

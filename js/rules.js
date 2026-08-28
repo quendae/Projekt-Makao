@@ -66,26 +66,55 @@ export function isCardLegal(card, state, playerIndex) {
   const constraint = getTurnConstraint(state, playerIndex);
   const top = topCard(state);
 
-  if (constraint.type === 'draw') return card.rank === '2' || card.rank === '3';
-  if (constraint.type === 'skip') return card.rank === '4';
-  if (constraint.type === 'jack') return card.rank === 'J' || card.rank === constraint.rank;
-  if (constraint.type === 'ace') return card.rank === 'A' || card.suit === constraint.suit;
+  if (constraint.type === 'draw') {
+    if (!(card.rank === '2' || card.rank === '3')) return false;
+    if (!top) return true;
+    return card.rank === top.rank || card.suit === top.suit;
+  }
+
+  if (constraint.type === 'skip') {
+    return card.rank === '4';
+  }
+
+  if (constraint.type === 'jack') {
+    return card.rank === 'J' || card.rank === constraint.rank;
+  }
+
+  if (constraint.type === 'ace') {
+    return card.rank === 'A' || card.suit === constraint.suit;
+  }
+
   if (!top) return true;
 
+  // Dama jest dzika wyłącznie wtedy, gdy nie działa aktywna kara/żądanie.
   if (card.rank === 'Q' || top.rank === 'Q') return true;
+
   return card.rank === top.rank || card.suit === top.suit;
 }
 
 export function validateGroup(cards, state, playerIndex, { rescueOnly = false } = {}) {
-  if (!Array.isArray(cards) || !cards.length) return { ok: false, reason: 'Wybierz kartę.' };
-  if (rescueOnly && cards.length !== 1) return { ok: false, reason: 'Po dobraniu możesz zagrać tylko dobraną kartę.' };
-  if (!ALLOWED_GROUP_SIZES.includes(cards.length)) return { ok: false, reason: 'W tym wariancie można zagrać 1, 3 albo 4 karty.' };
+  if (!Array.isArray(cards) || !cards.length) {
+    return { ok: false, reason: 'Wybierz kartę.' };
+  }
+
+  if (rescueOnly && cards.length !== 1) {
+    return { ok: false, reason: 'Po dobraniu możesz zagrać tylko dobraną kartę.' };
+  }
+
+  if (!ALLOWED_GROUP_SIZES.includes(cards.length)) {
+    return { ok: false, reason: 'W tym wariancie można zagrać 1, 3 albo 4 karty.' };
+  }
 
   const rank = cards[0].rank;
-  if (!cards.every((card) => card.rank === rank)) return { ok: false, reason: 'Kilka kart naraz musi mieć tę samą wartość.' };
+  if (!cards.every((card) => card.rank === rank)) {
+    return { ok: false, reason: 'Kilka kart naraz musi mieć tę samą wartość.' };
+  }
 
   const legalStarter = cards.find((card) => isCardLegal(card, state, playerIndex));
-  if (!legalStarter) return { ok: false, reason: 'Żadna z wybranych kart nie może rozpocząć tego zagrania.' };
+  if (!legalStarter) {
+    return { ok: false, reason: 'Żadna z wybranych kart nie może rozpocząć tego zagrania.' };
+  }
+
   return { ok: true, starterId: legalStarter.id };
 }
 
@@ -98,7 +127,10 @@ export function orderGroupForPlay(cards, state, playerIndex) {
 
 export function getLegalGroups(hand, state, playerIndex) {
   const groups = [];
-  for (const card of hand) if (isCardLegal(card, state, playerIndex)) groups.push([card]);
+
+  for (const card of hand) {
+    if (isCardLegal(card, state, playerIndex)) groups.push([card]);
+  }
 
   const byRank = new Map();
   for (const card of hand) {
@@ -108,10 +140,16 @@ export function getLegalGroups(hand, state, playerIndex) {
 
   for (const cards of byRank.values()) {
     if (cards.length >= 3) {
-      for (const triple of combinations(cards, 3)) if (validateGroup(triple, state, playerIndex).ok) groups.push(triple);
+      const triples = combinations(cards, 3);
+      for (const triple of triples) {
+        if (validateGroup(triple, state, playerIndex).ok) groups.push(triple);
+      }
     }
-    if (cards.length === 4 && validateGroup(cards, state, playerIndex).ok) groups.push([...cards]);
+    if (cards.length === 4 && validateGroup(cards, state, playerIndex).ok) {
+      groups.push([...cards]);
+    }
   }
+
   return groups;
 }
 

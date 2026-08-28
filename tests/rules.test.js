@@ -3,51 +3,101 @@ import assert from 'node:assert/strict';
 import { createDeck, isCardLegal, isFunctional, validateGroup } from '../js/rules.js';
 import { MakaoGame } from '../js/game.js';
 
-function card(rank, suit) { return { id: `${rank}-${suit}`, rank, suit }; }
-function state(top, extra = {}) { return { discardPile:[top], pendingDraw:null, pendingSkip:null, jackDemand:null, aceDemand:null, ...extra }; }
+function card(rank, suit) {
+  return { id: `${rank}-${suit}`, rank, suit };
+}
 
-test('talia ma 52 karty i nie zawiera jokerów', () => {
+function state(top, extra = {}) {
+  return {
+    discardPile: [top],
+    pendingDraw: null,
+    pendingSkip: null,
+    jackDemand: null,
+    aceDemand: null,
+    ...extra,
+  };
+}
+
+test('talia ma dokładnie 52 karty i nie zawiera jokerów', () => {
   const deck = createDeck();
   assert.equal(deck.length, 52);
   assert.equal(new Set(deck.map((c) => c.id)).size, 52);
   assert.equal(deck.some((c) => c.rank === 'JOKER'), false);
 });
 
-test('tylko K♥ i K♠ są funkcyjne', () => {
-  assert.equal(isFunctional(card('K','hearts')), true);
-  assert.equal(isFunctional(card('K','spades')), true);
-  assert.equal(isFunctional(card('K','clubs')), false);
-  assert.equal(isFunctional(card('K','diamonds')), false);
+test('króle kier i pik są funkcyjne, trefl i karo są zwykłe', () => {
+  assert.equal(isFunctional(card('K', 'hearts')), true);
+  assert.equal(isFunctional(card('K', 'spades')), true);
+  assert.equal(isFunctional(card('K', 'clubs')), false);
+  assert.equal(isFunctional(card('K', 'diamonds')), false);
 });
 
 test('dama jest dzika w zwykłej grze', () => {
-  assert.equal(isCardLegal(card('Q','diamonds'), state(card('7','clubs')), 0), true);
-  assert.equal(isCardLegal(card('9','hearts'), state(card('Q','spades')), 0), true);
+  const s = state(card('7', 'clubs'));
+  assert.equal(isCardLegal(card('Q', 'diamonds'), s, 0), true);
+  assert.equal(isCardLegal(card('9', 'hearts'), state(card('Q', 'spades')), 0), true);
 });
 
-test('dama nie omija aktywnej kary i żądania', () => {
-  assert.equal(isCardLegal(card('Q','hearts'), state(card('2','clubs'), {pendingDraw:{amount:2,targetIndex:0}}), 0), false);
-  assert.equal(isCardLegal(card('Q','hearts'), state(card('J','clubs'), {jackDemand:{rank:'8',byIndex:1}}), 0), false);
-  assert.equal(isCardLegal(card('Q','hearts'), state(card('A','clubs'), {aceDemand:{suit:'clubs',targetIndex:0}}), 0), false);
+test('dama nie omija aktywnej kary ani żądania', () => {
+  assert.equal(isCardLegal(card('Q', 'hearts'), state(card('2', 'clubs'), { pendingDraw: { amount: 2, targetIndex: 0 } }), 0), false);
+  assert.equal(isCardLegal(card('Q', 'hearts'), state(card('J', 'clubs'), { jackDemand: { rank: '8', byIndex: 1 } }), 0), false);
+  assert.equal(isCardLegal(card('Q', 'hearts'), state(card('A', 'clubs'), { aceDemand: { suit: 'clubs', targetIndex: 0 } }), 0), false);
 });
 
-test('2 i 3 mogą odpowiadać na karę dobierania', () => {
-  const s = state(card('2','hearts'), {pendingDraw:{amount:2,targetIndex:0}});
-  assert.equal(isCardLegal(card('3','spades'), s, 0), true);
-  assert.equal(isCardLegal(card('2','clubs'), s, 0), true);
-  assert.equal(isCardLegal(card('4','hearts'), s, 0), false);
+test('przy karze z 2/3 wolno odpowiedzieć tylko 2/3 pasującą kolorem lub wartością', () => {
+  const s = state(card('2', 'hearts'), { pendingDraw: { amount: 2, targetIndex: 0 } });
+  assert.equal(isCardLegal(card('3', 'hearts'), s, 0), true);
+  assert.equal(isCardLegal(card('2', 'clubs'), s, 0), true);
+  assert.equal(isCardLegal(card('3', 'spades'), s, 0), false);
+  assert.equal(isCardLegal(card('4', 'hearts'), s, 0), false);
 });
 
 test('wariant wielokartowy dopuszcza 1, 3 lub 4, ale nie parę', () => {
-  const s = state(card('9','hearts'));
-  assert.equal(validateGroup([card('9','clubs')], s, 0).ok, true);
-  assert.equal(validateGroup([card('9','clubs'),card('9','spades')], s, 0).ok, false);
-  assert.equal(validateGroup([card('9','clubs'),card('9','spades'),card('9','diamonds')], s, 0).ok, true);
-  assert.equal(validateGroup([card('9','clubs'),card('9','spades'),card('9','diamonds'),card('9','hearts')], s, 0).ok, true);
+  const s = state(card('9', 'hearts'));
+  const one = [card('9', 'clubs')];
+  const pair = [card('9', 'clubs'), card('9', 'spades')];
+  const triple = [card('9', 'clubs'), card('9', 'spades'), card('9', 'diamonds')];
+  const four = [...triple, card('9', 'hearts')];
+  assert.equal(validateGroup(one, s, 0).ok, true);
+  assert.equal(validateGroup(pair, s, 0).ok, false);
+  assert.equal(validateGroup(triple, s, 0).ok, true);
+  assert.equal(validateGroup(four, s, 0).ok, true);
 });
 
-test('nowa gra działa dla 2 i 3 botów', () => {
-  for (const bots of [2,3]) {
+test('grupa może rozpocząć się kartą pasującą, a kolejne są tej samej wartości', () => {
+  const s = state(card('6', 'hearts'));
+  const group = [card('8', 'hearts'), card('8', 'clubs'), card('8', 'spades')];
+  assert.equal(validateGroup(group, s, 0).ok, true);
+});
+
+test('kilka dwójek i trójek sumuje karę według łącznej liczby oczek', () => {
+  const game = new MakaoGame();
+  game.state.started = true;
+  game.state.players = game.createPlayers(2);
+  game.state.discardPile = [card('7', 'clubs')];
+
+  game.applyCardEffects(0, [card('2', 'hearts'), card('2', 'spades'), card('2', 'diamonds')], { type: 'normal' });
+  assert.equal(game.state.pendingDraw.amount, 6);
+
+  game.applyCardEffects(1, [card('3', 'clubs'), card('3', 'hearts'), card('3', 'spades')], { type: 'draw' });
+  assert.equal(game.state.pendingDraw.amount, 15);
+});
+
+test('król kier daje tylko +5 kart bez utraty tury', () => {
+  const game = new MakaoGame();
+  game.state.started = true;
+  game.state.players = game.createPlayers(2);
+  game.state.players[1].hand = [card('5', 'clubs')];
+  game.state.drawPile = [card('6', 'diamonds'), card('7', 'spades'), card('8', 'hearts'), card('9', 'clubs'), card('10', 'diamonds')];
+  game.state.discardPile = [card('7', 'clubs')];
+
+  game.applyCardEffects(0, [card('K', 'hearts')], { type: 'normal' });
+  assert.equal(game.state.players[1].hand.length, 6);
+  assert.equal(game.state.players[1].blockedTurns, 0);
+});
+
+test('nowa gra ma 1 gracza + 2/3 boty, po 5 kart i zwykłą kartę startową', () => {
+  for (const bots of [2, 3]) {
     const game = new MakaoGame();
     game.start(bots);
     clearTimeout(game.timer);

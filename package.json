@@ -5,6 +5,6 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "check": "node --check js/constants.js && node --check js/rules.js && node --check js/bot.js && node --check js/game.js && node --check js/ui.js && node --check js/main.js"
+    "check": "node --check js/constants.js && node --check js/rules.js && node --check js/bot.js && node --check js/game.js && node --check js/ui.js && node --check js/ux-effects.js && node --check js/main.js && node --check scripts/build-single.mjs"
   }
 }
