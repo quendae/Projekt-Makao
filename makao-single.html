@@ -74,13 +74,75 @@
   backdrop-filter: blur(7px);
 }
 
-/* Large hands should compress into the available width instead of pushing
-   the table or cards outside the viewport. JS sets the actual overlap. */
+/* Normal-size hands stay as a fan. When the fan would expose less than about
+   half a card, JS switches to a horizontally scrollable rack with a stable
+   44–48 px click target for every card. */
 .human-hand {
   overflow: visible;
   contain: layout;
 }
 .hand-card { min-width: 0; }
+.human-hand.hand-scroll-mode {
+  height: 190px;
+  justify-content: flex-start;
+  align-items: flex-end;
+  overflow-x: auto;
+  overflow-y: hidden;
+  contain: layout paint;
+  padding: 28px 18px 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(215,180,94,.42) rgba(0,0,0,.16);
+}
+.human-hand.hand-scroll-mode::-webkit-scrollbar { height: 7px; }
+.human-hand.hand-scroll-mode::-webkit-scrollbar-track { background: rgba(0,0,0,.16); border-radius: 99px; }
+.human-hand.hand-scroll-mode::-webkit-scrollbar-thumb { background: rgba(215,180,94,.42); border-radius: 99px; }
+.human-hand.hand-scroll-mode .hand-card { flex: 0 0 var(--cardw, 106px); }
+
+/* Jack/Ace decisions should not hide the player's own hand. The choice panel
+   floats above the hand with only a very light veil over the table. */
+#choice-modal.choice-peek-overlay {
+  place-items: end center;
+  padding: 0 18px 340px;
+  background: rgba(2,7,4,.14);
+  backdrop-filter: none;
+  pointer-events: none;
+}
+#choice-modal.choice-peek-overlay .choice-card {
+  width: min(690px, calc(100vw - 48px));
+  padding: 16px 18px;
+  pointer-events: auto;
+  background: rgba(14, 27, 21, .96);
+  box-shadow: 0 18px 48px rgba(0,0,0,.38);
+}
+#choice-modal.choice-peek-overlay .choice-card h2 { margin: 3px 0 4px; font-size: 24px; }
+#choice-modal.choice-peek-overlay .choice-card > p { margin: 5px 0 0; }
+#choice-modal.choice-peek-overlay .choice-options {
+  grid-template-columns: repeat(auto-fit, minmax(94px, 1fr));
+  gap: 7px;
+  margin-top: 11px;
+}
+#choice-modal.choice-peek-overlay .choice-button {
+  min-height: 52px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+#choice-modal.choice-peek-overlay .rank-choice,
+#choice-modal.choice-peek-overlay .no-demand-choice { flex-direction: column; gap: 2px; }
+#choice-modal.choice-peek-overlay .choice-button small {
+  display: block;
+  color: #9db8a7;
+  font: 700 9px Inter, system-ui, sans-serif;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+#choice-modal.choice-peek-overlay .suit-choice span { display: grid; gap: 2px; text-align: left; }
+#choice-modal.choice-peek-overlay .no-demand-choice {
+  border-color: rgba(215,180,94,.45);
+  color: var(--gold2, #e7cd78);
+}
 
 /* Transient flight cards used for play/draw feedback. */
 .ux-flight-card {
@@ -100,11 +162,14 @@
 @media (max-width: 820px) {
   .human-area { height: 272px; }
   .human-hand { bottom: 65px; height: 125px; contain: none; }
+  .human-hand.hand-scroll-mode { height: 146px; padding-top: 24px; }
   .action-bar {
     bottom: 205px;
     width: max-content;
     max-width: 96%;
   }
+  #choice-modal.choice-peek-overlay { padding-bottom: 270px; }
+  #choice-modal.choice-peek-overlay .choice-card { width: min(620px, calc(100vw - 28px)); }
 }
 
 @media (max-width: 560px) {
@@ -115,6 +180,8 @@
     width: max-content;
     max-width: 94%;
   }
+  #choice-modal.choice-peek-overlay { padding: 0 10px 290px; }
+  #choice-modal.choice-peek-overlay .choice-options { grid-template-columns: repeat(2, 1fr); }
 }
 
   </style>
@@ -274,7 +341,7 @@
           <article><strong>Dobieranie</strong><p>Dobierasz jedną kartę. Jeśli pasuje, działa „pierwsza karta ratuje” i możesz ją od razu zagrać.</p></article>
           <article><strong>2 i 3</strong><p>Karę można odbić wyłącznie 2 lub 3 pasującą kolorem albo wartością. Przy kilku kartach i kolejnych odbiciach liczy się łączna liczba oczek.</p></article>
           <article><strong>4</strong><p>Blokuje następnego gracza. Kolejna 4 przenosi i zwiększa blokadę.</p></article>
-          <article><strong>Walet</strong><p>Żąda wartości od 5 do 10. Żądanie trwa do spełnienia lub przebicia innym waletem.</p></article>
+          <article><strong>Walet</strong><p>Żąda wartości od 5 do 10, ale tylko takiej, którą zagrywający nadal ma w ręce. Można też wybrać „Nic” i nie żądać żadnej wartości. Żądanie może zostać zmienione innym waletem.</p></article>
           <article><strong>Dama</strong><p>„Dama na wszystko, wszystko na damę”, ale nie omija aktywnej kary, blokady ani żądania.</p></article>
           <article><strong>As</strong><p>Żąda koloru dla następnego gracza. Inny as może zmienić żądanie.</p></article>
           <article><strong>Króle</strong><p>K♥: +5 dla następnego gracza. K♠: +5 dla poprzedniego. K♣ i K♦ nie mają funkcji.</p></article>
@@ -537,8 +604,8 @@ function chooseBotPlay(bot, state, playerIndex) {
 }
 
 function chooseJackDemand(hand) {
-  let bestRank = JACK_DEMAND_RANKS[0];
-  let bestCount = -1;
+  let bestRank = null;
+  let bestCount = 0;
   for (const rank of JACK_DEMAND_RANKS) {
     const count = hand.filter((card) => card.rank === rank).length;
     if (count > bestCount) {
@@ -897,8 +964,13 @@ class MakaoGame {
         this.state.pendingChoice = { type: 'jack', actorIndex: playerIndex };
       } else {
         const demand = chooseJackDemand(player.hand);
-        this.state.jackDemand = { rank: demand, byIndex: playerIndex };
-        this.addLog(`${player.name} żąda wartości ${demand}.`);
+        if (demand) {
+          this.state.jackDemand = { rank: demand, byIndex: playerIndex };
+          this.addLog(`${player.name} żąda wartości ${demand}.`);
+        } else {
+          this.state.jackDemand = null;
+          this.addLog(`${player.name} nie żąda żadnej wartości.`);
+        }
       }
       return;
     }
@@ -944,8 +1016,18 @@ class MakaoGame {
     const actor = this.state.players[actorIndex];
 
     if (choice.type === 'jack') {
-      this.state.jackDemand = { rank: value, byIndex: actorIndex };
-      this.addLog(`${actor.name} żąda wartości ${value}.`);
+      if (value == null) {
+        this.state.jackDemand = null;
+        this.addLog(`${actor.name} nie żąda żadnej wartości.`);
+      } else {
+        const mayDemand = JACK_DEMAND_RANKS.includes(value) && actor.hand.some((card) => card.rank === value);
+        if (!mayDemand) {
+          this.onMessage('Walet może żądać tylko wartości 5–10, którą masz w ręce, albo niczego.');
+          return;
+        }
+        this.state.jackDemand = { rank: value, byIndex: actorIndex };
+        this.addLog(`${actor.name} żąda wartości ${value}.`);
+      }
     }
 
     if (choice.type === 'ace') {
@@ -1220,6 +1302,7 @@ function installUxEffects(game, ui) {
     baseRender(state);
     requestAnimationFrame(() => {
       compressHumanHand(hand);
+      enhanceChoicePanel(game, state);
       animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects });
       humanPlayRects = [];
     });
@@ -1229,7 +1312,10 @@ function installUxEffects(game, ui) {
   // The initial render is invoked directly from main.js, so keep the hand
   // responsive on resize as well.
   window.addEventListener('resize', () => requestAnimationFrame(() => compressHumanHand(hand)));
-  requestAnimationFrame(() => compressHumanHand(hand));
+  requestAnimationFrame(() => {
+    compressHumanHand(hand);
+    enhanceChoicePanel(game, game.state);
+  });
 }
 
 function snapshot(state) {
@@ -1248,25 +1334,86 @@ function motionEnabled(toggle) {
 function compressHumanHand(hand) {
   if (!hand) return;
   const cards = [...hand.querySelectorAll('.hand-card')];
+  hand.classList.remove('hand-scroll-mode');
   if (cards.length < 2) return;
 
-  // On very small screens horizontal scrolling is preferable to excessive
-  // overlap, because the baseline mobile layout already supports it.
-  if (window.innerWidth <= 560) {
+  const available = Math.max(260, hand.clientWidth - 24);
+  const sampleWidth = cards[0].getBoundingClientRect().width || 106;
+  const idealStep = (available - sampleWidth) / Math.max(1, cards.length - 1);
+  const minClickableStep = window.innerWidth <= 560 ? 44 : 48;
+  const useScrollRack = window.innerWidth <= 560 || idealStep < minClickableStep;
+
+  if (useScrollRack) {
+    hand.classList.add('hand-scroll-mode');
+    const margin = Math.round(minClickableStep - sampleWidth);
     cards.forEach((card, index) => {
-      card.style.marginLeft = index === 0 ? '0px' : '-18px';
+      card.style.marginLeft = index === 0 ? '0px' : `${margin}px`;
+      card.style.setProperty('--angle', '0deg');
+      card.style.setProperty('--hover-angle', '0deg');
+      card.style.setProperty('--selected-angle', '0deg');
+      card.style.setProperty('--drop', '0px');
     });
     return;
   }
 
-  const available = Math.max(260, hand.clientWidth - 20);
-  const sampleWidth = cards[0].getBoundingClientRect().width || 106;
-  const step = Math.max(sampleWidth * .28, Math.min(sampleWidth * .78, (available - sampleWidth) / (cards.length - 1)));
+  const step = Math.min(sampleWidth * .78, idealStep);
   const margin = Math.round(step - sampleWidth);
-
   cards.forEach((card, index) => {
     card.style.marginLeft = index === 0 ? '0px' : `${margin}px`;
   });
+}
+
+function enhanceChoicePanel(game, state) {
+  const modal = document.getElementById('choice-modal');
+  const options = document.getElementById('choice-options');
+  const description = document.getElementById('choice-description');
+  const choice = state.pendingChoice;
+  if (!modal || !options || !choice) return;
+
+  modal.classList.add('choice-peek-overlay');
+  const actor = state.players[choice.actorIndex];
+  if (!actor) return;
+
+  if (choice.type === 'jack') {
+    const allowed = new Map();
+    for (const card of actor.hand) {
+      if (['5', '6', '7', '8', '9', '10'].includes(card.rank)) {
+        allowed.set(card.rank, (allowed.get(card.rank) ?? 0) + 1);
+      }
+    }
+
+    options.querySelectorAll('.rank-choice').forEach((button) => {
+      const rank = button.textContent.trim();
+      const count = allowed.get(rank) ?? 0;
+      if (!count) {
+        button.remove();
+        return;
+      }
+      button.innerHTML = `<b>${rank}</b><small>${count} ${count === 1 ? 'karta' : 'karty'} w ręce</small>`;
+    });
+
+    const none = document.createElement('button');
+    none.className = 'choice-button no-demand-choice';
+    none.innerHTML = '<b>Nic</b><small>bez żądania</small>';
+    none.addEventListener('click', () => game.choosePending(null));
+    options.appendChild(none);
+
+    if (description) {
+      description.textContent = allowed.size
+        ? 'Możesz zażądać tylko wartości 5–10, którą nadal masz w ręce, albo nie żądać niczego.'
+        : 'Nie masz w ręce żadnej wartości 5–10. Wybierz „Nic”.';
+    }
+  } else if (choice.type === 'ace') {
+    const suitMap = { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' };
+    const counts = Object.fromEntries(Object.keys(suitMap).map((suit) => [suit, actor.hand.filter((card) => card.suit === suit).length]));
+    options.querySelectorAll('.suit-choice').forEach((button) => {
+      const suit = Object.keys(suitMap).find((key) => button.classList.contains(`suit-${key}`));
+      if (!suit) return;
+      const label = button.querySelector('span')?.textContent ?? '';
+      button.innerHTML = `<b>${suitMap[suit]}</b><span>${label}<small>${counts[suit]} w ręce</small></span>`;
+    });
+    if (description) description.textContent = 'Wybierz kolor dla następnego gracza. Twoja ręka pozostaje widoczna, a liczby pokazują ile kart danego koloru masz.';
+  }
 }
 
 function animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects }) {
