@@ -11,8 +11,10 @@ on:
     branches: [main]
     paths:
       - 'js/**'
+      - 'rules/**'
       - 'tests/**'
       - 'scripts/stress.mjs'
+      - 'scripts/rules-audit.mjs'
       - 'package.json'
       - '.github/workflows/stress-games.yml'
 
@@ -29,6 +31,9 @@ jobs:
 
       - name: Unit tests
         run: npm test
+
+      - name: Rule conformance audit
+        run: npm run rules:audit
 
       - name: Syntax checks
         run: npm run check
