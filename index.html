@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#08110d" />
+  <title>Makao — Offline</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="eyebrow">OFFLINE · 1 GRACZ + BOTY</div>
+        <div class="logo">MAKAO</div>
+      </div>
+
+      <div class="hud-stats" aria-label="Stan gry">
+        <div class="hud-stat">
+          <span>TURA</span>
+          <strong id="hud-turn">—</strong>
+        </div>
+        <div class="hud-stat">
+          <span>TALIA</span>
+          <strong id="hud-deck">52</strong>
+        </div>
+        <div class="hud-stat hud-stat-wide">
+          <span>STAN</span>
+          <strong id="hud-state">OCZEKIWANIE</strong>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn ghost compact" id="rules-btn" type="button">Zasady</button>
+        <button class="btn ghost compact" id="menu-btn" type="button">Menu</button>
+      </div>
+    </header>
+
+    <main class="game-layout">
+      <aside class="helper-panel">
+        <div class="helper-heading">
+          <span class="eyebrow">PANEL STOŁU</span>
+          <h2>Pomocnik</h2>
+        </div>
+        <div class="helper-tabs" role="tablist">
+          <button class="helper-tab active" data-tab="state" type="button">Stan</button>
+          <button class="helper-tab" data-tab="rules" type="button">Zasady</button>
+          <button class="helper-tab" data-tab="log" type="button">Dziennik</button>
+        </div>
+        <div id="helper-content" class="helper-content"></div>
+      </aside>
+
+      <section class="table-wrap">
+        <div class="wood-frame">
+          <div class="felt-table" id="felt-table">
+            <div class="felt-inner-line"></div>
+            <div class="felt-watermark">MAKAO</div>
+            <div class="phase-ribbon" id="phase-ribbon">Wybierz liczbę botów i rozpocznij grę</div>
+
+            <div id="opponents" class="opponents"></div>
+
+            <div class="table-center">
+              <div class="pile-block">
+                <div class="pile-label">TALIA</div>
+                <div id="draw-pile" class="card card-back deck-card" aria-label="Talia kart">
+                  <div class="back-inner"><span>MAKAO</span></div>
+                </div>
+                <div id="draw-count" class="pile-count">52</div>
+              </div>
+
+              <div class="center-state" id="center-state">
+                <span class="eyebrow">AKTUALNIE</span>
+                <strong>—</strong>
+                <small>Rozpocznij partię</small>
+              </div>
+
+              <div class="pile-block">
+                <div class="pile-label">STOS</div>
+                <div id="discard-pile" class="discard-slot"></div>
+                <div class="pile-count">WIERZCH</div>
+              </div>
+            </div>
+
+            <div class="human-area">
+              <div id="human-seat" class="player-plate human-plate">
+                <div class="avatar human-avatar">TY</div>
+                <div class="plate-copy">
+                  <strong>Ty</strong>
+                  <span id="human-role">GRACZ</span>
+                </div>
+                <div class="card-counter" id="human-count">0 KART</div>
+              </div>
+
+              <div id="human-hand" class="human-hand" aria-label="Twoje karty"></div>
+
+              <div class="action-bar" id="action-bar">
+                <button id="makao-btn" class="btn makao-btn" type="button" disabled>MAKAO</button>
+                <button id="clear-btn" class="btn ghost" type="button" disabled>Wyczyść</button>
+                <button id="play-btn" class="btn primary" type="button" disabled>Zagraj</button>
+                <button id="draw-btn" class="btn standard" type="button" disabled>Dobierz kartę</button>
+                <button id="pass-btn" class="btn ghost hidden" type="button">Pas</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="main-menu" class="overlay menu-overlay open" aria-modal="true" role="dialog">
+    <div class="overlay-frame">
+      <div class="menu-card">
+        <div class="brand-medal">♠</div>
+        <div class="eyebrow">CYFROWY STÓŁ KARCIANY</div>
+        <h1>MAKAO</h1>
+        <p class="menu-lead">Klasyczne Makao przeciwko botom, według ustalonego wariantu zasad.</p>
+
+        <div class="menu-section">
+          <span class="menu-label">LICZBA BOTÓW</span>
+          <div class="segmented" id="bot-selector">
+            <button class="segment active" data-bots="2" type="button">2 boty</button>
+            <button class="segment" data-bots="3" type="button">3 boty</button>
+          </div>
+        </div>
+
+        <button id="start-btn" class="menu-action primary-menu" type="button">
+          <span>▶</span><strong>Nowa gra</strong><span>→</span>
+        </button>
+        <button id="resume-btn" class="menu-action hidden" type="button">
+          <span>↩</span><strong>Wznów</strong><span>→</span>
+        </button>
+        <button id="menu-rules-btn" class="menu-action" type="button">
+          <span>?</span><strong>Zasady wariantu</strong><span>→</span>
+        </button>
+
+        <label class="motion-toggle">
+          <input id="motion-toggle" type="checkbox" checked />
+          <span>Animacje kart</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div id="choice-modal" class="overlay modal-overlay" aria-modal="true" role="dialog">
+    <div class="modal-card choice-card">
+      <span class="eyebrow" id="choice-eyebrow">KARTA FUNKCYJNA</span>
+      <h2 id="choice-title">Wybierz</h2>
+      <p id="choice-description"></p>
+      <div id="choice-options" class="choice-options"></div>
+    </div>
+  </div>
+
+  <div id="rules-modal" class="overlay modal-overlay" aria-modal="true" role="dialog">
+    <div class="modal-card rules-card">
+      <button class="modal-close" id="rules-close" type="button" aria-label="Zamknij">×</button>
+      <span class="eyebrow">WARIANT PROJEKTU</span>
+      <h2>Zasady Makao</h2>
+      <div class="rules-scroll">
+        <div class="rule-grid">
+          <article><strong>Cel</strong><p>Pozbądź się wszystkich kart. Po pierwszym zwycięzcy pozostali grają dalej o kolejne miejsca.</p></article>
+          <article><strong>Zagranie</strong><p>Karta musi pasować kolorem lub wartością. Naraz wolno zagrać 1, 3 albo 4 karty tej samej wartości.</p></article>
+          <article><strong>Dobieranie</strong><p>Dobierasz jedną kartę. Jeśli pasuje, działa „pierwsza karta ratuje” i możesz ją od razu zagrać.</p></article>
+          <article><strong>2 i 3</strong><p>Następny gracz dobiera odpowiednio 2 lub 3. Karę można przebić kolejną 2 lub 3 i sumować.</p></article>
+          <article><strong>4</strong><p>Blokuje następnego gracza. Kolejna 4 przenosi i zwiększa blokadę.</p></article>
+          <article><strong>Walet</strong><p>Żąda wartości od 5 do 10. Żądanie trwa do spełnienia lub przebicia innym waletem.</p></article>
+          <article><strong>Dama</strong><p>„Dama na wszystko, wszystko na damę”, ale nie omija aktywnej kary, blokady ani żądania.</p></article>
+          <article><strong>As</strong><p>Żąda koloru dla następnego gracza. Inny as może zmienić żądanie.</p></article>
+          <article><strong>Króle</strong><p>K♥: +5 dla następnego gracza. K♠: +5 dla poprzedniego. K♣ i K♦ nie mają funkcji.</p></article>
+          <article><strong>Makao</strong><p>Przy zejściu do jednej karty zadeklaruj MAKAO. Brak deklaracji i STOP MAKAO oznacza +5 kart.</p></article>
+        </div>
+        <p class="source-note">Źródła reguł: Wikipedia „Makao (gra karciana)” oraz poradnik Morele.net wskazany w projekcie. Rozbieżności zostały rozstrzygnięte przez autora projektu.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="result-modal" class="overlay modal-overlay" aria-modal="true" role="dialog">
+    <div class="modal-card result-card">
+      <span class="eyebrow">KONIEC PARTII</span>
+      <h2>Klasyfikacja</h2>
+      <div id="standings" class="standings"></div>
+      <button id="result-new-game" class="btn primary wide" type="button">Nowa gra</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
