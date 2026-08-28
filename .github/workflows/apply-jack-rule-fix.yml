@@ -23,44 +23,44 @@ jobs:
           const path = 'js/game.js';
           let source = fs.readFileSync(path, 'utf8');
 
-          const oldImport = "import { BOT_NAMES, UI_DELAYS } from './constants.js';";
-          const newImport = "import { BOT_NAMES, JACK_DEMAND_RANKS, UI_DELAYS } from './constants.js';";
-          if (source.includes(oldImport)) source = source.replace(oldImport, newImport);
+          source = source.replace(
+            "import { BOT_NAMES, UI_DELAYS } from './constants.js';",
+            "import { BOT_NAMES, JACK_DEMAND_RANKS, UI_DELAYS } from './constants.js';"
+          );
 
-          const oldBot = `        const demand = chooseJackDemand(player.hand);
-          this.state.jackDemand = { rank: demand, byIndex: playerIndex };
-          this.addLog(\`${'${player.name}'} żąda wartości ${'${demand}'}.\`);`;
-          const newBot = `        const demand = chooseJackDemand(player.hand);
-          if (demand) {
-            this.state.jackDemand = { rank: demand, byIndex: playerIndex };
-            this.addLog(\`${'${player.name}'} żąda wartości ${'${demand}'}.\`);
-          } else {
-            this.state.jackDemand = null;
-            this.addLog(\`${'${player.name}'} nie żąda żadnej wartości.\`);
-          }`;
-          if (!source.includes(oldBot)) throw new Error('Bot Jack block not found');
-          source = source.replace(oldBot, newBot);
+          const botPattern = /        const demand = chooseJackDemand\(player\.hand\);\n        this\.state\.jackDemand = \{ rank: demand, byIndex: playerIndex \};\n        this\.addLog\(`\$\{player\.name\} żąda wartości \$\{demand\}\.``?\);/;
+          const botReplacement = [
+            '        const demand = chooseJackDemand(player.hand);',
+            '        if (demand) {',
+            '          this.state.jackDemand = { rank: demand, byIndex: playerIndex };',
+            '          this.addLog(`${player.name} żąda wartości ${demand}.`);',
+            '        } else {',
+            '          this.state.jackDemand = null;',
+            '          this.addLog(`${player.name} nie żąda żadnej wartości.`);',
+            '        }',
+          ].join('\n');
+          if (!botPattern.test(source)) throw new Error('Bot Jack block not found');
+          source = source.replace(botPattern, botReplacement);
 
-          const oldHuman = `    if (choice.type === 'jack') {
-            this.state.jackDemand = { rank: value, byIndex: actorIndex };
-            this.addLog(\`${'${actor.name}'} żąda wartości ${'${value}'}.\`);
-          }`;
-          const newHuman = `    if (choice.type === 'jack') {
-            if (value == null) {
-              this.state.jackDemand = null;
-              this.addLog(\`${'${actor.name}'} nie żąda żadnej wartości.\`);
-            } else {
-              const mayDemand = JACK_DEMAND_RANKS.includes(value) && actor.hand.some((card) => card.rank === value);
-              if (!mayDemand) {
-                this.onMessage('Walet może żądać tylko wartości 5–10, którą masz w ręce, albo niczego.');
-                return;
-              }
-              this.state.jackDemand = { rank: value, byIndex: actorIndex };
-              this.addLog(\`${'${actor.name}'} żąda wartości ${'${value}'}.\`);
-            }
-          }`;
-          if (!source.includes(oldHuman)) throw new Error('Human Jack block not found');
-          source = source.replace(oldHuman, newHuman);
+          const humanPattern = /    if \(choice\.type === 'jack'\) \{\n      this\.state\.jackDemand = \{ rank: value, byIndex: actorIndex \};\n      this\.addLog\(`\$\{actor\.name\} żąda wartości \$\{value\}\.``?\);\n    \}/;
+          const humanReplacement = [
+            "    if (choice.type === 'jack') {",
+            '      if (value == null) {',
+            '        this.state.jackDemand = null;',
+            '        this.addLog(`${actor.name} nie żąda żadnej wartości.`);',
+            '      } else {',
+            '        const mayDemand = JACK_DEMAND_RANKS.includes(value) && actor.hand.some((card) => card.rank === value);',
+            '        if (!mayDemand) {',
+            "          this.onMessage('Walet może żądać tylko wartości 5–10, którą masz w ręce, albo niczego.');",
+            '          return;',
+            '        }',
+            '        this.state.jackDemand = { rank: value, byIndex: actorIndex };',
+            '        this.addLog(`${actor.name} żąda wartości ${value}.`);',
+            '      }',
+            '    }',
+          ].join('\n');
+          if (!humanPattern.test(source)) throw new Error('Human Jack block not found');
+          source = source.replace(humanPattern, humanReplacement);
 
           fs.writeFileSync(path, source, 'utf8');
           NODE
