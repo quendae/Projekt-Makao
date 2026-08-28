@@ -1,0 +1,120 @@
+{
+  "version": "2026-08-28",
+  "purpose": "Machine-readable oracle for automated rule-conformance tests. The game follows the selected project variant, not every variant described by each source.",
+  "sources": {
+    "wikipedia": "https://pl.wikipedia.org/wiki/Makao_(gra_karciana)",
+    "morele": "https://www.morele.net/wiadomosc/gra-karciana-makao-jak-grac-zasady-i-praktyczne-porady-gry-karcianej/18363/"
+  },
+  "severityPolicy": {
+    "bug": "Implementation contradicts an enforced project rule.",
+    "source_divergence": "Project intentionally chose one variant although another supplied source describes a different variant. Report, do not fail.",
+    "review": "The supplied sources and explicit project decisions do not uniquely determine the behavior. Report for human review; never auto-fix."
+  },
+  "rules": [
+    {
+      "id": "R01_DECK",
+      "status": "enforced",
+      "projectRule": "Use one standard 52-card deck, without jokers, for 1 human plus 2 or 3 bots.",
+      "basis": "Both sources describe a standard 52-card deck as sufficient for 2-4 players; jokers are optional. Project explicitly selected no jokers and max 3 bots.",
+      "sourceDivergence": false
+    },
+    {
+      "id": "R02_DEAL",
+      "status": "enforced",
+      "projectRule": "Deal 5 cards to every player; the initial face-up card must be non-functional.",
+      "basis": "Supported by both supplied sources.",
+      "sourceDivergence": false
+    },
+    {
+      "id": "R03_BASIC_MATCH",
+      "status": "enforced",
+      "projectRule": "A normal play must match the top card by suit or rank unless an explicitly selected functional-card rule overrides it.",
+      "basis": "Supported by both supplied sources.",
+      "sourceDivergence": false
+    },
+    {
+      "id": "R04_MULTI_PLAY",
+      "status": "enforced",
+      "projectRule": "A turn may play exactly 1, 3 or 4 cards of the same rank. Pairs and stair/runs are disabled.",
+      "basis": "Project selected the Morele 1/3/4 variant. Wikipedia describes broader multi-card variants.",
+      "sourceDivergence": true
+    },
+    {
+      "id": "R05_FIRST_CARD_RESCUES",
+      "status": "enforced",
+      "projectRule": "When a normally drawn card is immediately legal, it may be played in the same turn ('pierwsza karta ratuje'). Only that newly drawn card is playable as the rescue play.",
+      "basis": "Project explicitly selected the Wikipedia rescue rule. Morele describes drawing and losing the turn. Restricting the rescue play to the newly drawn card is the current project interpretation.",
+      "sourceDivergence": true
+    },
+    {
+      "id": "R06_DRAW_2_3",
+      "status": "enforced",
+      "projectRule": "2 adds 2 cards and 3 adds 3 cards to the pending penalty. Defense is only another 2 or 3 that also matches the current top card by suit or rank. Multiple 2s/3s played together add the total pip value.",
+      "basis": "Both sources describe 2/3 penalties and accumulation; project explicitly clarified suit-or-rank matching and total pip summation.",
+      "sourceDivergence": false
+    },
+    {
+      "id": "R07_FOUR",
+      "status": "enforced",
+      "projectRule": "4 blocks the next player for one turn; additional 4s accumulate blocked turns. The direct defense to an active block is another 4.",
+      "basis": "Supported by both supplied sources.",
+      "sourceDivergence": false
+    },
+    {
+      "id": "R07B_BLOCKED_FUNCTION_INTERACTION",
+      "status": "review",
+      "projectRule": "Current implementation resolves a pending 2/3 draw penalty even if the target also has an older blocked turn, consuming the block and the penalty together.",
+      "basis": "Wikipedia additionally says functional effects do not act on a blocked player and are applied to the next player; this interaction was not explicitly selected when the project variant was established.",
+      "sourceDivergence": true
+    },
+    {
+      "id": "R08_JACK",
+      "status": "enforced",
+      "projectRule": "Jack may demand a non-functional numeric rank 5-10 that the actor still holds after playing the Jack, or demand nothing. A Jack can answer an existing Jack demand. Bots should not create endless Jack-demand loops.",
+      "basis": "Sources support Jack demands for non-functional values and Wikipedia explicitly allows changing a Jack demand to no demand. Requiring the demanded rank to be held is an explicit project clarification from the user.",
+      "sourceDivergence": false
+    },
+    {
+      "id": "R09_QUEEN",
+      "status": "enforced",
+      "projectRule": "Queen is wild in normal play ('dama na wszystko, wszystko na dame') but may not bypass an active draw penalty, block, Jack demand or Ace demand.",
+      "basis": "Project explicitly selected the restricted-queen variant mentioned by Wikipedia; Morele only describes the common broad queen rule.",
+      "sourceDivergence": true
+    },
+    {
+      "id": "R10_ACE",
+      "status": "enforced",
+      "projectRule": "Ace demands a suit for the next player only. That player may answer with the demanded suit or another Ace.",
+      "basis": "Supported by Wikipedia; Morele describes Ace as a suit-demand card in general terms.",
+      "sourceDivergence": false
+    },
+    {
+      "id": "R11_KINGS",
+      "status": "enforced",
+      "projectRule": "K-hearts immediately makes the next active player draw 5. K-spades immediately makes the previous active player draw 5. K-clubs and K-diamonds are ordinary cards. No king counter/defense chain is used.",
+      "basis": "Direction and +5 are supported by both sources. Project explicitly disabled all special behavior for K-clubs/K-diamonds; Wikipedia describes king counter/block variants that are intentionally not used.",
+      "sourceDivergence": true
+    },
+    {
+      "id": "R12_MAKAO",
+      "status": "enforced",
+      "projectRule": "A human reaching one card must declare MAKAO. Missing the declaration allows STOP MAKAO and causes +5 cards. Finishing all cards uses the project's 'Makao i po makale' declaration flow.",
+      "basis": "Both sources support the one-card declaration and +5 penalty; Morele also describes 'makao i po makale' when finishing in one play.",
+      "sourceDivergence": false
+    },
+    {
+      "id": "R13_RECYCLE",
+      "status": "enforced",
+      "projectRule": "When the draw pile is empty, shuffle the discard pile back into a new draw pile while preserving the current top discard card.",
+      "basis": "Supported by Wikipedia.",
+      "sourceDivergence": false
+    },
+    {
+      "id": "R14_FINISH_ORDER",
+      "status": "enforced",
+      "projectRule": "After the first player finishes, remaining players continue until the complete placement order is known.",
+      "basis": "Project explicitly selected the Wikipedia continuation rule. Morele describes the game as ending when the first player has no cards.",
+      "sourceDivergence": true
+    }
+  ]
+}
