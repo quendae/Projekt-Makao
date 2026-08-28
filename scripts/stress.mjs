@@ -1,6 +1,6 @@
 import { MakaoGame } from '../js/game.js';
 import { chooseAceSuit, chooseBotPlay, chooseJackDemand } from '../js/bot.js';
-import { getTurnConstraint, isCardLegal, validateGroup } from '../js/rules.js';
+import { cardLabel, getTurnConstraint, isCardLegal, validateGroup } from '../js/rules.js';
 
 const gameCount = Math.max(1, Number.parseInt(process.argv[2] ?? '500', 10) || 500);
 const baseSeed = Number.parseInt(process.argv[3] ?? '12648430', 10) >>> 0;
@@ -27,6 +27,26 @@ function snapshotCards(state) {
 
 function assertInvariant(condition, message) {
   if (!condition) throw new Error(message);
+}
+
+function describeState(game) {
+  const { state } = game;
+  const current = state.players[state.currentIndex];
+  const top = state.discardPile.at(-1);
+  const playerLines = state.players.map((player, index) => {
+    const hand = player.hand.map(cardLabel).join(' ');
+    return `  [${index}] ${player.name}: hand=${player.hand.length}, blocked=${player.blockedTurns}, finish=${player.finishPlace ?? '-'} :: ${hand}`;
+  });
+  const recentLog = state.log.slice(0, 30).reverse().map((entry) => `  ${entry.message}`);
+
+  return [
+    `turn=${state.turnNumber}, current=${state.currentIndex}:${current?.name ?? '?'}, top=${top ? cardLabel(top) : '-'}, draw=${state.drawPile.length}, discard=${state.discardPile.length}`,
+    `pendingDraw=${JSON.stringify(state.pendingDraw)}, pendingSkip=${JSON.stringify(state.pendingSkip)}, jack=${JSON.stringify(state.jackDemand)}, ace=${JSON.stringify(state.aceDemand)}, choice=${JSON.stringify(state.pendingChoice)}`,
+    `standings=${JSON.stringify(state.standings)}`,
+    ...playerLines,
+    'last log entries (oldest -> newest):',
+    ...recentLog,
+  ].join('\n');
 }
 
 function checkState(game, step) {
@@ -141,7 +161,7 @@ function playOneStep(game) {
 
 function finalChecks(game, steps) {
   const { state } = game;
-  assertInvariant(state.gameOver, `partia nie zakończyła się po ${steps} krokach`);
+  assertInvariant(state.gameOver, `partia nie zakończyła się po ${steps} krokach\n${describeState(game)}`);
   assertInvariant(state.standings.length === state.players.length, 'klasyfikacja nie zawiera wszystkich graczy');
   assertInvariant(new Set(state.standings).size === state.players.length, 'klasyfikacja zawiera duplikaty');
 
@@ -154,9 +174,10 @@ function runGame(index) {
   const seed = (baseSeed + Math.imul(index + 1, 0x9e3779b1)) >>> 0;
   const originalRandom = Math.random;
   Math.random = mulberry32(seed);
+  let game = null;
 
   try {
-    const game = new MakaoGame();
+    game = new MakaoGame();
     // Stress runner sam steruje turami synchronicznie; wyłączamy timery/UI.
     game.queueCurrentTurn = () => {};
     const botCount = index % 2 === 0 ? 2 : 3;
@@ -178,6 +199,9 @@ function runGame(index) {
     return { seed, botCount, steps, turns: game.state.turnNumber, maxHand };
   } catch (error) {
     error.seed = seed;
+    if (game && !String(error.message).includes('last log entries')) {
+      error.message += `\n${describeState(game)}`;
+    }
     throw error;
   } finally {
     Math.random = originalRandom;
@@ -211,7 +235,8 @@ for (let index = 0; index < gameCount; index += 1) {
   } catch (error) {
     console.error(`\nFAIL w partii ${index + 1}/${gameCount}, seed=${error.seed}`);
     console.error(error.stack ?? error);
-    console.error(`Odtwórz: npm run stress -- 1 ${error.seed}`);
+    console.error(`Odtwórz tę samą serię do awarii: npm run stress -- ${index + 1} ${baseSeed}`);
+    console.error(`Dokładny seed wadliwej partii: ${error.seed}`);
     process.exitCode = 1;
     break;
   }
