@@ -64,11 +64,6 @@ async function auditReadability(page, label, { choiceOpen = false } = {}) {
       return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
     };
 
-    const insideViewport = (rect, tolerance = 2) => !rect || (
-      rect.left >= -tolerance && rect.top >= -tolerance &&
-      rect.right <= innerWidth + tolerance && rect.bottom <= innerHeight + tolerance
-    );
-
     const overlap = (a, b) => {
       if (!a || !b) return 0;
       const width = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
@@ -185,6 +180,13 @@ for (const device of DEVICES) {
       await setReadableGameState(page, { choice: 'jack' });
       await expect(page.locator('#choice-modal')).toHaveClass(/open/);
       await auditReadability(page, `${label} Jack`, { choiceOpen: true });
+    });
+
+    test(`${label}: Ace choice remains readable without hiding hand`, async ({ page }) => {
+      await readyAt(page, orientation.viewport);
+      await setReadableGameState(page, { choice: 'ace' });
+      await expect(page.locator('#choice-modal')).toHaveClass(/open/);
+      await auditReadability(page, `${label} Ace`, { choiceOpen: true });
     });
   }
 }
