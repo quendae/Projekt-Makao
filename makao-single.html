@@ -793,7 +793,18 @@ class MakaoGame {
 
     if (player.blockedTurns > 0 && !this.isPendingSkipFor(this.state.currentIndex)) {
       player.blockedTurns -= 1;
-      this.addLog(`${player.name} traci kolejkę.`);
+
+      // A zaległa blokada nie może sprawić, że kara 2/3 zniknie bez rozliczenia.
+      // Zablokowany gracz nie może się bronić kartą, ale nadal jest celem kary.
+      if (this.isPendingDrawFor(this.state.currentIndex)) {
+        const amount = this.state.pendingDraw.amount;
+        this.state.pendingDraw = null;
+        this.drawCards(this.state.currentIndex, amount);
+        this.addLog(`${player.name} traci kolejkę i dobiera ${amount} kart za karę.`);
+      } else {
+        this.addLog(`${player.name} traci kolejkę.`);
+      }
+
       this.emit();
       this.timer = setTimeout(() => this.endTurn(this.state.currentIndex), UI_DELAYS.blockedTurn);
       return;
