@@ -4,7 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#08110d" />
-  <title>Makao — Offline</title>
+  <meta name="makao-signaling-url" content="" />
+  <title>Makao — Offline / P2P</title>
   <style>
 /* ===== css/styles.css ===== */
 :root{--bg:#08110d;--panel:#111a16;--panel2:#17231d;--ink:#edf5ef;--muted:#97aa9f;--line:rgba(255,255,255,.10);--felt1:#20845a;--felt2:#176a48;--felt3:#0e4932;--felt4:#093424;--wood:#74492d;--wood2:#50301e;--gold:#d7b45e;--gold2:#e7cd78;--gold3:#bd9137;--cardw:106px;--cardh:152px;font-family:Inter,system-ui,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}*{box-sizing:border-box}html,body{min-height:100%}body{margin:0;background:linear-gradient(#0a1510,#060c09 72%);overflow:hidden}button{font:inherit;color:inherit}.hidden{display:none!important}.eyebrow{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.app-shell{min-height:100vh;display:grid;grid-template-rows:96px minmax(0,1fr)}.topbar{display:grid;grid-template-columns:260px minmax(0,1fr) auto;gap:20px;align-items:center;padding:14px 24px;background:rgba(6,12,9,.96);border-bottom:1px solid var(--line);z-index:10}.logo{font:800 30px Georgia,serif;letter-spacing:.17em}.hud-stats{display:flex;gap:10px}.hud-stat{min-width:112px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03)}.hud-stat-wide{min-width:175px}.hud-stat span{display:block;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.13em}.hud-stat strong{display:block;margin-top:5px;font-size:14px}.top-actions{display:flex;gap:8px}.game-layout{min-height:0;display:grid;grid-template-columns:330px minmax(0,1fr)}.helper-panel{min-height:0;display:grid;grid-template-rows:auto auto minmax(0,1fr);background:radial-gradient(circle at 50% 0,rgba(215,180,94,.09),transparent 26%),linear-gradient(#101b16,#0c1511);border-right:1px solid var(--line)}.helper-heading{padding:24px 24px 18px}.helper-heading h2{margin:4px 0 0;font:700 25px Georgia,serif}.helper-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 18px 14px;border-bottom:1px solid var(--line)}.helper-tab{padding:9px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--muted);cursor:pointer}.helper-tab.active{color:var(--ink);border-color:rgba(215,180,94,.35);background:rgba(215,180,94,.08)}.helper-content{min-height:0;overflow:auto;padding:18px}.helper-card{padding:16px;border:1px solid var(--line);border-radius:15px;background:rgba(0,0,0,.18)}.helper-card.emphasized{border-color:rgba(215,180,94,.34)}.helper-card strong{display:block;margin-top:5px;font:700 21px Georgia,serif}.helper-card p{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.45}.status-chip{margin-top:10px;display:flex;justify-content:space-between;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025);font-size:12px}.status-chip span{color:var(--muted)}.status-chip b{color:var(--gold2)}.status-chip.danger{border-color:rgba(204,89,100,.33)}.helper-subhead{margin:20px 2px 8px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.14em}.ranking-mini,.mini-rule-list{border-top:1px solid var(--line)}.ranking-mini p,.mini-rule-list p,.log-list p{margin:0;padding:10px 2px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px}.ranking-mini p,.mini-rule-list p{display:flex;justify-content:space-between}.table-wrap{min-width:0;min-height:0;padding:14px;background:#07100c}.wood-frame{width:100%;height:100%;padding:14px 14px 23px;border-radius:22px;background:linear-gradient(#815638,var(--wood) 58%,var(--wood2) 82%,#2d1b12);box-shadow:0 24px 70px rgba(0,0,0,.46)}.felt-table{position:relative;width:100%;height:100%;min-height:570px;overflow:hidden;border-radius:15px;background:radial-gradient(circle at 50% 26%,rgba(255,242,188,.075),transparent 26%),radial-gradient(ellipse at center,var(--felt1),var(--felt2) 38%,var(--felt3) 70%,var(--felt4));box-shadow:inset 0 0 90px rgba(0,0,0,.45)}.felt-inner-line{position:absolute;inset:16px;border:1px solid rgba(255,255,255,.1);border-radius:16px}.felt-watermark{position:absolute;inset:0;display:grid;place-items:center;color:rgba(255,255,255,.035);font:800 clamp(50px,8vw,110px) Georgia,serif;letter-spacing:.18em}.phase-ribbon{position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:6;max-width:52%;padding:8px 15px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(4,12,8,.55);font-size:11px;text-align:center}.opponent-seat{position:absolute;z-index:5;width:250px;transition:.22s}.seat-left{left:28px;top:92px}.seat-right{right:28px;top:92px}.seat-top{left:50%;top:62px;transform:translateX(-50%)}.opponent-seat.active .player-plate,.human-plate.active{border-color:var(--gold);box-shadow:0 15px 32px rgba(0,0,0,.33),0 0 30px rgba(215,180,94,.15)}.opponent-seat.finished{opacity:.62}.opponent-hand{position:relative;height:49px;margin:0 20px -7px}.mini-back{position:absolute;bottom:0;left:calc(50% - 23px + (var(--i) - 2)*7px);width:47px;height:67px;border:2px solid #e4dbc3;border-radius:5px;background:repeating-linear-gradient(135deg,#19375d 0 7px,#244d80 7px 14px);box-shadow:0 5px 10px rgba(0,0,0,.28);transform:rotate(calc((var(--i) - 2.5)*3deg))}.opponent-hand b{position:absolute;z-index:3;right:8px;bottom:1px;min-width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:#101914;border:1px solid rgba(255,255,255,.15);font-size:11px}.player-plate{min-height:72px;display:grid;grid-template-columns:52px minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 11px;border:1px solid rgba(241,215,130,.23);border-radius:15px;background:linear-gradient(rgba(19,44,32,.96),rgba(7,17,12,.97));box-shadow:0 15px 30px rgba(0,0,0,.34)}.avatar{width:48px;height:48px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.2);font:800 15px Georgia,serif}.avatar-1{background:radial-gradient(circle at 35% 28%,#8da057,#4f6335 70%)}.avatar-2{background:radial-gradient(circle at 35% 28%,#8095a2,#485d69 70%)}.avatar-3{background:radial-gradient(circle at 35% 28%,#7d6e95,#4d405f 70%)}.human-avatar{background:radial-gradient(circle at 35% 28%,#b78b54,#74502f 72%)}.plate-copy strong{display:block;font:700 17px Georgia,serif}.plate-copy span{display:block;margin-top:3px;color:#9db8a7;font-size:9px;font-weight:800;letter-spacing:.12em}.card-counter{padding:6px 8px;border-radius:8px;background:rgba(0,0,0,.22);color:#e7d9ad;font-size:9px;font-weight:800}.table-center{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:4;display:grid;grid-template-columns:auto minmax(130px,180px) auto;align-items:center;gap:clamp(20px,4vw,54px)}.pile-block{display:grid;justify-items:center;gap:7px}.pile-label,.pile-count{color:rgba(237,245,239,.66);font-size:9px;font-weight:800;letter-spacing:.13em}.center-state{padding:15px 16px;border:1px solid rgba(215,180,94,.25);border-radius:14px;background:rgba(4,14,9,.38);text-align:center}.center-state strong{display:block;margin:5px 0 4px;font:700 23px Georgia,serif;color:var(--gold2)}.center-state small{color:#c1d0c6;font-size:10px}.discard-slot{width:120px;height:168px;display:grid;place-items:center;border:1px dashed rgba(255,255,255,.15);border-radius:12px}.card-face{position:relative;width:var(--cardw);height:var(--cardh);flex:0 0 var(--cardw);border:1px solid #c9cfcb;border-radius:10px;background:linear-gradient(145deg,#fff,#f2f1ec 67%,#e4e1d9);color:#171b19;box-shadow:0 13px 20px rgba(0,0,0,.27);overflow:hidden}.table-card{--cardw:120px;--cardh:168px}.corner{position:absolute;display:grid;justify-items:center;line-height:.94;font-family:Georgia,serif}.corner strong{font-size:20px}.corner span{font-size:17px}.top-corner{top:8px;left:9px}.bottom-corner{right:9px;bottom:8px;transform:rotate(180deg)}.center-pip{position:absolute;inset:0;display:grid;place-items:center;font:700 57px Georgia,serif}.suit-hearts{color:#bf2435}.suit-diamonds{color:#236ae0}.suit-clubs{color:#1e9d4a}.suit-spades{color:#14191d}.card-back{position:relative;width:120px;height:168px;border:3px solid #eee2c4;border-radius:8px;background:repeating-linear-gradient(135deg,#19375d 0 11px,#244d80 11px 22px);box-shadow:0 15px 24px rgba(0,0,0,.28)}.back-inner{position:absolute;inset:7px;display:grid;place-items:center;border:1px solid rgba(238,226,196,.8)}.back-inner span{padding:7px;background:rgba(25,55,93,.86);color:#f0e4c4;font:800 10px Georgia,serif;letter-spacing:.13em}.human-area{position:absolute;left:18px;right:18px;bottom:14px;z-index:7;height:245px;pointer-events:none}.human-plate{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:260px;pointer-events:auto}.human-hand{position:absolute;left:50%;bottom:78px;width:min(88%,950px);height:166px;transform:translateX(-50%);display:flex;align-items:flex-end;justify-content:center;pointer-events:none}.hand-card{margin-left:-24px;pointer-events:auto;transform-origin:center 125%;transform:translateY(var(--drop,0)) rotate(var(--angle,0));transition:.16s}.hand-card:first-child{margin-left:0}.hand-card.playable{cursor:pointer}.hand-card.playable:hover{transform:translateY(-14px) rotate(var(--hover-angle,0));filter:drop-shadow(0 0 10px rgba(215,180,94,.44));z-index:20}.hand-card.selected{transform:translateY(-20px) rotate(var(--selected-angle,0));box-shadow:0 0 0 3px var(--gold),0 16px 25px rgba(0,0,0,.32);z-index:25}.hand-card.disabled-card{filter:brightness(.53) saturate(.55)}.action-bar{position:absolute;left:50%;bottom:196px;transform:translateX(-50%);display:flex;gap:7px;pointer-events:auto}.btn{min-height:38px;padding:9px 13px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.2);cursor:pointer;font-size:11px;font-weight:800;transition:.13s}.btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.08)}.btn:disabled{opacity:.38;cursor:not-allowed}.btn.primary{color:#1b1a12;border-color:#efda8f;background:linear-gradient(var(--gold2),var(--gold3))}.btn.standard{background:linear-gradient(#2a4035,#21332a)}.btn.ghost{background:rgba(7,15,11,.46)}.makao-btn{border-color:rgba(215,180,94,.4);color:var(--gold2);background:rgba(215,180,94,.07)}.makao-btn.armed{color:#1e1a10;background:linear-gradient(#f1d782,#bd9137)}.overlay{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(2,7,4,.78);backdrop-filter:blur(10px)}.overlay.open{display:grid}.menu-overlay{background:radial-gradient(circle at 50% 40%,rgba(23,106,72,.28),transparent 38%),rgba(3,9,6,.86)}.overlay-frame{width:calc(100% - 48px);height:calc(100% - 48px);display:grid;place-items:center;border:16px solid #50301e;border-radius:22px}.menu-card,.modal-card{width:min(520px,calc(100vw - 56px));padding:30px;border:1px solid rgba(215,180,94,.4);border-radius:22px;background:radial-gradient(circle at 50% 0,rgba(215,180,94,.10),transparent 28%),linear-gradient(#15231c,#0e1713);box-shadow:0 24px 70px rgba(0,0,0,.46);text-align:center}.brand-medal{width:74px;height:74px;margin:0 auto 17px;display:grid;place-items:center;border:2px solid var(--gold);border-radius:50%;background:radial-gradient(circle at 35% 30%,#20845a,#0e4932 72%);color:var(--gold2);font:700 34px Georgia,serif}.menu-card h1{margin:5px 0 8px;font:800 46px Georgia,serif;letter-spacing:.16em}.menu-lead{color:var(--muted);font-size:13px}.menu-section{margin:18px 0;padding:15px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.14);text-align:left}.menu-label{display:block;margin-bottom:10px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.14em}.segmented{display:grid;grid-template-columns:1fr 1fr;gap:7px}.segment{padding:10px;border:1px solid var(--line);border-radius:9px;background:#18231e;color:var(--muted);cursor:pointer}.segment.active{color:#1d1a10;border-color:var(--gold2);background:linear-gradient(var(--gold2),var(--gold3))}.menu-action{width:100%;margin-top:8px;min-height:49px;display:grid;grid-template-columns:32px 1fr 32px;align-items:center;border:1px solid var(--line);border-radius:12px;background:linear-gradient(#263d32,#1b2c24);cursor:pointer}.menu-action strong{text-align:left}.primary-menu{color:#1d1b12!important;background:linear-gradient(#e7cd78,#bd9137)!important}.motion-toggle{margin-top:18px;display:flex;justify-content:center;gap:8px;color:var(--muted);font-size:11px}.motion-toggle input{accent-color:var(--gold)}.modal-card{position:relative;text-align:left}.modal-card h2{margin:5px 0 8px;font:700 30px Georgia,serif}.modal-close{position:absolute;top:13px;right:13px;width:34px;height:34px;border:1px solid var(--line);border-radius:9px;background:rgba(0,0,0,.22);cursor:pointer}.choice-options{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:18px}.choice-button{min-height:62px;border:1px solid var(--line);border-radius:12px;background:#18251f;cursor:pointer;font:800 21px Georgia,serif}.suit-choice{display:flex;align-items:center;justify-content:center;gap:8px;font:12px Inter,system-ui}.suit-choice b{font:700 28px Georgia,serif}.rules-card{width:min(840px,calc(100vw - 56px))}.rules-scroll{max-height:68vh;overflow:auto}.rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.rule-grid article{padding:13px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.14)}.rule-grid strong{font:700 16px Georgia,serif;color:var(--gold2)}.rule-grid p{margin:6px 0 0;color:#bac9c0;font-size:12px;line-height:1.45}.source-note{color:var(--muted);font-size:10px}.standings{display:grid;gap:7px;margin-top:18px}.standing-row{display:grid;grid-template-columns:38px 1fr auto;align-items:center;padding:12px;border:1px solid var(--line);border-radius:11px;background:rgba(0,0,0,.13)}.wide{width:100%;margin-top:18px}.toast{position:fixed;left:50%;bottom:24px;z-index:100;transform:translate(-50%,20px);padding:11px 15px;border:1px solid rgba(215,180,94,.35);border-radius:11px;background:rgba(10,19,14,.96);opacity:0;pointer-events:none;transition:.18s}.toast.show{opacity:1;transform:translate(-50%,0)}.reduce-motion *{animation-duration:.001ms!important;transition-duration:.001ms!important}@media(max-width:1180px){body{overflow:auto}.app-shell{display:block}.topbar{grid-template-columns:1fr auto}.hud-stats{grid-column:1/-1;overflow-x:auto}.game-layout{display:flex;flex-direction:column-reverse}.table-wrap{height:720px}.helper-panel{min-height:360px}}@media(max-width:820px){:root{--cardw:74px;--cardh:106px}.table-wrap{height:650px;padding:6px}.opponent-seat{width:190px}.seat-left{left:10px;top:70px}.seat-right{right:10px;top:70px}.seat-top{top:45px}.card-back,.discard-slot,.table-card{width:78px;height:110px}.table-card{--cardw:78px;--cardh:110px}.human-hand{width:96%}.action-bar{width:96%;flex-wrap:wrap}.overlay-frame{width:calc(100% - 20px);height:calc(100% - 20px);border-width:8px}.rule-grid{grid-template-columns:1fr}}@media(max-width:560px){.table-wrap{height:720px}.opponent-seat{width:145px}.seat-left{left:7px;top:87px}.seat-right{right:7px;top:87px}.seat-top{top:42px}.opponent-seat .card-counter{display:none}.table-center{top:46%;grid-template-columns:auto auto}.center-state{position:absolute;left:50%;top:-56px;width:170px;transform:translateX(-50%)}.human-hand{justify-content:flex-start;padding-left:24px;overflow-x:auto}.choice-options{grid-template-columns:repeat(2,1fr)}}
@@ -212,13 +213,201 @@
   #choice-modal.choice-peek-overlay .choice-options { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* ===== css/multiplayer.css ===== */
+.network-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+  color: var(--muted, #9eaea4);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .09em;
+  white-space: nowrap;
+}
+.network-pill.online {
+  border-color: rgba(72, 190, 125, .38);
+  background: rgba(36, 130, 82, .16);
+  color: #b9f2d0;
+}
+.network-pill.warning {
+  border-color: rgba(238, 178, 70, .5);
+  background: rgba(183, 111, 24, .16);
+  color: #f5dba5;
+}
+.multiplayer-menu {
+  border-color: rgba(78, 190, 132, .34) !important;
+  background: linear-gradient(180deg, rgba(32, 116, 75, .22), rgba(18, 60, 42, .12)) !important;
+}
+.multiplayer-overlay { z-index: 130; }
+.multiplayer-card {
+  width: min(720px, calc(100vw - 28px));
+  max-height: min(820px, calc(100vh - 28px));
+  overflow: auto;
+}
+.mp-panel { display: grid; gap: 16px; }
+.mp-panel h2 { margin: -4px 0 0; }
+.mp-lead, .mp-footnote, .mp-status {
+  margin: 0;
+  color: var(--muted, #9eaea4);
+  line-height: 1.55;
+}
+.mp-footnote { font-size: 12px; }
+.mp-status { min-height: 22px; font-size: 13px; }
+.mp-status.error { color: #ffaaaa; }
+.mp-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.mp-choice {
+  min-height: 130px;
+  padding: 18px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  text-align: left;
+  color: var(--ink, #edf5ef);
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
+  cursor: pointer;
+}
+.mp-choice:hover { border-color: rgba(215,180,94,.42); background: rgba(215,180,94,.08); }
+.mp-choice b { font-size: 17px; }
+.mp-choice span { color: var(--muted, #9eaea4); font-size: 13px; line-height: 1.45; }
+.mp-back {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted, #9eaea4);
+  cursor: pointer;
+}
+.mp-field { display: grid; gap: 7px; }
+.mp-field > span {
+  color: #d8e2dc;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.mp-field small { color: var(--muted, #9eaea4); font-weight: 500; text-transform: none; letter-spacing: 0; }
+.mp-field input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 11px;
+  outline: 0;
+  background: #111c17;
+  color: var(--ink, #edf5ef);
+}
+.mp-field input:focus { border-color: rgba(215,180,94,.62); box-shadow: 0 0 0 3px rgba(215,180,94,.09); }
+.mp-segmented { max-width: 360px; }
+.mp-room-line {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid rgba(215,180,94,.28);
+  border-radius: 14px;
+  background: rgba(215,180,94,.07);
+}
+.mp-room-line div { display: grid; gap: 4px; }
+.mp-room-line small { color: var(--muted, #9eaea4); font-size: 9px; letter-spacing: .14em; }
+.mp-room-line strong { font: 800 28px/1 Georgia, serif; letter-spacing: .12em; color: #f1d58a; }
+.mp-seats { display: grid; gap: 9px; }
+.mp-seat {
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 13px;
+  background: rgba(255,255,255,.025);
+}
+.mp-seat.local { border-color: rgba(215,180,94,.42); background: rgba(215,180,94,.075); }
+.mp-seat.bot { border-color: rgba(88,170,122,.27); }
+.mp-seat-index {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  font-weight: 900;
+}
+.mp-seat-copy { min-width: 0; display: grid; gap: 3px; }
+.mp-seat-copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mp-seat-copy span { color: var(--muted, #9eaea4); font-size: 9px; letter-spacing: .08em; }
+.mp-seat-action {
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 9px;
+  background: rgba(255,255,255,.035);
+  color: var(--ink, #edf5ef);
+  cursor: pointer;
+}
+.mp-lobby-actions { display: flex; justify-content: space-between; gap: 10px; }
+.mp-lobby-actions > * { flex: 1 1 0; }
+.choice-none { border-color: rgba(215,180,94,.34) !important; }
+.disconnect-overlay { z-index: 160; }
+.disconnect-card { width: min(520px, calc(100vw - 28px)); }
+.disconnect-card p { color: var(--muted, #9eaea4); line-height: 1.55; }
+
+@media (max-width: 720px) {
+  .network-pill { display: none; }
+  .multiplayer-card { width: min(620px, calc(100vw - 16px)); max-height: calc(100vh - 16px); padding: 20px 16px; }
+  .mp-choice-grid { grid-template-columns: 1fr; }
+  .mp-choice { min-height: 92px; }
+  .mp-room-line strong { font-size: 23px; }
+  .mp-lobby-actions { flex-direction: column-reverse; }
+}
+
+@media (max-width: 430px) {
+  .mp-seat { grid-template-columns: 34px minmax(0, 1fr); }
+  .mp-seat-action { grid-column: 1 / -1; width: 100%; }
+  .mp-room-line { align-items: center; }
+  .mp-room-line strong { font-size: 20px; letter-spacing: .08em; }
+}
+
+@media (max-height: 470px) and (orientation: landscape) {
+  .multiplayer-overlay { align-items: stretch; padding: 6px; }
+  .multiplayer-card {
+    width: min(820px, calc(100vw - 12px));
+    max-height: calc(100vh - 12px);
+    padding: 14px 18px;
+  }
+  .mp-panel { gap: 9px; }
+  .mp-panel h2 { margin: -2px 0 0; font-size: 22px; }
+  .mp-lead, .mp-footnote { font-size: 11px; line-height: 1.35; }
+  .mp-choice-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+  .mp-choice { min-height: 72px; padding: 10px 12px; }
+  .mp-field { gap: 4px; }
+  .mp-field input { min-height: 38px; padding: 7px 10px; }
+  .mp-seats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .mp-seat { min-height: 48px; padding: 6px 8px; }
+  .mp-seat-index { width: 28px; height: 28px; }
+  .mp-room-line { padding: 8px 12px; }
+  .mp-room-line strong { font-size: 21px; }
+  .mp-lobby-actions { flex-direction: row; }
+}
+
   </style>
 </head>
 <body>
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">OFFLINE · 1 GRACZ + BOTY</div>
+        <div class="eyebrow">PRYWATNY STÓŁ · OFFLINE / P2P</div>
         <div class="logo">MAKAO</div>
       </div>
 
@@ -238,6 +427,7 @@
       </div>
 
       <div class="top-actions">
+        <span id="network-pill" class="network-pill">OFFLINE</span>
         <button class="btn ghost compact" id="rules-btn" type="button">Zasady</button>
         <button class="btn ghost compact" id="menu-btn" type="button">Menu</button>
       </div>
@@ -262,7 +452,7 @@
           <div class="felt-table" id="felt-table">
             <div class="felt-inner-line"></div>
             <div class="felt-watermark">MAKAO</div>
-            <div class="phase-ribbon" id="phase-ribbon">Wybierz liczbę botów i rozpocznij grę</div>
+            <div class="phase-ribbon" id="phase-ribbon">Wybierz tryb gry i rozpocznij partię</div>
 
             <div id="opponents" class="opponents"></div>
 
@@ -290,9 +480,9 @@
 
             <div class="human-area">
               <div id="human-seat" class="player-plate human-plate">
-                <div class="avatar human-avatar">TY</div>
+                <div id="human-avatar" class="avatar human-avatar">TY</div>
                 <div class="plate-copy">
-                  <strong>Ty</strong>
+                  <strong id="human-name">Ty</strong>
                   <span id="human-role">GRACZ</span>
                 </div>
                 <div class="card-counter" id="human-count">0 KART</div>
@@ -320,10 +510,10 @@
         <div class="brand-medal">♠</div>
         <div class="eyebrow">CYFROWY STÓŁ KARCIANY</div>
         <h1>MAKAO</h1>
-        <p class="menu-lead">Klasyczne Makao przeciwko botom, według ustalonego wariantu zasad.</p>
+        <p class="menu-lead">Graj offline z botami albo utwórz prywatny stół WebRTC P2P.</p>
 
         <div class="menu-section">
-          <span class="menu-label">LICZBA BOTÓW</span>
+          <span class="menu-label">TRYB OFFLINE · LICZBA BOTÓW</span>
           <div class="segmented" id="bot-selector">
             <button class="segment active" data-bots="2" type="button">2 boty</button>
             <button class="segment" data-bots="3" type="button">3 boty</button>
@@ -331,7 +521,10 @@
         </div>
 
         <button id="start-btn" class="menu-action primary-menu" type="button">
-          <span>▶</span><strong>Nowa gra</strong><span>→</span>
+          <span>▶</span><strong>Nowa gra offline</strong><span>→</span>
+        </button>
+        <button id="multiplayer-btn" class="menu-action multiplayer-menu" type="button">
+          <span>⌁</span><strong>Multiplayer P2P</strong><span>→</span>
         </button>
         <button id="resume-btn" class="menu-action hidden" type="button">
           <span>↩</span><strong>Wznów</strong><span>→</span>
@@ -345,6 +538,75 @@
           <span>Animacje kart</span>
         </label>
       </div>
+    </div>
+  </div>
+
+  <div id="multiplayer-modal" class="overlay modal-overlay multiplayer-overlay" aria-modal="true" role="dialog" aria-labelledby="mp-title">
+    <div class="modal-card multiplayer-card">
+      <button class="modal-close" id="mp-close" type="button" aria-label="Zamknij">×</button>
+
+      <section id="mp-entry" class="mp-panel">
+        <span class="eyebrow">PRYWATNY MULTIPLAYER</span>
+        <h2 id="mp-title">WebRTC P2P</h2>
+        <p class="mp-lead">Gospodarz prowadzi jedyny autorytatywny stan gry. Po zestawieniu połączeń ruchy idą bezpośrednio między przeglądarkami.</p>
+        <div class="mp-choice-grid">
+          <button id="mp-choose-host" class="mp-choice" type="button"><b>Utwórz stół</b><span>Hostujesz rozgrywkę i opcjonalne boty.</span></button>
+          <button id="mp-choose-guest" class="mp-choice" type="button"><b>Dołącz</b><span>Wpisujesz kod otrzymany od gospodarza.</span></button>
+        </div>
+        <p class="mp-footnote">Tryb offline nie wymaga usługi sieciowej i pozostaje dostępny niezależnie od sygnalizacji.</p>
+      </section>
+
+      <section id="mp-host-panel" class="mp-panel hidden">
+        <button id="mp-host-back" class="mp-back" type="button">← Wróć</button>
+        <span class="eyebrow">NOWY STÓŁ</span>
+        <h2>Hostuj grę</h2>
+        <label class="mp-field"><span>Twój nick</span><input id="mp-host-nick" maxlength="20" autocomplete="nickname" placeholder="np. Grzegorz" /></label>
+        <label class="mp-field"><span>Hasło pokoju <small>opcjonalnie</small></span><input id="mp-host-password" type="password" minlength="6" autocomplete="new-password" placeholder="minimum 6 znaków" /></label>
+        <div class="mp-field">
+          <span>Liczba miejsc</span>
+          <div id="mp-table-size" class="segmented mp-segmented">
+            <button class="segment active" data-mp-table-size="3" type="button">3 graczy</button>
+            <button class="segment" data-mp-table-size="4" type="button">4 graczy</button>
+          </div>
+        </div>
+        <button id="mp-create-room" class="btn primary wide" type="button">Utwórz prywatny pokój</button>
+        <p id="mp-host-status" class="mp-status" aria-live="polite"></p>
+      </section>
+
+      <section id="mp-guest-panel" class="mp-panel hidden">
+        <button id="mp-guest-back" class="mp-back" type="button">← Wróć</button>
+        <span class="eyebrow">DOŁĄCZ DO STOŁU</span>
+        <h2>Połącz z gospodarzem</h2>
+        <label class="mp-field"><span>Twój nick</span><input id="mp-guest-nick" maxlength="20" autocomplete="nickname" placeholder="np. Anna" /></label>
+        <label class="mp-field"><span>Kod pokoju</span><input id="mp-room-code" inputmode="text" maxlength="9" autocomplete="off" placeholder="ABCD-EFGH" /></label>
+        <label class="mp-field"><span>Hasło <small>jeśli gospodarz ustawił</small></span><input id="mp-guest-password" type="password" autocomplete="current-password" /></label>
+        <button id="mp-join-room" class="btn primary wide" type="button">Dołącz do pokoju</button>
+        <p id="mp-guest-status" class="mp-status" aria-live="polite"></p>
+      </section>
+
+      <section id="mp-lobby-panel" class="mp-panel hidden">
+        <span class="eyebrow">PRYWATNY STÓŁ</span>
+        <div class="mp-room-line">
+          <div><small>KOD POKOJU</small><strong id="mp-room-code-display">—</strong></div>
+          <button id="mp-copy-room" class="btn ghost compact" type="button">Kopiuj</button>
+        </div>
+        <div id="mp-seats" class="mp-seats"></div>
+        <p id="mp-lobby-status" class="mp-status" aria-live="polite"></p>
+        <div class="mp-lobby-actions">
+          <button id="mp-leave-room" class="btn ghost" type="button">Opuść pokój</button>
+          <button id="mp-start-game" class="btn primary" type="button" disabled>Rozpocznij grę</button>
+        </div>
+        <p class="mp-footnote">Boty działają wyłącznie u gospodarza. Zajęte przez bota miejsce nie może zostać przydzielone gościowi.</p>
+      </section>
+    </div>
+  </div>
+
+  <div id="mp-disconnect" class="overlay modal-overlay disconnect-overlay" aria-modal="true" role="alertdialog">
+    <div class="modal-card disconnect-card">
+      <span class="eyebrow">POŁĄCZENIE PRZERWANE</span>
+      <h2>Gra została wstrzymana</h2>
+      <p id="mp-disconnect-text">Utracono połączenie z graczem.</p>
+      <button id="mp-disconnect-leave" class="btn primary wide" type="button">Wróć do menu</button>
     </div>
   </div>
 
@@ -672,6 +934,8 @@ class MakaoGame {
   constructor({ onChange = () => {}, onMessage = () => {} } = {}) {
     this.onChange = onChange;
     this.onMessage = onMessage;
+    this.localSeat = 0;
+    this.readOnlyView = false;
     this.state = this.emptyState();
     this.timer = null;
   }
@@ -680,6 +944,8 @@ class MakaoGame {
     return {
       started: false,
       gameOver: false,
+      multiplayer: false,
+      networkPaused: false,
       botCount: 2,
       players: [],
       dealerIndex: 0,
@@ -699,13 +965,76 @@ class MakaoGame {
     };
   }
 
+  setLocalSeat(seat) {
+    this.localSeat = Number.isInteger(seat) ? seat : 0;
+    if (Array.isArray(this.state.players)) {
+      this.state.players.forEach((player, index) => {
+        player.isLocal = index === this.localSeat;
+      });
+    }
+  }
+
+  stop() {
+    clearTimeout(this.timer);
+    this.timer = null;
+    this.readOnlyView = false;
+    this.localSeat = 0;
+    this.state = this.emptyState();
+    this.emit();
+  }
+
   start(botCount = 2) {
     const safeBotCount = botCount === 3 ? 3 : 2;
+    this.localSeat = 0;
+    this.readOnlyView = false;
+    return this.startWithPlayers(this.createPlayers(safeBotCount), { multiplayer: false, localSeat: 0 });
+  }
+
+  startMultiplayer(seats, { localSeat = 0 } = {}) {
+    if (!Array.isArray(seats) || ![3, 4].includes(seats.length)) {
+      throw new Error('Makao multiplayer wymaga 3 albo 4 miejsc przy stole.');
+    }
+
+    const players = seats.map((seat, index) => {
+      const isBot = Boolean(seat?.isBot);
+      const fallbackName = isBot ? BOT_NAMES[(index - 1 + BOT_NAMES.length) % BOT_NAMES.length] : `Gracz ${index + 1}`;
+      const name = String(seat?.name || fallbackName).trim().slice(0, 20) || fallbackName;
+      return {
+        id: seat?.id || `seat-${index}`,
+        name,
+        isHuman: !isBot,
+        isBot,
+        isLocal: index === localSeat,
+        avatar: this.avatarForName(name, isBot ? 'B' : `G${index + 1}`),
+        hand: [],
+        finishPlace: null,
+        blockedTurns: 0,
+      };
+    });
+
+    this.localSeat = localSeat;
+    this.readOnlyView = false;
+    return this.startWithPlayers(players, { multiplayer: true, localSeat });
+  }
+
+  startWithPlayers(players, { multiplayer = false, localSeat = 0 } = {}) {
     clearTimeout(this.timer);
+    this.timer = null;
+    this.localSeat = localSeat;
+    this.readOnlyView = false;
     this.state = this.emptyState();
     this.state.started = true;
-    this.state.botCount = safeBotCount;
-    this.state.players = this.createPlayers(safeBotCount);
+    this.state.multiplayer = multiplayer;
+    this.state.players = players.map((player, index) => ({
+      ...player,
+      isBot: Boolean(player.isBot),
+      isHuman: !player.isBot,
+      isLocal: index === localSeat,
+      hand: [],
+      finishPlace: null,
+      blockedTurns: 0,
+    }));
+    this.state.botCount = this.state.players.filter((player) => player.isBot).length;
     this.state.drawPile = shuffle(createDeck());
     this.state.dealerIndex = Math.floor(Math.random() * this.state.players.length);
 
@@ -715,7 +1044,6 @@ class MakaoGame {
       }
     }
 
-    // Źródła wymagają, aby pierwsza odkryta karta nie była funkcyjna.
     do {
       const card = this.state.drawPile.pop();
       if (!card) break;
@@ -728,6 +1056,7 @@ class MakaoGame {
     this.addLog(`Zaczyna ${this.state.players[this.state.currentIndex].name}.`);
     this.emit();
     this.queueCurrentTurn();
+    return this.state;
   }
 
   createPlayers(botCount) {
@@ -736,6 +1065,8 @@ class MakaoGame {
         id: 'human',
         name: 'Ty',
         isHuman: true,
+        isBot: false,
+        isLocal: true,
         avatar: 'TY',
         hand: [],
         finishPlace: null,
@@ -748,6 +1079,8 @@ class MakaoGame {
         id: `bot-${i + 1}`,
         name: BOT_NAMES[i],
         isHuman: false,
+        isBot: true,
+        isLocal: false,
         avatar: BOT_NAMES[i].slice(0, 1).toUpperCase(),
         hand: [],
         finishPlace: null,
@@ -757,6 +1090,26 @@ class MakaoGame {
     return players;
   }
 
+  avatarForName(name, fallback = 'G') {
+    const chars = Array.from(String(name || '').trim()).filter((char) => /[\p{L}\p{N}]/u.test(char));
+    return (chars.slice(0, 2).join('') || fallback).toUpperCase();
+  }
+
+  applyRemoteState(view, localSeat) {
+    clearTimeout(this.timer);
+    this.timer = null;
+    this.readOnlyView = true;
+    this.localSeat = localSeat;
+    this.state = view;
+    this.state.multiplayer = true;
+    this.state.players?.forEach((player, index) => {
+      player.isLocal = index === localSeat;
+      player.isBot = Boolean(player.isBot);
+      player.isHuman = !player.isBot;
+    });
+    this.emit();
+  }
+
   emit() {
     this.onChange(this.state);
   }
@@ -764,6 +1117,10 @@ class MakaoGame {
   addLog(message) {
     this.state.log.unshift({ id: `${Date.now()}-${Math.random()}`, message });
     this.state.log = this.state.log.slice(0, 80);
+  }
+
+  isLocalNarration(player) {
+    return !this.state.multiplayer && Boolean(player?.isLocal);
   }
 
   activePlayerIndexes() {
@@ -797,7 +1154,7 @@ class MakaoGame {
 
   queueCurrentTurn() {
     clearTimeout(this.timer);
-    if (!this.state.started || this.state.gameOver || this.state.pendingChoice) return;
+    if (!this.state.started || this.state.gameOver || this.state.pendingChoice || this.state.networkPaused) return;
 
     const player = this.currentPlayer();
     if (!player || player.finishPlace != null) {
@@ -809,15 +1166,13 @@ class MakaoGame {
     if (player.blockedTurns > 0 && !this.isPendingSkipFor(this.state.currentIndex)) {
       player.blockedTurns -= 1;
 
-      // A zaległa blokada nie może sprawić, że kara 2/3 zniknie bez rozliczenia.
-      // Zablokowany gracz nie może się bronić kartą, ale nadal jest celem kary.
       if (this.isPendingDrawFor(this.state.currentIndex)) {
         const amount = this.state.pendingDraw.amount;
         this.state.pendingDraw = null;
         this.drawCards(this.state.currentIndex, amount);
-        this.addLog(player.isHuman ? `Tracisz kolejkę i dobierasz ${amount} kart za karę.` : `${player.name} traci kolejkę i dobiera ${amount} kart za karę.`);
+        this.addLog(this.isLocalNarration(player) ? `Tracisz kolejkę i dobierasz ${amount} kart za karę.` : `${player.name} traci kolejkę i dobiera ${amount} kart za karę.`);
       } else {
-        this.addLog(player.isHuman ? 'Tracisz kolejkę.' : `${player.name} traci kolejkę.`);
+        this.addLog(this.isLocalNarration(player) ? 'Tracisz kolejkę.' : `${player.name} traci kolejkę.`);
       }
 
       this.emit();
@@ -825,7 +1180,7 @@ class MakaoGame {
       return;
     }
 
-    if (!player.isHuman) {
+    if (player.isBot) {
       this.timer = setTimeout(() => this.runBotTurn(this.state.currentIndex), UI_DELAYS.botThink);
     }
   }
@@ -838,29 +1193,77 @@ class MakaoGame {
     return this.state.pendingSkip?.targetIndex === playerIndex;
   }
 
-  humanCanAct() {
-    const player = this.currentPlayer();
+  canPlayerAct(playerIndex) {
+    const player = this.state.players[playerIndex];
     return Boolean(
       this.state.started &&
         !this.state.gameOver &&
+        !this.state.networkPaused &&
         !this.state.pendingChoice &&
-        player?.isHuman &&
+        this.state.currentIndex === playerIndex &&
+        player &&
+        !player.isBot &&
         player.finishPlace == null &&
         player.blockedTurns === 0,
     );
   }
 
+  humanCanAct() {
+    return this.canPlayerAct(this.localSeat);
+  }
+
+  executePlayerAction(playerIndex, action, payload = {}) {
+    if (this.readOnlyView) return { ok: false, reason: 'Stan gościa jest tylko do odczytu.' };
+    if (!Number.isInteger(playerIndex) || !this.state.players[playerIndex]) {
+      return { ok: false, reason: 'Nieprawidłowe miejsce gracza.' };
+    }
+    if (this.state.players[playerIndex].isBot) {
+      return { ok: false, reason: 'Miejsce jest sterowane przez bota.' };
+    }
+
+    switch (action) {
+      case 'play-cards':
+        return this.playerPlay(playerIndex, payload.cardIds);
+      case 'draw':
+        return this.playerDraw(playerIndex);
+      case 'pass-after-draw':
+        return this.playerPassAfterDraw(playerIndex);
+      case 'toggle-makao':
+        return this.toggleMakaoFor(playerIndex);
+      case 'choose-pending':
+        return this.choosePendingFor(playerIndex, payload.value ?? null);
+      default:
+        return { ok: false, reason: 'Nieznana akcja gracza.' };
+    }
+  }
+
   toggleMakao() {
-    if (!this.humanCanAct()) return;
+    return this.executePlayerAction(this.localSeat, 'toggle-makao');
+  }
+
+  toggleMakaoFor(playerIndex) {
+    if (!this.canPlayerAct(playerIndex)) return { ok: false, reason: 'Teraz nie jest Twoja tura.' };
     this.state.makaoArmed = !this.state.makaoArmed;
     this.emit();
+    return { ok: true };
   }
 
   humanPlay(cardIds) {
-    if (!this.humanCanAct()) return { ok: false, reason: 'Teraz nie jest Twoja tura.' };
-    const playerIndex = this.state.currentIndex;
+    return this.executePlayerAction(this.localSeat, 'play-cards', { cardIds });
+  }
+
+  playerPlay(playerIndex, cardIds) {
+    if (!this.canPlayerAct(playerIndex)) return { ok: false, reason: 'Teraz nie jest Twoja tura.' };
+    if (!Array.isArray(cardIds) || cardIds.some((id) => typeof id !== 'string')) {
+      return { ok: false, reason: 'Nieprawidłowa lista kart.' };
+    }
+    if (new Set(cardIds).size !== cardIds.length) {
+      return { ok: false, reason: 'Ta sama karta nie może wystąpić w zagraniu kilka razy.' };
+    }
+
     const player = this.state.players[playerIndex];
     const cards = cardIds.map((id) => player.hand.find((card) => card.id === id)).filter(Boolean);
+    if (cards.length !== cardIds.length) return { ok: false, reason: 'Nie masz jednej z wybranych kart.' };
 
     if (this.state.drawnRescueCardId) {
       if (cards.length !== 1 || cards[0].id !== this.state.drawnRescueCardId) {
@@ -878,8 +1281,11 @@ class MakaoGame {
   }
 
   humanDraw() {
-    if (!this.humanCanAct()) return;
-    const playerIndex = this.state.currentIndex;
+    return this.executePlayerAction(this.localSeat, 'draw');
+  }
+
+  playerDraw(playerIndex) {
+    if (!this.canPlayerAct(playerIndex)) return { ok: false, reason: 'Teraz nie jest Twoja tura.' };
     const player = this.state.players[playerIndex];
     const constraint = getTurnConstraint(this.state, playerIndex);
 
@@ -887,48 +1293,58 @@ class MakaoGame {
       const amount = this.state.pendingDraw.amount;
       this.state.pendingDraw = null;
       this.drawCards(playerIndex, amount);
-      this.addLog(player.isHuman ? `Dobierasz ${amount} kart za karę.` : `${player.name} dobiera ${amount} kart za karę.`);
+      this.addLog(this.isLocalNarration(player) ? `Dobierasz ${amount} kart za karę.` : `${player.name} dobiera ${amount} kart za karę.`);
       this.endTurn(playerIndex);
-      return;
+      return { ok: true };
     }
 
     if (constraint.type === 'skip') {
       this.acceptSkip(playerIndex);
-      return;
+      return { ok: true };
     }
 
-    if (this.state.drawnRescueCardId) return;
+    if (this.state.drawnRescueCardId) return { ok: false, reason: 'Dobraną kartę trzeba zagrać albo spasować.' };
 
     const drawn = this.drawCards(playerIndex, 1)[0];
     if (!drawn) {
       this.endTurn(playerIndex);
-      return;
+      return { ok: true };
     }
 
-    this.addLog(player.isHuman ? 'Dobierasz kartę.' : `${player.name} dobiera kartę.`);
+    this.addLog(this.isLocalNarration(player) ? 'Dobierasz kartę.' : `${player.name} dobiera kartę.`);
     if (isCardLegal(drawn, this.state, playerIndex)) {
       this.state.drawnRescueCardId = drawn.id;
-      this.onMessage('Pierwsza karta ratuje — możesz zagrać dobraną kartę albo spasować.');
+      if (player.isLocal) this.onMessage('Pierwsza karta ratuje — możesz zagrać dobraną kartę albo spasować.');
       this.emit();
     } else {
       this.endTurn(playerIndex);
     }
+    return { ok: true };
   }
 
   humanPassAfterDraw() {
-    if (!this.humanCanAct() || !this.state.drawnRescueCardId) return;
-    this.addLog('Nie zagrywasz dobranej karty.');
-    this.endTurn(this.state.currentIndex);
+    return this.executePlayerAction(this.localSeat, 'pass-after-draw');
+  }
+
+  playerPassAfterDraw(playerIndex) {
+    if (!this.canPlayerAct(playerIndex) || !this.state.drawnRescueCardId) {
+      return { ok: false, reason: 'Nie ma dobranej karty do spasowania.' };
+    }
+    const player = this.state.players[playerIndex];
+    this.addLog(this.isLocalNarration(player) ? 'Nie zagrywasz dobranej karty.' : `${player.name} nie zagrywa dobranej karty.`);
+    this.endTurn(playerIndex);
+    return { ok: true };
   }
 
   acceptSkip(playerIndex) {
-    if (!this.isPendingSkipFor(playerIndex)) return;
+    if (!this.isPendingSkipFor(playerIndex)) return false;
     const player = this.state.players[playerIndex];
     const count = this.state.pendingSkip.count;
     this.state.pendingSkip = null;
     player.blockedTurns += Math.max(0, count - 1);
-    this.addLog(player.isHuman ? `Przyjmujesz blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.` : `${player.name} przyjmuje blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.`);
+    this.addLog(this.isLocalNarration(player) ? `Przyjmujesz blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.` : `${player.name} przyjmuje blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.`);
     this.endTurn(playerIndex);
+    return true;
   }
 
   playCards(playerIndex, cards, { fromRescue = false } = {}) {
@@ -937,13 +1353,8 @@ class MakaoGame {
     const ordered = fromRescue ? [...cards] : orderGroupForPlay(cards, this.state, playerIndex);
     const rank = ordered[0].rank;
 
-    // Spełnienie żądania waleta usuwa je. Walet może je zastąpić nowym.
-    if (constraintBefore.type === 'jack' && rank === this.state.jackDemand?.rank) {
-      this.state.jackDemand = null;
-    }
-    if (constraintBefore.type === 'jack' && rank === 'J') {
-      this.state.jackDemand = null;
-    }
+    if (constraintBefore.type === 'jack' && rank === this.state.jackDemand?.rank) this.state.jackDemand = null;
+    if (constraintBefore.type === 'jack' && rank === 'J') this.state.jackDemand = null;
 
     for (const card of ordered) {
       const handIndex = player.hand.findIndex((held) => held.id === card.id);
@@ -952,31 +1363,27 @@ class MakaoGame {
     }
 
     this.state.drawnRescueCardId = null;
-    this.addLog(player.isHuman ? `Zagrywasz ${ordered.map(cardLabel).join(', ')}.` : `${player.name} zagrywa ${ordered.map(cardLabel).join(', ')}.`);
+    this.addLog(this.isLocalNarration(player) ? `Zagrywasz ${ordered.map(cardLabel).join(', ')}.` : `${player.name} zagrywa ${ordered.map(cardLabel).join(', ')}.`);
 
     const makaoRequired = isMakaoRequired(player.hand.length);
-    const declared = !player.isHuman || this.state.makaoArmed;
+    const declared = player.isBot || this.state.makaoArmed;
 
     if (makaoRequired && declared) {
       this.addLog(player.hand.length === 0 ? `${player.name}: „Makao i po makale!”` : `${player.name}: „Makao!”`);
     } else if (makaoRequired && !declared) {
-      this.addLog(player.isHuman ? 'STOP MAKAO! Dobierasz 5 kart.' : `STOP MAKAO! ${player.name} dobiera 5 kart.`);
+      this.addLog(this.isLocalNarration(player) ? 'STOP MAKAO! Dobierasz 5 kart.' : `STOP MAKAO! ${player.name} dobiera 5 kart.`);
       this.drawCards(playerIndex, 5);
-      this.onMessage('STOP MAKAO — brak deklaracji. Dobierasz 5 kart.');
+      if (player.isLocal) this.onMessage('STOP MAKAO — brak deklaracji. Dobierasz 5 kart.');
     }
 
     this.applyCardEffects(playerIndex, ordered, constraintBefore);
 
-    if (player.hand.length === 0) {
-      this.finishPlayer(playerIndex);
-    }
+    if (player.hand.length === 0) this.finishPlayer(playerIndex);
 
     this.state.makaoArmed = false;
     this.emit();
 
-    if (!this.state.gameOver && !this.state.pendingChoice) {
-      this.endTurn(playerIndex);
-    }
+    if (!this.state.gameOver && !this.state.pendingChoice) this.endTurn(playerIndex);
   }
 
   applyCardEffects(playerIndex, cards, constraintBefore) {
@@ -1009,12 +1416,9 @@ class MakaoGame {
 
     if (rank === 'J') {
       const player = this.state.players[playerIndex];
-      if (player.isHuman) {
+      if (!player.isBot) {
         this.state.pendingChoice = { type: 'jack', actorIndex: playerIndex };
       } else {
-        // Walet zagrany jako odpowiedź na aktywne żądanie kończy łańcuch
-        // wyborem „nic”. To jest dozwolona decyzja waleta i zapobiega
-        // nieskończonemu krążeniu czterech waletów między botami.
         const demand = constraintBefore.type === 'jack' ? null : chooseJackDemand(player.hand);
         if (demand) {
           this.state.jackDemand = { rank: demand, byIndex: playerIndex };
@@ -1029,7 +1433,7 @@ class MakaoGame {
 
     if (rank === 'A') {
       const player = this.state.players[playerIndex];
-      if (player.isHuman) {
+      if (!player.isBot) {
         this.state.pendingChoice = { type: 'ace', actorIndex: playerIndex };
       } else {
         const suit = chooseAceSuit(player.hand);
@@ -1062,10 +1466,16 @@ class MakaoGame {
   }
 
   choosePending(value) {
+    return this.executePlayerAction(this.localSeat, 'choose-pending', { value });
+  }
+
+  choosePendingFor(playerIndex, value) {
     const choice = this.state.pendingChoice;
-    if (!choice) return;
-    const actorIndex = choice.actorIndex;
-    const actor = this.state.players[actorIndex];
+    if (!choice || choice.actorIndex !== playerIndex) {
+      return { ok: false, reason: 'Ta decyzja nie należy do tego gracza.' };
+    }
+    const actor = this.state.players[playerIndex];
+    if (!actor || actor.isBot) return { ok: false, reason: 'Nieprawidłowy gracz.' };
 
     if (choice.type === 'jack') {
       if (value == null) {
@@ -1073,24 +1483,24 @@ class MakaoGame {
         this.addLog(`${actor.name} nie żąda żadnej wartości.`);
       } else {
         const mayDemand = JACK_DEMAND_RANKS.includes(value) && actor.hand.some((card) => card.rank === value);
-        if (!mayDemand) {
-          this.onMessage('Walet może żądać tylko wartości 5–10, którą masz w ręce, albo niczego.');
-          return;
-        }
-        this.state.jackDemand = { rank: value, byIndex: actorIndex };
+        if (!mayDemand) return { ok: false, reason: 'Walet może żądać tylko wartości 5–10, którą masz w ręce, albo niczego.' };
+        this.state.jackDemand = { rank: value, byIndex: playerIndex };
         this.addLog(`${actor.name} żąda wartości ${value}.`);
       }
-    }
-
-    if (choice.type === 'ace') {
-      const targetIndex = this.nextActiveIndex(actorIndex);
-      this.state.aceDemand = { suit: value, targetIndex, byIndex: actorIndex };
+    } else if (choice.type === 'ace') {
+      const allowedSuit = SUITS.some((suit) => suit.key === value);
+      if (!allowedSuit) return { ok: false, reason: 'Nieprawidłowy kolor żądany asem.' };
+      const targetIndex = this.nextActiveIndex(playerIndex);
+      this.state.aceDemand = { suit: value, targetIndex, byIndex: playerIndex };
       this.addLog(`${actor.name} żąda koloru: ${suitLabel(value)}.`);
+    } else {
+      return { ok: false, reason: 'Nieznany typ decyzji.' };
     }
 
     this.state.pendingChoice = null;
     this.emit();
-    if (!this.state.gameOver) this.endTurn(actorIndex);
+    if (!this.state.gameOver) this.endTurn(playerIndex);
+    return { ok: true };
   }
 
   drawCards(playerIndex, count) {
@@ -1106,9 +1516,9 @@ class MakaoGame {
   }
 
   runBotTurn(playerIndex) {
-    if (this.state.gameOver || this.state.pendingChoice || this.state.currentIndex !== playerIndex) return;
+    if (this.state.gameOver || this.state.pendingChoice || this.state.networkPaused || this.state.currentIndex !== playerIndex) return;
     const bot = this.state.players[playerIndex];
-    if (!bot || bot.isHuman || bot.finishPlace != null) return;
+    if (!bot || !bot.isBot || bot.finishPlace != null) return;
 
     const constraint = getTurnConstraint(this.state, playerIndex);
     const play = chooseBotPlay(bot, this.state, playerIndex);
@@ -1139,7 +1549,7 @@ class MakaoGame {
 
     if (drawn && isCardLegal(drawn, this.state, playerIndex)) {
       this.timer = setTimeout(() => {
-        if (!this.state.gameOver && this.state.currentIndex === playerIndex) {
+        if (!this.state.gameOver && !this.state.networkPaused && this.state.currentIndex === playerIndex) {
           this.playCards(playerIndex, [drawn], { fromRescue: true });
         }
       }, UI_DELAYS.botAfterDraw);
@@ -1153,7 +1563,7 @@ class MakaoGame {
     if (player.finishPlace != null) return;
     player.finishPlace = this.state.standings.length + 1;
     this.state.standings.push(playerIndex);
-    this.addLog(player.isHuman ? `Zajmujesz ${player.finishPlace}. miejsce.` : `${player.name} zajmuje ${player.finishPlace}. miejsce.`);
+    this.addLog(this.isLocalNarration(player) ? `Zajmujesz ${player.finishPlace}. miejsce.` : `${player.name} zajmuje ${player.finishPlace}. miejsce.`);
 
     const active = this.activePlayerIndexes();
     if (active.length === 1) {
@@ -1161,7 +1571,7 @@ class MakaoGame {
       const last = this.state.players[lastIndex];
       last.finishPlace = this.state.standings.length + 1;
       this.state.standings.push(lastIndex);
-      this.addLog(last.isHuman ? `Zajmujesz ${last.finishPlace}. miejsce.` : `${last.name} zajmuje ${last.finishPlace}. miejsce.`);
+      this.addLog(this.isLocalNarration(last) ? `Zajmujesz ${last.finishPlace}. miejsce.` : `${last.name} zajmuje ${last.finishPlace}. miejsce.`);
       this.state.gameOver = true;
       this.state.pendingChoice = null;
       this.addLog('Koniec partii.');
@@ -1174,11 +1584,7 @@ class MakaoGame {
       return;
     }
 
-    // Żądanie asa dotyczy wyłącznie następnego gracza. Jeśli nie zostało
-    // zastąpione kolejnym asem, wygasa wraz z końcem jego tury.
-    if (this.state.aceDemand?.targetIndex === actorIndex) {
-      this.state.aceDemand = null;
-    }
+    if (this.state.aceDemand?.targetIndex === actorIndex) this.state.aceDemand = null;
 
     this.state.drawnRescueCardId = null;
     this.state.makaoArmed = false;
@@ -1189,10 +1595,979 @@ class MakaoGame {
   }
 }
 
-// ===== js/ui.js =====
-class MakaoUI {
+// ===== js/multiplayer.js =====
+const RTC_CONFIG = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+const SIGNAL_TIMEOUT_MS = 12000;
+const MAX_MESSAGE_BYTES = 96 * 1024;
+const ROOM_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const GAME_ACTIONS = new Set(['play-cards', 'draw', 'pass-after-draw', 'toggle-makao', 'choose-pending']);
+
+function normalizeRoomCode(value) {
+  const raw = String(value || '').toUpperCase().replace(/[^A-Z2-9]/g, '');
+  return raw.length === 8 ? `${raw.slice(0, 4)}-${raw.slice(4)}` : '';
+}
+
+function filterStateForSeat(state, seat) {
+  const view = typeof structuredClone === 'function'
+    ? structuredClone(state)
+    : JSON.parse(JSON.stringify(state));
+
+  view.players = (view.players || []).map((player, index) => ({
+    ...player,
+    isLocal: index === seat,
+    hand: index === seat
+      ? player.hand
+      : Array.from({ length: player.hand?.length || 0 }, () => ({ hidden: true })),
+  }));
+  view.drawPile = Array.from({ length: view.drawPile?.length || 0 }, () => ({ hidden: true }));
+
+  if (view.pendingChoice?.actorIndex !== seat) view.pendingChoice = null;
+  if (view.currentIndex !== seat) {
+    view.drawnRescueCardId = null;
+    view.makaoArmed = false;
+  }
+
+  return view;
+}
+
+function seatReady({ seat, tableSize, botSeats, peers }) {
+  if (!Number.isInteger(seat) || seat <= 0 || seat >= tableSize) return false;
+  if (botSeats.has(seat)) return true;
+  return Boolean(peers.get(seat)?.connected);
+}
+
+function validateNick(value) {
+  const nickname = String(value || '')
+    .normalize('NFKC')
+    .replace(/[\u200B-\u200D\u2060\uFEFF]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const length = Array.from(nickname).length;
+  if (length < 3 || length > 20) return { ok: false, message: 'Nick powinien mieć od 3 do 20 znaków.' };
+  if (/https?:|www\.|[<>@]/iu.test(nickname) || !/^[\p{L}\p{N} _-]+$/u.test(nickname)) {
+    return { ok: false, message: 'Nick może zawierać litery, cyfry, spacje, _ i -.' };
+  }
+  return { ok: true, nickname };
+}
+
+function safeJsonParse(raw) {
+  try {
+    const text = typeof raw === 'string' ? raw : String(raw || '');
+    if (text.length > MAX_MESSAGE_BYTES) return null;
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+function safeClose(target) {
+  try {
+    target?.close?.();
+  } catch {
+    // Already closed.
+  }
+}
+
+function channelOpen(channel) {
+  return channel?.readyState === 'open';
+}
+
+function randomRoomCode() {
+  const bytes = new Uint8Array(8);
+  globalThis.crypto.getRandomValues(bytes);
+  const chars = Array.from(bytes, (byte) => ROOM_ALPHABET[byte % ROOM_ALPHABET.length]).join('');
+  return `${chars.slice(0, 4)}-${chars.slice(4)}`;
+}
+
+async function sha256Hex(value) {
+  const bytes = new TextEncoder().encode(value);
+  const hash = await globalThis.crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(hash), (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+async function roomVerifier(room, password = '') {
+  return sha256Hex(`makao-p2p:${room}:${password}`);
+}
+
+function waitForIce(pc, timeoutMs = 6000) {
+  if (pc.iceGatheringState === 'complete') return Promise.resolve();
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      pc.removeEventListener('icegatheringstatechange', onChange);
+      resolve();
+    };
+    const onChange = () => {
+      if (pc.iceGatheringState === 'complete') finish();
+    };
+    const timer = setTimeout(finish, timeoutMs);
+    pc.addEventListener('icegatheringstatechange', onChange);
+  });
+}
+
+function signalingErrorMessage(error) {
+  const message = String(error?.message || error || 'Błąd połączenia');
+  if (/404|expired|not found/i.test(message)) return 'Pokój nie istnieje albo wygasł.';
+  if (/403|auth|password|token/i.test(message)) return 'Nieprawidłowy kod pokoju lub hasło.';
+  if (/full|4009/i.test(message)) return 'Pokój jest pełny.';
+  if (/timeout|timed out/i.test(message)) return 'Przekroczono czas łączenia z usługą sygnalizacji.';
+  return message;
+}
+
+class MakaoMultiplayer {
   constructor(game) {
     this.game = game;
+    this.ui = null;
+    this.pendingTableSize = 3;
+    this.intentionalClose = false;
+    this.session = this.emptySession();
+    this.el = {};
+  }
+
+  emptySession() {
+    return {
+      active: false,
+      role: null,
+      room: '',
+      nick: '',
+      auth: '',
+      hostToken: '',
+      passwordProtected: false,
+      localSeat: 0,
+      tableSize: this.pendingTableSize || 3,
+      names: ['', '', '', ''],
+      botSeats: new Set(),
+      peers: new Map(),
+      signalToSeat: new Map(),
+      guestPc: null,
+      guestChannel: null,
+      signaling: null,
+      inGame: false,
+      revision: 0,
+      lastRevision: 0,
+      connectedSeats: new Set(),
+    };
+  }
+
+  attachUI(ui) {
+    this.ui = ui;
+    this.bindElements();
+    this.bindEvents();
+    this.restoreName();
+    this.renderEntry();
+    this.updateNetworkPill();
+  }
+
+  bindElements() {
+    const $ = (id) => document.getElementById(id);
+    this.el = {
+      open: $('multiplayer-btn'),
+      modal: $('multiplayer-modal'),
+      close: $('mp-close'),
+      entry: $('mp-entry'),
+      hostPanel: $('mp-host-panel'),
+      guestPanel: $('mp-guest-panel'),
+      lobbyPanel: $('mp-lobby-panel'),
+      chooseHost: $('mp-choose-host'),
+      chooseGuest: $('mp-choose-guest'),
+      hostBack: $('mp-host-back'),
+      guestBack: $('mp-guest-back'),
+      hostNick: $('mp-host-nick'),
+      hostPassword: $('mp-host-password'),
+      guestNick: $('mp-guest-nick'),
+      guestPassword: $('mp-guest-password'),
+      roomInput: $('mp-room-code'),
+      create: $('mp-create-room'),
+      join: $('mp-join-room'),
+      hostStatus: $('mp-host-status'),
+      guestStatus: $('mp-guest-status'),
+      lobbyStatus: $('mp-lobby-status'),
+      roomCode: $('mp-room-code-display'),
+      copyRoom: $('mp-copy-room'),
+      seats: $('mp-seats'),
+      start: $('mp-start-game'),
+      leave: $('mp-leave-room'),
+      tableSize: $('mp-table-size'),
+      pill: $('network-pill'),
+      disconnect: $('mp-disconnect'),
+      disconnectText: $('mp-disconnect-text'),
+      disconnectLeave: $('mp-disconnect-leave'),
+    };
+  }
+
+  bindEvents() {
+    this.el.open?.addEventListener('click', () => this.openModal());
+    this.el.close?.addEventListener('click', () => {
+      if (this.session.active) this.leaveRoom();
+      else this.closeModal();
+    });
+    this.el.modal?.addEventListener('click', (event) => {
+      if (event.target === this.el.modal && !this.session.active) this.closeModal();
+    });
+    this.el.chooseHost?.addEventListener('click', () => this.showPanel('host'));
+    this.el.chooseGuest?.addEventListener('click', () => this.showPanel('guest'));
+    this.el.hostBack?.addEventListener('click', () => this.renderEntry());
+    this.el.guestBack?.addEventListener('click', () => this.renderEntry());
+    this.el.create?.addEventListener('click', () => this.createRoom());
+    this.el.join?.addEventListener('click', () => this.joinRoom());
+    this.el.copyRoom?.addEventListener('click', () => this.copyRoomCode());
+    this.el.start?.addEventListener('click', () => this.startHostGame());
+    this.el.leave?.addEventListener('click', () => this.leaveRoom());
+    this.el.disconnectLeave?.addEventListener('click', () => this.leaveRoom());
+    this.el.tableSize?.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-mp-table-size]');
+      if (!button || this.session.active) return;
+      this.pendingTableSize = Number(button.dataset.mpTableSize) === 4 ? 4 : 3;
+      this.el.tableSize.querySelectorAll('[data-mp-table-size]').forEach((item) => item.classList.toggle('active', item === button));
+    });
+    this.el.seats?.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-mp-bot-seat]');
+      if (!button) return;
+      this.toggleBotSeat(Number(button.dataset.mpBotSeat));
+    });
+  }
+
+  restoreName() {
+    let name = '';
+    try {
+      name = localStorage.getItem('makao-player-name') || '';
+    } catch {
+      // Storage may be disabled.
+    }
+    if (name) {
+      if (this.el.hostNick) this.el.hostNick.value = name;
+      if (this.el.guestNick) this.el.guestNick.value = name;
+    }
+  }
+
+  persistName(name) {
+    try {
+      localStorage.setItem('makao-player-name', name);
+    } catch {
+      // Storage may be disabled.
+    }
+  }
+
+  openModal() {
+    this.ui?.closeMenu?.();
+    this.el.modal?.classList.add('open');
+    if (this.session.active) this.renderLobby();
+    else this.renderEntry();
+  }
+
+  closeModal() {
+    this.el.modal?.classList.remove('open');
+  }
+
+  renderEntry() {
+    this.setView('entry');
+    this.setStatus('host', '');
+    this.setStatus('guest', '');
+  }
+
+  showPanel(name) {
+    this.setView(name);
+  }
+
+  setView(name) {
+    this.el.entry?.classList.toggle('hidden', name !== 'entry');
+    this.el.hostPanel?.classList.toggle('hidden', name !== 'host');
+    this.el.guestPanel?.classList.toggle('hidden', name !== 'guest');
+    this.el.lobbyPanel?.classList.toggle('hidden', name !== 'lobby');
+  }
+
+  setStatus(target, text, isError = false) {
+    const element = target === 'host' ? this.el.hostStatus : target === 'guest' ? this.el.guestStatus : this.el.lobbyStatus;
+    if (!element) return;
+    element.textContent = text || '';
+    element.classList.toggle('error', Boolean(isError));
+  }
+
+  signalingBase() {
+    const configured = document.querySelector('meta[name="makao-signaling-url"]')?.getAttribute('content')?.trim();
+    if (configured) return configured.replace(/\/$/, '');
+    if (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+      return location.origin;
+    }
+    return '';
+  }
+
+  websocketUrl(base, room) {
+    const url = new URL(`${base}/api/rooms/${encodeURIComponent(room)}/socket`);
+    url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+    return url.toString();
+  }
+
+  async createRoom() {
+    if (!window.RTCPeerConnection || !globalThis.crypto?.subtle) {
+      this.setStatus('host', 'Ta przeglądarka nie obsługuje WebRTC/Web Crypto.', true);
+      return;
+    }
+    const checked = validateNick(this.el.hostNick?.value);
+    if (!checked.ok) return this.setStatus('host', checked.message, true);
+    const password = this.el.hostPassword?.value || '';
+    if (password && password.length < 6) return this.setStatus('host', 'Hasło powinno mieć co najmniej 6 znaków.', true);
+    const base = this.signalingBase();
+    if (!base) return this.setStatus('host', 'Multiplayer wymaga wdrożonego adresu HTTPS z usługą /api/.', true);
+
+    this.closeNetworkResources();
+    this.session = this.emptySession();
+    this.session.active = true;
+    this.session.role = 'host';
+    this.session.tableSize = this.pendingTableSize;
+    this.session.localSeat = 0;
+    this.session.nick = checked.nickname;
+    this.session.names[0] = checked.nickname;
+    this.session.passwordProtected = Boolean(password);
+    this.persistName(checked.nickname);
+    this.setStatus('host', 'Tworzenie pokoju…');
+
+    try {
+      let created = null;
+      for (let attempt = 0; attempt < 4 && !created; attempt += 1) {
+        const room = randomRoomCode();
+        const auth = await roomVerifier(room, password);
+        const response = await this.fetchWithTimeout(`${base}/api/rooms`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ room, nick: checked.nickname, auth, passwordProtected: Boolean(password) }),
+        });
+        if (response.status === 409) continue;
+        if (!response.ok) throw new Error(`Room create failed: ${response.status}`);
+        created = await response.json();
+        this.session.room = created.room;
+        this.session.auth = auth;
+        this.session.hostToken = created.hostToken;
+      }
+      if (!created) throw new Error('Nie udało się wygenerować wolnego kodu pokoju.');
+      await this.openSignaling('host', { token: this.session.hostToken });
+      this.renderLobby();
+      this.setStatus('lobby', 'Pokój gotowy. Przekaż kod pozostałym graczom.');
+    } catch (error) {
+      this.setStatus('host', signalingErrorMessage(error), true);
+      this.closeNetworkResources();
+      this.session = this.emptySession();
+    }
+  }
+
+  async joinRoom() {
+    if (!window.RTCPeerConnection || !globalThis.crypto?.subtle) {
+      this.setStatus('guest', 'Ta przeglądarka nie obsługuje WebRTC/Web Crypto.', true);
+      return;
+    }
+    const checked = validateNick(this.el.guestNick?.value);
+    if (!checked.ok) return this.setStatus('guest', checked.message, true);
+    const room = normalizeRoomCode(this.el.roomInput?.value);
+    if (!room) return this.setStatus('guest', 'Wpisz pełny ośmioznakowy kod pokoju.', true);
+    const password = this.el.guestPassword?.value || '';
+    const base = this.signalingBase();
+    if (!base) return this.setStatus('guest', 'Multiplayer wymaga wdrożonego adresu HTTPS z usługą /api/.', true);
+
+    this.closeNetworkResources();
+    this.session = this.emptySession();
+    this.session.active = true;
+    this.session.role = 'guest';
+    this.session.localSeat = -1;
+    this.session.room = room;
+    this.session.nick = checked.nickname;
+    this.session.auth = await roomVerifier(room, password);
+    this.session.passwordProtected = Boolean(password);
+    this.persistName(checked.nickname);
+    this.setStatus('guest', 'Łączenie z pokojem…');
+
+    try {
+      await this.openSignaling('guest', { auth: this.session.auth, nick: checked.nickname });
+      const pc = new RTCPeerConnection(RTC_CONFIG);
+      this.session.guestPc = pc;
+      const channel = pc.createDataChannel('makao', { ordered: true });
+      this.attachGuestChannel(channel);
+      pc.onconnectionstatechange = () => {
+        if (['failed', 'disconnected', 'closed'].includes(pc.connectionState)) this.networkInterrupted(0);
+      };
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      await waitForIce(pc);
+      this.signalSend({ type: 'offer', sdp: pc.localDescription });
+      this.setView('lobby');
+      this.renderLobby();
+      this.setStatus('lobby', 'Pokój znaleziony. Łączenie bezpośrednie z gospodarzem…');
+    } catch (error) {
+      this.setStatus('guest', signalingErrorMessage(error), true);
+      this.closeNetworkResources();
+      this.session = this.emptySession();
+    }
+  }
+
+  async fetchWithTimeout(url, options) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), SIGNAL_TIMEOUT_MS);
+    try {
+      return await fetch(url, { ...options, signal: controller.signal, cache: 'no-store' });
+    } catch (error) {
+      if (error?.name === 'AbortError') throw new Error('Signaling timeout');
+      throw error;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  openSignaling(role, credentials) {
+    const base = this.signalingBase();
+    if (!base) return Promise.reject(new Error('Brak adresu sygnalizacji'));
+    const ws = new WebSocket(this.websocketUrl(base, this.session.room));
+    this.session.signaling = ws;
+
+    return new Promise((resolve, reject) => {
+      let authenticated = false;
+      const timer = setTimeout(() => {
+        if (!authenticated) {
+          safeClose(ws);
+          reject(new Error('Signaling timeout'));
+        }
+      }, SIGNAL_TIMEOUT_MS);
+
+      ws.onmessage = (event) => {
+        const message = safeJsonParse(event.data);
+        if (!message) return;
+        if (message.type === 'auth-required') {
+          ws.send(JSON.stringify({ type: 'authenticate', role, ...credentials }));
+          return;
+        }
+        if (message.type === 'authenticated') {
+          authenticated = true;
+          clearTimeout(timer);
+          resolve(message);
+          if (role === 'host') {
+            for (const guest of message.guests || []) {
+              if (guest.offer) queueMicrotask(() => this.handleHostOffer({ type: 'offer', guestId: guest.id, nick: guest.nick, sdp: guest.offer }));
+            }
+          }
+          return;
+        }
+        this.handleSignalMessage(message);
+      };
+
+      ws.onerror = () => {
+        if (!authenticated) {
+          clearTimeout(timer);
+          reject(new Error('Nie udało się połączyć z sygnalizacją.'));
+        }
+      };
+
+      ws.onclose = (event) => {
+        clearTimeout(timer);
+        if (!authenticated) {
+          reject(new Error(event.reason || `Signaling closed (${event.code})`));
+          return;
+        }
+        if (!this.intentionalClose && !this.session.inGame && this.session.active) {
+          this.setStatus('lobby', event.reason || 'Połączenie z sygnalizacją zostało zamknięte.', true);
+        }
+      };
+    });
+  }
+
+  signalSend(message) {
+    const ws = this.session.signaling;
+    if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify(message));
+  }
+
+  handleSignalMessage(message) {
+    if (this.session.role === 'host') {
+      if (message.type === 'offer') this.handleHostOffer(message);
+      if (message.type === 'guest-left') this.removeLobbyGuest(message.guestId);
+      return;
+    }
+
+    if (this.session.role === 'guest') {
+      if (message.type === 'answer') this.acceptAnswer(message);
+      if (message.type === 'rejected') {
+        this.setStatus('lobby', message.reason || 'Gospodarz odrzucił połączenie.', true);
+        safeClose(this.session.guestPc);
+      }
+      if (message.type === 'room-closed' && !this.session.inGame) {
+        this.setStatus('lobby', message.reason || 'Pokój został zamknięty.', true);
+      }
+    }
+  }
+
+  async handleHostOffer(offer) {
+    if (this.session.role !== 'host' || this.session.inGame || !offer?.guestId || !offer?.sdp) return;
+    const checked = validateNick(offer.nick);
+    if (!checked.ok || this.session.signalToSeat.has(offer.guestId)) return;
+
+    const seat = Array.from({ length: this.session.tableSize - 1 }, (_, index) => index + 1)
+      .find((candidate) => !this.session.botSeats.has(candidate) && !this.session.peers.get(candidate)?.connected && !this.session.peers.get(candidate)?.pending);
+
+    if (!seat) {
+      this.signalSend({ type: 'reject', guestId: offer.guestId, reason: 'Brak wolnego miejsca przy tym stole.' });
+      return;
+    }
+
+    const pc = new RTCPeerConnection(RTC_CONFIG);
+    const peer = { pc, channel: null, connected: false, pending: true, guestId: offer.guestId, nick: checked.nickname };
+    this.session.peers.set(seat, peer);
+    this.session.signalToSeat.set(offer.guestId, seat);
+    this.session.names[seat] = checked.nickname;
+    pc.ondatachannel = (event) => this.attachHostChannel(seat, event.channel);
+    pc.onconnectionstatechange = () => {
+      if (['failed', 'disconnected', 'closed'].includes(pc.connectionState)) this.networkInterrupted(seat);
+    };
+    this.renderLobby();
+
+    try {
+      await pc.setRemoteDescription(offer.sdp);
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      await waitForIce(pc);
+      peer.pending = false;
+      this.signalSend({ type: 'answer', guestId: offer.guestId, seat, sdp: pc.localDescription });
+      this.setStatus('lobby', `Łączenie z graczem ${checked.nickname}…`);
+    } catch {
+      this.session.signalToSeat.delete(offer.guestId);
+      this.session.peers.delete(seat);
+      this.session.names[seat] = '';
+      safeClose(pc);
+      this.signalSend({ type: 'reject', guestId: offer.guestId, reason: 'Nie udało się zestawić połączenia WebRTC.' });
+      this.renderLobby();
+    }
+  }
+
+  async acceptAnswer(message) {
+    if (this.session.role !== 'guest' || !this.session.guestPc || !message?.sdp) return;
+    this.session.localSeat = Number(message.seat);
+    this.game.setLocalSeat(this.session.localSeat);
+    try {
+      await this.session.guestPc.setRemoteDescription(message.sdp);
+    } catch (error) {
+      this.setStatus('lobby', `Nie udało się przyjąć odpowiedzi gospodarza: ${error.message}`, true);
+    }
+  }
+
+  attachGuestChannel(channel) {
+    this.session.guestChannel = channel;
+    channel.onopen = () => {
+      this.sendGuest({ type: 'hello', name: this.session.nick });
+      this.signalSend({ type: 'connected' });
+      this.setStatus('lobby', 'Połączono P2P. Czekaj na start gospodarza.');
+      this.updateNetworkPill();
+    };
+    channel.onmessage = (event) => {
+      const message = safeJsonParse(event.data);
+      if (message) this.handleHostData(message);
+    };
+    channel.onclose = () => this.networkInterrupted(0);
+    channel.onerror = () => this.networkInterrupted(0);
+  }
+
+  attachHostChannel(seat, channel) {
+    const peer = this.session.peers.get(seat);
+    if (!peer) return;
+    peer.channel = channel;
+    channel.onopen = () => {
+      peer.connected = true;
+      peer.pending = false;
+      this.session.connectedSeats.add(seat);
+      this.sendPeer(seat, this.welcomePacket(seat));
+      this.sendLobby();
+      this.renderLobby();
+      this.setStatus('lobby', `${peer.nick} jest połączony.`);
+      this.updateNetworkPill();
+    };
+    channel.onmessage = (event) => {
+      const message = safeJsonParse(event.data);
+      if (message) this.handlePeerData(seat, message);
+    };
+    channel.onclose = () => this.networkInterrupted(seat);
+    channel.onerror = () => this.networkInterrupted(seat);
+  }
+
+  handlePeerData(seat, message) {
+    if (message.type === 'hello') {
+      const checked = validateNick(message.name);
+      if (checked.ok && !this.session.inGame) {
+        this.session.names[seat] = checked.nickname;
+        const peer = this.session.peers.get(seat);
+        if (peer) peer.nick = checked.nickname;
+        this.sendLobby();
+        this.renderLobby();
+      }
+      return;
+    }
+
+    if (message.type !== 'action' || !this.session.inGame || !GAME_ACTIONS.has(message.action)) return;
+    const result = this.game.executePlayerAction(seat, message.action, message.payload || {});
+    if (!result?.ok) {
+      this.sendPeer(seat, { type: 'error', code: 'ILLEGAL_ACTION', message: result?.reason || 'Niedozwolona akcja.' });
+    }
+  }
+
+  handleHostData(message) {
+    if (message.type === 'welcome') {
+      this.session.localSeat = Number(message.seat);
+      this.session.tableSize = Number(message.tableSize) || 3;
+      this.session.names = [...(message.names || [])];
+      this.session.botSeats = new Set(message.botSeats || []);
+      this.session.connectedSeats = new Set(message.connectedSeats || []);
+      this.game.setLocalSeat(this.session.localSeat);
+      this.renderLobby();
+      return;
+    }
+
+    if (message.type === 'lobby') {
+      this.session.tableSize = Number(message.tableSize) || this.session.tableSize;
+      this.session.names = [...(message.names || this.session.names)];
+      this.session.botSeats = new Set(message.botSeats || []);
+      this.session.connectedSeats = new Set(message.connectedSeats || []);
+      this.renderLobby();
+      return;
+    }
+
+    if (message.type === 'start') {
+      this.session.inGame = true;
+      this.closeModal();
+      this.setStatus('lobby', 'Gra rozpoczęta.');
+      this.updateNetworkPill();
+      return;
+    }
+
+    if (message.type === 'state') {
+      const revision = Number(message.revision) || 0;
+      if (revision <= this.session.lastRevision || !message.state) return;
+      this.session.lastRevision = revision;
+      this.session.inGame = true;
+      this.game.applyRemoteState(message.state, this.session.localSeat);
+      this.closeModal();
+      this.updateNetworkPill();
+      if (message.state.networkPaused) this.showDisconnect('Rozgrywka została wstrzymana, ponieważ jeden z graczy utracił połączenie.');
+      return;
+    }
+
+    if (message.type === 'error') this.ui?.showToast?.(message.message || 'Gospodarz odrzucił akcję.');
+  }
+
+  welcomePacket(seat) {
+    return {
+      type: 'welcome',
+      seat,
+      tableSize: this.session.tableSize,
+      names: this.session.names.slice(0, this.session.tableSize),
+      botSeats: [...this.session.botSeats],
+      connectedSeats: this.connectedHumanSeats(),
+    };
+  }
+
+  sendLobby() {
+    if (this.session.role !== 'host') return;
+    const packet = {
+      type: 'lobby',
+      tableSize: this.session.tableSize,
+      names: this.session.names.slice(0, this.session.tableSize),
+      botSeats: [...this.session.botSeats],
+      connectedSeats: this.connectedHumanSeats(),
+    };
+    this.broadcast(packet);
+  }
+
+  connectedHumanSeats() {
+    const seats = [0];
+    for (let seat = 1; seat < this.session.tableSize; seat += 1) {
+      if (this.session.peers.get(seat)?.connected) seats.push(seat);
+    }
+    return seats;
+  }
+
+  sendPeer(seat, message) {
+    const channel = this.session.peers.get(seat)?.channel;
+    if (channelOpen(channel)) channel.send(JSON.stringify(message));
+  }
+
+  sendGuest(message) {
+    if (channelOpen(this.session.guestChannel)) this.session.guestChannel.send(JSON.stringify(message));
+  }
+
+  broadcast(message) {
+    if (this.session.role !== 'host') return;
+    for (let seat = 1; seat < this.session.tableSize; seat += 1) this.sendPeer(seat, message);
+  }
+
+  handleGameStateChange(state) {
+    if (this.session.role !== 'host' || !this.session.inGame || !state?.started) return;
+    this.session.revision += 1;
+    for (let seat = 1; seat < this.session.tableSize; seat += 1) {
+      const peer = this.session.peers.get(seat);
+      if (!peer?.connected) continue;
+      this.sendPeer(seat, {
+        type: 'state',
+        revision: this.session.revision,
+        state: filterStateForSeat(state, seat),
+      });
+    }
+  }
+
+  handleGameAction(action, payload = {}) {
+    if (!this.session.inGame) return { ok: false, reason: 'Multiplayer nie jest aktywny.' };
+    if (!GAME_ACTIONS.has(action)) return { ok: false, reason: 'Nieznana akcja.' };
+
+    if (this.session.role === 'host') {
+      const result = this.game.executePlayerAction(this.session.localSeat, action, payload);
+      if (!result?.ok) this.ui?.showToast?.(result?.reason || 'Niedozwolona akcja.');
+      return result;
+    }
+
+    if (this.session.role === 'guest') {
+      if (!channelOpen(this.session.guestChannel)) {
+        const result = { ok: false, reason: 'Brak połączenia z gospodarzem.' };
+        this.ui?.showToast?.(result.reason);
+        return result;
+      }
+      this.sendGuest({ type: 'action', action, payload });
+      return { ok: true, pending: true };
+    }
+
+    return { ok: false, reason: 'Nieprawidłowa rola multiplayer.' };
+  }
+
+  isGameActive() {
+    return Boolean(this.session.active && this.session.inGame);
+  }
+
+  isGuest() {
+    return this.session.role === 'guest';
+  }
+
+  toggleBotSeat(seat) {
+    if (this.session.role !== 'host' || this.session.inGame || !Number.isInteger(seat) || seat <= 0 || seat >= this.session.tableSize) return;
+    const peer = this.session.peers.get(seat);
+    if (peer?.connected || peer?.pending) return;
+
+    if (this.session.botSeats.has(seat)) {
+      this.session.botSeats.delete(seat);
+      this.session.names[seat] = '';
+    } else {
+      this.session.botSeats.add(seat);
+      this.session.names[seat] = BOT_NAMES[(seat - 1) % BOT_NAMES.length] || `Bot ${seat}`;
+    }
+    this.renderLobby();
+    this.sendLobby();
+  }
+
+  allSeatsReady() {
+    if (this.session.role !== 'host') return false;
+    for (let seat = 1; seat < this.session.tableSize; seat += 1) {
+      if (!seatReady({ seat, tableSize: this.session.tableSize, botSeats: this.session.botSeats, peers: this.session.peers })) return false;
+    }
+    return true;
+  }
+
+  startHostGame() {
+    if (this.session.role !== 'host' || this.session.inGame || !this.allSeatsReady()) return;
+    const seats = Array.from({ length: this.session.tableSize }, (_, index) => ({
+      id: `seat-${index}`,
+      name: this.session.names[index] || (this.session.botSeats.has(index) ? `Bot ${index}` : `Gracz ${index + 1}`),
+      isBot: this.session.botSeats.has(index),
+    }));
+    seats[0].isBot = false;
+
+    this.session.inGame = true;
+    this.session.revision = 0;
+    this.broadcast({ type: 'start' });
+    this.closeModal();
+    this.game.startMultiplayer(seats, { localSeat: 0 });
+    this.signalSend({ type: 'close-room' });
+    this.updateNetworkPill();
+  }
+
+  renderLobby() {
+    if (!this.session.active) return;
+    this.setView('lobby');
+    if (this.el.roomCode) this.el.roomCode.textContent = this.session.room || '—';
+    if (!this.el.seats) return;
+
+    const tableSize = this.session.tableSize || 3;
+    const rows = [];
+    for (let seat = 0; seat < tableSize; seat += 1) {
+      const isBot = this.session.botSeats.has(seat);
+      const peer = this.session.peers.get(seat);
+      const isLocal = seat === this.session.localSeat;
+      const connected = seat === 0 || Boolean(peer?.connected) || (this.session.role === 'guest' && this.session.connectedSeats.has(seat));
+      const pending = Boolean(peer?.pending);
+      const name = this.session.names[seat] || (seat === 0 ? 'Gospodarz' : 'Wolne miejsce');
+      const status = isBot ? 'BOT · GOTOWY' : connected ? 'POŁĄCZONY' : pending ? 'ŁĄCZENIE…' : 'OCZEKUJE';
+      const botButton = this.session.role === 'host' && seat > 0 && !connected && !pending
+        ? `<button type="button" class="mp-seat-action" data-mp-bot-seat="${seat}">${isBot ? 'Usuń bota' : 'Dodaj bota'}</button>`
+        : '';
+      rows.push(`<div class="mp-seat ${isLocal ? 'local' : ''} ${isBot ? 'bot' : ''}"><div class="mp-seat-index">${seat + 1}</div><div class="mp-seat-copy"><strong>${this.escapeHtml(name)}${isLocal ? ' · Ty' : ''}</strong><span>${status}</span></div>${botButton}</div>`);
+    }
+    this.el.seats.innerHTML = rows.join('');
+    if (this.el.start) {
+      this.el.start.classList.toggle('hidden', this.session.role !== 'host');
+      this.el.start.disabled = !this.allSeatsReady();
+    }
+    this.updateNetworkPill();
+  }
+
+  escapeHtml(value) {
+    return String(value || '').replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
+  }
+
+  async copyRoomCode() {
+    if (!this.session.room) return;
+    try {
+      await navigator.clipboard.writeText(this.session.room.replace('-', ''));
+      this.ui?.showToast?.('Kod pokoju skopiowany.');
+    } catch {
+      this.ui?.showToast?.(`Kod pokoju: ${this.session.room}`);
+    }
+  }
+
+  removeLobbyGuest(guestId) {
+    const seat = this.session.signalToSeat.get(guestId);
+    if (!Number.isInteger(seat)) return;
+    const peer = this.session.peers.get(seat);
+    safeClose(peer?.channel);
+    safeClose(peer?.pc);
+    this.session.signalToSeat.delete(guestId);
+    this.session.peers.delete(seat);
+    this.session.connectedSeats.delete(seat);
+    if (!this.session.botSeats.has(seat)) this.session.names[seat] = '';
+    this.renderLobby();
+    this.sendLobby();
+  }
+
+  networkInterrupted(seat) {
+    if (this.intentionalClose || !this.session.active) return;
+    if (this.session.role === 'host' && seat > 0 && !this.session.inGame) {
+      const peer = this.session.peers.get(seat);
+      if (peer?.guestId) this.removeLobbyGuest(peer.guestId);
+      return;
+    }
+
+    if (this.session.inGame) {
+      if (this.session.role === 'host' && !this.game.state.networkPaused) {
+        this.game.state.networkPaused = true;
+        this.game.addLog('Rozgrywka została wstrzymana: gracz utracił połączenie.');
+        this.game.emit();
+      } else if (this.session.role === 'guest' && this.game.state?.started) {
+        this.game.state.networkPaused = true;
+        this.game.emit();
+      }
+      this.showDisconnect(this.session.role === 'guest'
+        ? 'Połączenie z gospodarzem zostało przerwane. Rozgrywka nie będzie kontynuowana z niespójnym stanem.'
+        : 'Jeden z graczy utracił połączenie. Rozgrywka została wstrzymana, aby zachować spójny stan.');
+    }
+    this.updateNetworkPill();
+  }
+
+  showDisconnect(message) {
+    if (this.el.disconnectText) this.el.disconnectText.textContent = message;
+    this.el.disconnect?.classList.add('open');
+  }
+
+  hideDisconnect() {
+    this.el.disconnect?.classList.remove('open');
+  }
+
+  leaveRoom() {
+    if (this.session.role === 'host' && !this.session.inGame) this.signalSend({ type: 'close-room' });
+    if (this.session.role === 'guest' && !this.session.inGame) this.signalSend({ type: 'leave' });
+    this.closeNetworkResources();
+    this.session = this.emptySession();
+    this.game.stop();
+    this.hideDisconnect();
+    this.closeModal();
+    this.ui?.openMenu?.();
+    this.updateNetworkPill();
+  }
+
+  closeNetworkResources() {
+    this.intentionalClose = true;
+    for (const peer of this.session.peers?.values?.() || []) {
+      safeClose(peer.channel);
+      safeClose(peer.pc);
+    }
+    safeClose(this.session.guestChannel);
+    safeClose(this.session.guestPc);
+    safeClose(this.session.signaling);
+    this.intentionalClose = false;
+  }
+
+  updateNetworkPill() {
+    if (!this.el.pill) return;
+    if (!this.session.active) {
+      this.el.pill.textContent = 'OFFLINE';
+      this.el.pill.classList.remove('online', 'warning');
+      return;
+    }
+    if (this.game.state?.networkPaused) {
+      this.el.pill.textContent = 'P2P · WSTRZYMANO';
+      this.el.pill.classList.remove('online');
+      this.el.pill.classList.add('warning');
+      return;
+    }
+    if (this.session.inGame) {
+      this.el.pill.textContent = `P2P · ${this.session.role === 'host' ? 'HOST' : `MIEJSCE ${this.session.localSeat + 1}`}`;
+      this.el.pill.classList.add('online');
+      this.el.pill.classList.remove('warning');
+      return;
+    }
+    this.el.pill.textContent = 'P2P · LOBBY';
+    this.el.pill.classList.add('online');
+    this.el.pill.classList.remove('warning');
+  }
+
+  debug() {
+    return {
+      active: this.session.active,
+      role: this.session.role,
+      room: this.session.room,
+      localSeat: this.session.localSeat,
+      tableSize: this.session.tableSize,
+      botSeats: [...this.session.botSeats],
+      connectedSeats: this.connectedHumanSeats(),
+      inGame: this.session.inGame,
+      revision: this.session.revision,
+      lastRevision: this.session.lastRevision,
+    };
+  }
+
+  debugSetBotSeat(seat, enabled = true) {
+    if (this.session.role !== 'host') return false;
+    if (enabled && !this.session.botSeats.has(seat)) this.toggleBotSeat(seat);
+    if (!enabled && this.session.botSeats.has(seat)) this.toggleBotSeat(seat);
+    return this.session.botSeats.has(seat) === enabled;
+  }
+
+  debugHostLobby({ tableSize = 4, botSeats = [2, 3], connectedSeats = [1] } = {}) {
+    this.closeNetworkResources();
+    this.session = this.emptySession();
+    this.session.active = true;
+    this.session.role = 'host';
+    this.session.localSeat = 0;
+    this.session.room = 'TEST-ROOM';
+    this.session.nick = 'Host';
+    this.session.tableSize = tableSize === 3 ? 3 : 4;
+    this.session.names[0] = 'Host';
+    this.session.botSeats = new Set(botSeats.filter((seat) => seat > 0 && seat < this.session.tableSize));
+    for (const seat of connectedSeats) {
+      if (seat <= 0 || seat >= this.session.tableSize || this.session.botSeats.has(seat)) continue;
+      this.session.names[seat] = `Guest ${seat}`;
+      this.session.peers.set(seat, { connected: true, pending: false, pc: null, channel: null, guestId: `debug-${seat}` });
+    }
+    this.openModal();
+    this.renderLobby();
+    return this.debug();
+  }
+}
+
+// ===== js/ui.js =====
+class MakaoUI {
+  constructor(game, multiplayer = null) {
+    this.game = game;
+    this.multiplayer = multiplayer;
     this.selected = new Set();
     this.botCount = 2;
     this.helperTab = 'state';
@@ -1204,7 +2579,7 @@ class MakaoUI {
   bindElements() {
     const $ = (id) => document.getElementById(id);
     this.el = {
-      hudTurn: $('hud-turn'), hudDeck: $('hud-deck'), hudState: $('hud-state'), phaseRibbon: $('phase-ribbon'), opponents: $('opponents'), drawCount: $('draw-count'), discard: $('discard-pile'), centerState: $('center-state'), humanSeat: $('human-seat'), humanRole: $('human-role'), humanCount: $('human-count'), hand: $('human-hand'), actionBar: $('action-bar'), makaoBtn: $('makao-btn'), clearBtn: $('clear-btn'), playBtn: $('play-btn'), drawBtn: $('draw-btn'), passBtn: $('pass-btn'), helperContent: $('helper-content'), mainMenu: $('main-menu'), startBtn: $('start-btn'), resumeBtn: $('resume-btn'), botSelector: $('bot-selector'), menuBtn: $('menu-btn'), rulesBtn: $('rules-btn'), menuRulesBtn: $('menu-rules-btn'), rulesModal: $('rules-modal'), rulesClose: $('rules-close'), choiceModal: $('choice-modal'), choiceEyebrow: $('choice-eyebrow'), choiceTitle: $('choice-title'), choiceDescription: $('choice-description'), choiceOptions: $('choice-options'), resultModal: $('result-modal'), standings: $('standings'), resultNewGame: $('result-new-game'), toast: $('toast'), motionToggle: $('motion-toggle')
+      hudTurn: $('hud-turn'), hudDeck: $('hud-deck'), hudState: $('hud-state'), phaseRibbon: $('phase-ribbon'), opponents: $('opponents'), drawCount: $('draw-count'), discard: $('discard-pile'), centerState: $('center-state'), humanSeat: $('human-seat'), humanRole: $('human-role'), humanCount: $('human-count'), hand: $('human-hand'), actionBar: $('action-bar'), makaoBtn: $('makao-btn'), clearBtn: $('clear-btn'), playBtn: $('play-btn'), drawBtn: $('draw-btn'), passBtn: $('pass-btn'), helperContent: $('helper-content'), mainMenu: $('main-menu'), startBtn: $('start-btn'), resumeBtn: $('resume-btn'), botSelector: $('bot-selector'), menuBtn: $('menu-btn'), rulesBtn: $('rules-btn'), menuRulesBtn: $('menu-rules-btn'), rulesModal: $('rules-modal'), rulesClose: $('rules-close'), choiceModal: $('choice-modal'), choiceEyebrow: $('choice-eyebrow'), choiceTitle: $('choice-title'), choiceDescription: $('choice-description'), choiceOptions: $('choice-options'), resultModal: $('result-modal'), standings: $('standings'), resultNewGame: $('result-new-game'), toast: $('toast'), motionToggle: $('motion-toggle'), humanName: $('human-name'), humanAvatar: $('human-avatar')
     };
   }
 
@@ -1215,123 +2590,384 @@ class MakaoUI {
       this.botCount = Number(button.dataset.bots);
       this.el.botSelector.querySelectorAll('.segment').forEach((item) => item.classList.toggle('active', item === button));
     });
-    this.el.startBtn.addEventListener('click', () => { this.selected.clear(); this.closeMenu(); this.game.start(this.botCount); });
+    this.el.startBtn.addEventListener('click', () => {
+      this.selected.clear();
+      this.closeMenu();
+      this.game.start(this.botCount);
+    });
     this.el.resumeBtn.addEventListener('click', () => this.closeMenu());
     this.el.menuBtn.addEventListener('click', () => this.openMenu());
     this.el.rulesBtn.addEventListener('click', () => this.openRules());
     this.el.menuRulesBtn.addEventListener('click', () => this.openRules());
     this.el.rulesClose.addEventListener('click', () => this.closeRules());
-    this.el.rulesModal.addEventListener('click', (event) => { if (event.target === this.el.rulesModal) this.closeRules(); });
-    document.querySelectorAll('.helper-tab').forEach((tab) => tab.addEventListener('click', () => { this.helperTab = tab.dataset.tab; document.querySelectorAll('.helper-tab').forEach((button) => button.classList.toggle('active', button === tab)); this.renderHelper(this.game.state); }));
-    this.el.hand.addEventListener('click', (event) => { const cardEl = event.target.closest('[data-card-id]'); if (!cardEl || cardEl.classList.contains('disabled-card')) return; this.toggleCardSelection(cardEl.dataset.cardId); });
-    this.el.clearBtn.addEventListener('click', () => { this.selected.clear(); this.render(this.game.state); });
-    this.el.playBtn.addEventListener('click', () => { const result = this.game.humanPlay([...this.selected]); if (!result.ok) this.showToast(result.reason); });
-    this.el.drawBtn.addEventListener('click', () => this.game.humanDraw());
-    this.el.passBtn.addEventListener('click', () => this.game.humanPassAfterDraw());
-    this.el.makaoBtn.addEventListener('click', () => this.game.toggleMakao());
+    this.el.rulesModal.addEventListener('click', (event) => {
+      if (event.target === this.el.rulesModal) this.closeRules();
+    });
+    document.querySelectorAll('.helper-tab').forEach((tab) => tab.addEventListener('click', () => {
+      this.helperTab = tab.dataset.tab;
+      document.querySelectorAll('.helper-tab').forEach((button) => button.classList.toggle('active', button === tab));
+      this.renderHelper(this.game.state);
+    }));
+    this.el.hand.addEventListener('click', (event) => {
+      const cardEl = event.target.closest('[data-card-id]');
+      if (!cardEl || cardEl.classList.contains('disabled-card')) return;
+      this.toggleCardSelection(cardEl.dataset.cardId);
+    });
+    this.el.clearBtn.addEventListener('click', () => {
+      this.selected.clear();
+      this.render(this.game.state);
+    });
+    this.el.playBtn.addEventListener('click', () => {
+      const result = this.dispatch('play-cards', { cardIds: [...this.selected] });
+      if (result?.ok) {
+        this.selected.clear();
+        this.render(this.game.state);
+      }
+    });
+    this.el.drawBtn.addEventListener('click', () => this.dispatch('draw'));
+    this.el.passBtn.addEventListener('click', () => this.dispatch('pass-after-draw'));
+    this.el.makaoBtn.addEventListener('click', () => this.dispatch('toggle-makao'));
     this.el.motionToggle.addEventListener('change', () => document.body.classList.toggle('reduce-motion', !this.el.motionToggle.checked));
-    this.el.resultNewGame.addEventListener('click', () => { this.el.resultModal.classList.remove('open'); this.openMenu(); });
+    this.el.resultNewGame.addEventListener('click', () => {
+      this.el.resultModal.classList.remove('open');
+      this.openMenu();
+    });
   }
 
-  openMenu(){ this.el.mainMenu.classList.add('open'); this.el.resumeBtn.classList.toggle('hidden', !(this.game.state.started && !this.game.state.gameOver)); }
-  closeMenu(){ this.el.mainMenu.classList.remove('open'); }
-  openRules(){ this.el.rulesModal.classList.add('open'); }
-  closeRules(){ this.el.rulesModal.classList.remove('open'); }
-  showToast(message){ clearTimeout(this.lastToastTimer); this.el.toast.textContent=message; this.el.toast.classList.add('show'); this.lastToastTimer=setTimeout(()=>this.el.toast.classList.remove('show'),2600); }
-
-  toggleCardSelection(cardId){
-    if(!this.game.humanCanAct())return;
-    const state=this.game.state, human=state.players[state.currentIndex], card=human.hand.find((item)=>item.id===cardId); if(!card)return;
-    if(state.drawnRescueCardId){this.selected.clear();this.selected.add(cardId);this.render(state);return;}
-    if(this.selected.has(cardId)){this.selected.delete(cardId);this.render(state);return;}
-    const selectedCards=[...this.selected].map((id)=>human.hand.find((item)=>item.id===id)).filter(Boolean);
-    if(selectedCards.length&&selectedCards[0].rank!==card.rank)this.selected.clear();
-    if(this.selected.size<4)this.selected.add(cardId); this.render(state);
+  dispatch(action, payload = {}) {
+    const result = this.multiplayer?.isGameActive?.()
+      ? this.multiplayer.handleGameAction(action, payload)
+      : this.game.executePlayerAction(this.game.localSeat, action, payload);
+    if (result && !result.ok) this.showToast(result.reason || 'Niedozwolona akcja.');
+    return result;
   }
 
-  render(state){ this.pruneSelection(state); this.renderHud(state); this.renderOpponents(state); this.renderCenter(state); this.renderHuman(state); this.renderActions(state); this.renderHelper(state); this.renderChoice(state); this.renderResult(state); }
-
-  pruneSelection(state){
-    const human=state.players.find((player)=>player.isHuman);
-    if(!human||state.currentIndex!==state.players.indexOf(human)||human.finishPlace!=null){this.selected.clear();return;}
-    const ids=new Set(human.hand.map((card)=>card.id)); for(const id of this.selected)if(!ids.has(id))this.selected.delete(id);
-    if(state.drawnRescueCardId)for(const id of [...this.selected])if(id!==state.drawnRescueCardId)this.selected.delete(id);
+  openMenu() {
+    this.el.mainMenu.classList.add('open');
+    this.el.resumeBtn.classList.toggle('hidden', !(this.game.state.started && !this.game.state.gameOver));
   }
 
-  renderHud(state){
-    if(!state.started){this.el.hudTurn.textContent='—';this.el.hudDeck.textContent='52';this.el.hudState.textContent='OCZEKIWANIE';return;}
-    const current=state.players[state.currentIndex]; this.el.hudTurn.textContent=current?.name?.toUpperCase()??'—'; this.el.hudDeck.textContent=String(state.drawPile.length); this.el.hudState.textContent=this.constraintShort(state).toUpperCase();
+  closeMenu() {
+    this.el.mainMenu.classList.remove('open');
   }
 
-  renderOpponents(state){
-    this.el.opponents.innerHTML=''; if(!state.started)return;
-    const bots=state.players.filter((player)=>!player.isHuman), positions=bots.length===2?['seat-left','seat-right']:['seat-left','seat-top','seat-right'];
-    bots.forEach((bot,idx)=>{
-      const playerIndex=state.players.indexOf(bot), seat=document.createElement('div');
-      seat.className=`opponent-seat ${positions[idx]} ${state.currentIndex===playerIndex&&!state.gameOver?'active':''} ${bot.finishPlace?'finished':''}`;
-      const backs=Array.from({length:Math.min(bot.hand.length,6)},(_,cardIndex)=>`<span class="mini-back" style="--i:${cardIndex}"></span>`).join('');
-      seat.innerHTML=`<div class="opponent-hand">${backs}<b>${bot.hand.length}</b></div><div class="player-plate"><div class="avatar avatar-${idx+1}">${bot.avatar}</div><div class="plate-copy"><strong>${bot.name}</strong><span>${bot.finishPlace?`${bot.finishPlace}. MIEJSCE`:'BOT'}</span></div><div class="card-counter">${bot.hand.length} KART</div></div>`;
+  openRules() {
+    this.el.rulesModal.classList.add('open');
+  }
+
+  closeRules() {
+    this.el.rulesModal.classList.remove('open');
+  }
+
+  showToast(message) {
+    clearTimeout(this.lastToastTimer);
+    this.el.toast.textContent = message;
+    this.el.toast.classList.add('show');
+    this.lastToastTimer = setTimeout(() => this.el.toast.classList.remove('show'), 2600);
+  }
+
+  localIndex(state) {
+    if (Number.isInteger(this.game.localSeat) && state.players?.[this.game.localSeat]) return this.game.localSeat;
+    const marked = state.players?.findIndex((player) => player.isLocal);
+    if (marked >= 0) return marked;
+    return state.players?.findIndex((player) => !player.isBot) ?? -1;
+  }
+
+  localPlayer(state) {
+    const index = this.localIndex(state);
+    return index >= 0 ? state.players[index] : null;
+  }
+
+  toggleCardSelection(cardId) {
+    if (!this.game.humanCanAct()) return;
+    const state = this.game.state;
+    const local = this.localPlayer(state);
+    const card = local?.hand.find((item) => item.id === cardId);
+    if (!card) return;
+    if (state.drawnRescueCardId) {
+      this.selected.clear();
+      this.selected.add(cardId);
+      this.render(state);
+      return;
+    }
+    if (this.selected.has(cardId)) {
+      this.selected.delete(cardId);
+      this.render(state);
+      return;
+    }
+    const selectedCards = [...this.selected].map((id) => local.hand.find((item) => item.id === id)).filter(Boolean);
+    if (selectedCards.length && selectedCards[0].rank !== card.rank) this.selected.clear();
+    if (this.selected.size < 4) this.selected.add(cardId);
+    this.render(state);
+  }
+
+  render(state) {
+    this.pruneSelection(state);
+    this.renderHud(state);
+    this.renderOpponents(state);
+    this.renderCenter(state);
+    this.renderHuman(state);
+    this.renderActions(state);
+    this.renderHelper(state);
+    this.renderChoice(state);
+    this.renderResult(state);
+  }
+
+  pruneSelection(state) {
+    const localIndex = this.localIndex(state);
+    const local = state.players?.[localIndex];
+    if (!local || state.currentIndex !== localIndex || local.finishPlace != null) {
+      this.selected.clear();
+      return;
+    }
+    const ids = new Set(local.hand.map((card) => card.id));
+    for (const id of this.selected) if (!ids.has(id)) this.selected.delete(id);
+    if (state.drawnRescueCardId) {
+      for (const id of [...this.selected]) if (id !== state.drawnRescueCardId) this.selected.delete(id);
+    }
+  }
+
+  renderHud(state) {
+    if (!state.started) {
+      this.el.hudTurn.textContent = '—';
+      this.el.hudDeck.textContent = '52';
+      this.el.hudState.textContent = 'OCZEKIWANIE';
+      return;
+    }
+    const current = state.players[state.currentIndex];
+    this.el.hudTurn.textContent = current?.name?.toUpperCase() ?? '—';
+    this.el.hudDeck.textContent = String(state.drawPile.length);
+    this.el.hudState.textContent = state.networkPaused ? 'WSTRZYMANO' : this.constraintShort(state).toUpperCase();
+  }
+
+  renderOpponents(state) {
+    this.el.opponents.innerHTML = '';
+    if (!state.started) return;
+    const localIndex = this.localIndex(state);
+    const opponents = state.players.map((player, index) => ({ player, index })).filter(({ index }) => index !== localIndex);
+    const positions = opponents.length === 2 ? ['seat-left', 'seat-right'] : ['seat-left', 'seat-top', 'seat-right'];
+
+    opponents.forEach(({ player, index: playerIndex }, idx) => {
+      const seat = document.createElement('div');
+      seat.className = `opponent-seat ${positions[idx] || 'seat-top'} ${state.currentIndex === playerIndex && !state.gameOver ? 'active' : ''} ${player.finishPlace ? 'finished' : ''}`;
+      const backs = Array.from({ length: Math.min(player.hand.length, 6) }, (_, cardIndex) => `<span class="mini-back" style="--i:${cardIndex}"></span>`).join('');
+      const role = player.finishPlace ? `${player.finishPlace}. MIEJSCE` : player.isBot ? 'BOT' : 'GRACZ';
+      seat.innerHTML = `<div class="opponent-hand">${backs}<b>${player.hand.length}</b></div><div class="player-plate"><div class="avatar avatar-${idx + 1}">${player.avatar || 'G'}</div><div class="plate-copy"><strong>${player.name}</strong><span>${role}</span></div><div class="card-counter">${player.hand.length} KART</div></div>`;
       this.el.opponents.appendChild(seat);
     });
   }
 
-  renderCenter(state){
-    this.el.drawCount.textContent=String(state.drawPile.length||0); this.el.discard.innerHTML='';
-    if(!state.started){this.el.phaseRibbon.textContent='Wybierz liczbę botów i rozpocznij grę';this.el.centerState.innerHTML='<span class="eyebrow">AKTUALNIE</span><strong>—</strong><small>Rozpocznij partię</small>';return;}
-    const top=state.discardPile.at(-1); if(top)this.el.discard.appendChild(this.makeCard(top,{table:true})); this.el.phaseRibbon.textContent=this.phaseText(state);
-    const current=state.players[state.currentIndex],detail=this.constraintDetail(state); this.el.centerState.innerHTML=`<span class="eyebrow">AKTUALNA TURA</span><strong>${current?.name??'—'}</strong><small>${detail}</small>`;
+  renderCenter(state) {
+    this.el.drawCount.textContent = String(state.drawPile.length || 0);
+    this.el.discard.innerHTML = '';
+    if (!state.started) {
+      this.el.phaseRibbon.textContent = 'Wybierz tryb gry i rozpocznij partię';
+      this.el.centerState.innerHTML = '<span class="eyebrow">AKTUALNIE</span><strong>—</strong><small>Rozpocznij partię</small>';
+      return;
+    }
+    const top = state.discardPile.at(-1);
+    if (top) this.el.discard.appendChild(this.makeCard(top, { table: true }));
+    this.el.phaseRibbon.textContent = state.networkPaused ? 'Rozgrywka wstrzymana — utracono połączenie' : this.phaseText(state);
+    const current = state.players[state.currentIndex];
+    const detail = state.networkPaused ? 'Oczekiwanie na decyzję o opuszczeniu stołu.' : this.constraintDetail(state);
+    this.el.centerState.innerHTML = `<span class="eyebrow">AKTUALNA TURA</span><strong>${current?.name ?? '—'}</strong><small>${detail}</small>`;
   }
 
-  renderHuman(state){
-    const human=state.players.find((player)=>player.isHuman); if(!human){this.el.hand.innerHTML='';this.el.humanCount.textContent='0 KART';return;}
-    const humanIndex=state.players.indexOf(human); this.el.humanSeat.classList.toggle('active',state.currentIndex===humanIndex&&!state.gameOver&&!human.finishPlace);this.el.humanSeat.classList.toggle('finished',Boolean(human.finishPlace));
-    this.el.humanRole.textContent=human.finishPlace?`${human.finishPlace}. MIEJSCE`:state.currentIndex===humanIndex?'TWOJA TURA':'GRACZ'; this.el.humanCount.textContent=`${human.hand.length} ${this.cardWord(human.hand.length)}`; this.el.hand.innerHTML='';
-    const isHumanTurn=this.game.humanCanAct(),drawnId=state.drawnRescueCardId;
-    human.hand.forEach((card,index)=>{
-      const legal=isHumanTurn&&isCardLegal(card,state,humanIndex),isRescueAllowed=!drawnId||card.id===drawnId,cardEl=this.makeCard(card,{hand:true}); cardEl.dataset.cardId=card.id;
-      const center=(human.hand.length-1)/2,delta=index-center; cardEl.style.setProperty('--angle',`${delta*2.35}deg`);cardEl.style.setProperty('--hover-angle',`${delta*1.7}deg`);cardEl.style.setProperty('--selected-angle',`${delta*1.2}deg`);cardEl.style.setProperty('--drop',`${Math.abs(delta)*1.25}px`);
-      const selectedCards=[...this.selected].map((id)=>human.hand.find((held)=>held.id===id)).filter(Boolean),companion=selectedCards.length>0&&selectedCards[0].rank===card.rank&&selectedCards.length<4,canSelect=isRescueAllowed&&(legal||companion||this.selected.has(card.id));
-      cardEl.classList.toggle('selected',this.selected.has(card.id));cardEl.classList.toggle('playable',canSelect);cardEl.classList.toggle('disabled-card',!canSelect);cardEl.classList.toggle('rescue-card',drawnId===card.id);cardEl.setAttribute('aria-label',cardLabel(card));this.el.hand.appendChild(cardEl);
+  renderHuman(state) {
+    const localIndex = this.localIndex(state);
+    const local = state.players?.[localIndex];
+    if (!local) {
+      this.el.hand.innerHTML = '';
+      this.el.humanCount.textContent = '0 KART';
+      return;
+    }
+
+    this.el.humanSeat.classList.toggle('active', state.currentIndex === localIndex && !state.gameOver && !local.finishPlace && !state.networkPaused);
+    this.el.humanSeat.classList.toggle('finished', Boolean(local.finishPlace));
+    this.el.humanRole.textContent = local.finishPlace ? `${local.finishPlace}. MIEJSCE` : state.currentIndex === localIndex ? 'TWOJA TURA' : 'GRACZ';
+    this.el.humanCount.textContent = `${local.hand.length} ${this.cardWord(local.hand.length)}`;
+    if (this.el.humanName) this.el.humanName.textContent = local.name || 'Ty';
+    if (this.el.humanAvatar) this.el.humanAvatar.textContent = local.avatar || 'TY';
+    this.el.hand.innerHTML = '';
+
+    const isLocalTurn = this.game.humanCanAct();
+    const drawnId = state.drawnRescueCardId;
+    local.hand.forEach((card, index) => {
+      if (card.hidden) return;
+      const legal = isLocalTurn && isCardLegal(card, state, localIndex);
+      const isRescueAllowed = !drawnId || card.id === drawnId;
+      const cardEl = this.makeCard(card, { hand: true });
+      cardEl.dataset.cardId = card.id;
+      const center = (local.hand.length - 1) / 2;
+      const delta = index - center;
+      cardEl.style.setProperty('--angle', `${delta * 2.35}deg`);
+      cardEl.style.setProperty('--hover-angle', `${delta * 1.7}deg`);
+      cardEl.style.setProperty('--selected-angle', `${delta * 1.2}deg`);
+      cardEl.style.setProperty('--drop', `${Math.abs(delta) * 1.25}px`);
+      const selectedCards = [...this.selected].map((id) => local.hand.find((held) => held.id === id)).filter(Boolean);
+      const companion = selectedCards.length > 0 && selectedCards[0].rank === card.rank && selectedCards.length < 4;
+      const canSelect = isRescueAllowed && (legal || companion || this.selected.has(card.id));
+      cardEl.classList.toggle('selected', this.selected.has(card.id));
+      cardEl.classList.toggle('playable', canSelect);
+      cardEl.classList.toggle('disabled-card', !canSelect);
+      cardEl.classList.toggle('rescue-card', drawnId === card.id);
+      cardEl.setAttribute('aria-label', cardLabel(card));
+      this.el.hand.appendChild(cardEl);
     });
   }
 
-  renderActions(state){
-    const canAct=this.game.humanCanAct(),human=state.players.find((player)=>player.isHuman),humanIndex=human?state.players.indexOf(human):-1,selectedCards=human?[...this.selected].map((id)=>human.hand.find((card)=>card.id===id)).filter(Boolean):[],validation=canAct?validateGroup(selectedCards,state,humanIndex,{rescueOnly:Boolean(state.drawnRescueCardId)}):{ok:false},handAfter=human?human.hand.length-selectedCards.length:99,makaoRelevant=canAct&&validation.ok&&handAfter<=1,constraint=canAct?getTurnConstraint(state,humanIndex):{type:'normal'};
-    this.el.playBtn.disabled=!canAct||!validation.ok;this.el.clearBtn.disabled=!this.selected.size;this.el.drawBtn.disabled=!canAct||Boolean(state.drawnRescueCardId);this.el.makaoBtn.disabled=!makaoRelevant;this.el.makaoBtn.classList.toggle('armed',state.makaoArmed);this.el.makaoBtn.textContent=handAfter===0?'MAKAO I PO MAKALE':'MAKAO';this.el.passBtn.classList.toggle('hidden',!state.drawnRescueCardId||!canAct);
-    if(constraint.type==='draw')this.el.drawBtn.textContent=`Dobierz ${constraint.amount}`;else if(constraint.type==='skip')this.el.drawBtn.textContent=`Przyjmij blokadę (${constraint.count})`;else this.el.drawBtn.textContent='Dobierz kartę';
+  renderActions(state) {
+    const canAct = this.game.humanCanAct();
+    const localIndex = this.localIndex(state);
+    const local = state.players?.[localIndex];
+    const selectedCards = local ? [...this.selected].map((id) => local.hand.find((card) => card.id === id)).filter(Boolean) : [];
+    const validation = canAct ? validateGroup(selectedCards, state, localIndex, { rescueOnly: Boolean(state.drawnRescueCardId) }) : { ok: false };
+    const handAfter = local ? local.hand.length - selectedCards.length : 99;
+    const makaoRelevant = canAct && validation.ok && handAfter <= 1;
+    const constraint = canAct ? getTurnConstraint(state, localIndex) : { type: 'normal' };
+    this.el.playBtn.disabled = !canAct || !validation.ok;
+    this.el.clearBtn.disabled = !this.selected.size;
+    this.el.drawBtn.disabled = !canAct || Boolean(state.drawnRescueCardId);
+    this.el.makaoBtn.disabled = !makaoRelevant;
+    this.el.makaoBtn.classList.toggle('armed', state.makaoArmed);
+    this.el.makaoBtn.textContent = handAfter === 0 ? 'MAKAO I PO MAKALE' : 'MAKAO';
+    this.el.passBtn.classList.toggle('hidden', !state.drawnRescueCardId || !canAct);
+    if (constraint.type === 'draw') this.el.drawBtn.textContent = `Dobierz ${constraint.amount}`;
+    else if (constraint.type === 'skip') this.el.drawBtn.textContent = `Przyjmij blokadę (${constraint.count})`;
+    else this.el.drawBtn.textContent = 'Dobierz kartę';
   }
 
-  renderHelper(state){
-    if(this.helperTab==='rules'){this.el.helperContent.innerHTML='<div class="helper-card"><span class="eyebrow">PODSTAWA</span><strong>Kolor lub wartość</strong><p>Możesz zagrać 1, 3 albo 4 karty tej samej wartości. Par i schodków nie ma.</p></div><div class="mini-rule-list"><p><b>2 / 3</b><span>dobieranie, kumulacja</span></p><p><b>4</b><span>utrata kolejki</span></p><p><b>J</b><span>żądanie 5–10</span></p><p><b>Q</b><span>dzika poza aktywną funkcją</span></p><p><b>A</b><span>żądanie koloru</span></p><p><b>K♥ / K♠</b><span>+5 następny / poprzedni</span></p></div>';return;}
-    if(this.helperTab==='log'){this.el.helperContent.innerHTML=state.log.length?`<div class="log-list">${state.log.map((entry)=>`<p>${entry.message}</p>`).join('')}</div>`:'<div class="empty-helper">Dziennik pojawi się po rozpoczęciu gry.</div>';return;}
-    if(!state.started){this.el.helperContent.innerHTML='<div class="helper-card"><span class="eyebrow">GOTOWOŚĆ</span><strong>Stół czeka</strong><p>W menu wybierz 2 lub 3 boty i rozpocznij partię.</p></div>';return;}
-    const current=state.players[state.currentIndex],constraint=getTurnConstraint(state,state.currentIndex),standings=state.standings.length?state.standings.map((index,place)=>`<p><b>${place+1}.</b><span>${state.players[index].name}</span></p>`).join(''):'<p><span>Jeszcze nikt nie zakończył.</span></p>';
-    this.el.helperContent.innerHTML=`<div class="helper-card emphasized"><span class="eyebrow">RUCH</span><strong>${current.name}</strong><p>${this.constraintDescription(constraint)}</p></div>${state.jackDemand?`<div class="status-chip"><span>Walet żąda</span><b>${state.jackDemand.rank}</b></div>`:''}${state.aceDemand?`<div class="status-chip"><span>As żąda</span><b>${suitSymbol(state.aceDemand.suit)} ${suitLabel(state.aceDemand.suit)}</b></div>`:''}${state.pendingDraw?`<div class="status-chip danger"><span>Kara</span><b>+${state.pendingDraw.amount}</b></div>`:''}${state.pendingSkip?`<div class="status-chip"><span>Blokada</span><b>${state.pendingSkip.count}</b></div>`:''}<div class="helper-subhead">KLASYFIKACJA</div><div class="ranking-mini">${standings}</div>`;
+  renderHelper(state) {
+    if (this.helperTab === 'rules') {
+      this.el.helperContent.innerHTML = '<div class="helper-card"><span class="eyebrow">PODSTAWA</span><strong>Kolor lub wartość</strong><p>Możesz zagrać 1, 3 albo 4 karty tej samej wartości. Par i schodków nie ma.</p></div><div class="mini-rule-list"><p><b>2 / 3</b><span>dobieranie, kumulacja</span></p><p><b>4</b><span>utrata kolejki</span></p><p><b>J</b><span>żądanie 5–10</span></p><p><b>Q</b><span>dzika poza aktywną funkcją</span></p><p><b>A</b><span>żądanie koloru</span></p><p><b>K♥ / K♠</b><span>+5 następny / poprzedni</span></p></div>';
+      return;
+    }
+    if (this.helperTab === 'log') {
+      this.el.helperContent.innerHTML = state.log.length ? `<div class="log-list">${state.log.map((entry) => `<p>${entry.message}</p>`).join('')}</div>` : '<div class="empty-helper">Dziennik pojawi się po rozpoczęciu gry.</div>';
+      return;
+    }
+    if (!state.started) {
+      this.el.helperContent.innerHTML = '<div class="helper-card"><span class="eyebrow">GOTOWOŚĆ</span><strong>Stół czeka</strong><p>Możesz grać offline z botami albo utworzyć prywatny pokój P2P.</p></div>';
+      return;
+    }
+    const current = state.players[state.currentIndex];
+    const constraint = getTurnConstraint(state, state.currentIndex);
+    const standings = state.standings.length ? state.standings.map((index, place) => `<p><b>${place + 1}.</b><span>${state.players[index].name}</span></p>`).join('') : '<p><span>Jeszcze nikt nie zakończył.</span></p>';
+    const network = state.multiplayer ? `<div class="status-chip"><span>Tryb</span><b>P2P · host authoritative</b></div>` : '';
+    this.el.helperContent.innerHTML = `<div class="helper-card emphasized"><span class="eyebrow">RUCH</span><strong>${current.name}</strong><p>${state.networkPaused ? 'Rozgrywka wstrzymana.' : this.constraintDescription(constraint)}</p></div>${network}${state.jackDemand ? `<div class="status-chip"><span>Walet żąda</span><b>${state.jackDemand.rank}</b></div>` : ''}${state.aceDemand ? `<div class="status-chip"><span>As żąda</span><b>${suitSymbol(state.aceDemand.suit)} ${suitLabel(state.aceDemand.suit)}</b></div>` : ''}${state.pendingDraw ? `<div class="status-chip danger"><span>Kara</span><b>+${state.pendingDraw.amount}</b></div>` : ''}${state.pendingSkip ? `<div class="status-chip"><span>Blokada</span><b>${state.pendingSkip.count}</b></div>` : ''}<div class="helper-subhead">KLASYFIKACJA</div><div class="ranking-mini">${standings}</div>`;
   }
 
-  renderChoice(state){
-    const choice=state.pendingChoice;if(!choice){this.el.choiceModal.classList.remove('open');return;}this.el.choiceOptions.innerHTML='';this.el.choiceModal.classList.add('open');
-    if(choice.type==='jack'){this.el.choiceEyebrow.textContent='WALET';this.el.choiceTitle.textContent='Zażądaj wartości';this.el.choiceDescription.textContent='Wybierz wartość od 5 do 10.';for(const rank of JACK_DEMAND_RANKS){const button=document.createElement('button');button.className='choice-button rank-choice';button.textContent=rank;button.addEventListener('click',()=>this.game.choosePending(rank));this.el.choiceOptions.appendChild(button);}}
-    else{this.el.choiceEyebrow.textContent='AS';this.el.choiceTitle.textContent='Zażądaj koloru';this.el.choiceDescription.textContent='Żądanie obowiązuje następnego gracza.';for(const suit of SUITS){const button=document.createElement('button');button.className=`choice-button suit-choice suit-${suit.key}`;button.innerHTML=`<b>${suit.symbol}</b><span>${suit.label}</span>`;button.addEventListener('click',()=>this.game.choosePending(suit.key));this.el.choiceOptions.appendChild(button);}}
+  renderChoice(state) {
+    const choice = state.pendingChoice;
+    const localIndex = this.localIndex(state);
+    if (!choice || choice.actorIndex !== localIndex) {
+      this.el.choiceModal.classList.remove('open');
+      return;
+    }
+    const actor = state.players[localIndex];
+    this.el.choiceOptions.innerHTML = '';
+    this.el.choiceModal.classList.add('open');
+
+    if (choice.type === 'jack') {
+      this.el.choiceEyebrow.textContent = 'WALET';
+      this.el.choiceTitle.textContent = 'Zażądaj wartości';
+      this.el.choiceDescription.textContent = 'Możesz żądać tylko wartości 5–10, którą nadal masz w ręce, albo niczego.';
+      const available = JACK_DEMAND_RANKS.filter((rank) => actor.hand.some((card) => card.rank === rank));
+      for (const rank of available) {
+        const button = document.createElement('button');
+        button.className = 'choice-button rank-choice';
+        button.textContent = rank;
+        button.addEventListener('click', () => this.dispatch('choose-pending', { value: rank }));
+        this.el.choiceOptions.appendChild(button);
+      }
+      const none = document.createElement('button');
+      none.className = 'choice-button rank-choice choice-none';
+      none.textContent = 'Nic';
+      none.addEventListener('click', () => this.dispatch('choose-pending', { value: null }));
+      this.el.choiceOptions.appendChild(none);
+      return;
+    }
+
+    this.el.choiceEyebrow.textContent = 'AS';
+    this.el.choiceTitle.textContent = 'Zażądaj koloru';
+    this.el.choiceDescription.textContent = 'Żądanie obowiązuje następnego gracza.';
+    for (const suit of SUITS) {
+      const button = document.createElement('button');
+      button.className = `choice-button suit-choice suit-${suit.key}`;
+      button.innerHTML = `<b>${suit.symbol}</b><span>${suit.label}</span>`;
+      button.addEventListener('click', () => this.dispatch('choose-pending', { value: suit.key }));
+      this.el.choiceOptions.appendChild(button);
+    }
   }
 
-  renderResult(state){if(!state.gameOver){this.el.resultModal.classList.remove('open');return;}this.el.standings.innerHTML=state.standings.map((index,place)=>{const player=state.players[index];return`<div class="standing-row ${player.isHuman?'human-standing':''}"><b>${place+1}</b><span>${player.name}</span><small>${player.isHuman?'GRACZ':'BOT'}</small></div>`;}).join('');this.el.resultModal.classList.add('open');}
+  renderResult(state) {
+    if (!state.gameOver) {
+      this.el.resultModal.classList.remove('open');
+      return;
+    }
+    const localIndex = this.localIndex(state);
+    this.el.standings.innerHTML = state.standings.map((index, place) => {
+      const player = state.players[index];
+      return `<div class="standing-row ${index === localIndex ? 'human-standing' : ''}"><b>${place + 1}</b><span>${player.name}</span><small>${player.isBot ? 'BOT' : 'GRACZ'}</small></div>`;
+    }).join('');
+    this.el.resultModal.classList.add('open');
+  }
 
-  makeCard(card,{hand=false,table=false}={}){const el=document.createElement('div');el.className=`card card-face suit-${card.suit} ${hand?'hand-card':''} ${table?'table-card':''}`;const symbol=suitSymbol(card.suit);el.innerHTML=`<div class="corner top-corner"><strong>${card.rank}</strong><span>${symbol}</span></div><div class="center-pip">${symbol}</div><div class="corner bottom-corner"><strong>${card.rank}</strong><span>${symbol}</span></div>`;return el;}
-  phaseText(state){if(state.gameOver)return'Koniec partii';const current=state.players[state.currentIndex],constraint=getTurnConstraint(state,state.currentIndex);if(constraint.type==='draw')return`${current.name}: obrona albo +${constraint.amount}`;if(constraint.type==='skip')return`${current.name}: obrona czwórką albo blokada`;if(constraint.type==='jack')return`${current.name}: żądana wartość ${constraint.rank}`;if(constraint.type==='ace')return`${current.name}: żądany kolor ${suitLabel(constraint.suit)}`;if(state.drawnRescueCardId&&current.isHuman)return'Pierwsza karta ratuje';return`Ruch: ${current.name}`;}
-  constraintShort(state){const c=getTurnConstraint(state,state.currentIndex);if(c.type==='draw')return`kara +${c.amount}`;if(c.type==='skip')return`blokada ${c.count}`;if(c.type==='jack')return`żądanie ${c.rank}`;if(c.type==='ace')return`kolor ${suitLabel(c.suit)}`;return'gra';}
-  constraintDetail(state){return this.constraintDescription(getTurnConstraint(state,state.currentIndex));}
-  constraintDescription(c){if(c.type==='draw')return`Zagraj 2/3 albo dobierz ${c.amount} kart.`;if(c.type==='skip')return`Zagraj 4 albo przyjmij ${c.count} ${c.count===1?'blokadę':'blokady'}.`;if(c.type==='jack')return`Obowiązuje żądanie wartości ${c.rank}.`;if(c.type==='ace')return`Obowiązuje kolor ${suitLabel(c.suit)} dla tej tury.`;return'Zagraj kartę pasującą kolorem lub wartością albo dobierz.';}
-  cardWord(count){if(count===1)return'KARTA';if([2,3,4].includes(count%10)&&![12,13,14].includes(count%100))return'KARTY';return'KART';}
+  makeCard(card, { hand = false, table = false } = {}) {
+    const el = document.createElement('div');
+    el.className = `card card-face suit-${card.suit} ${hand ? 'hand-card' : ''} ${table ? 'table-card' : ''}`;
+    const symbol = suitSymbol(card.suit);
+    el.innerHTML = `<div class="corner top-corner"><strong>${card.rank}</strong><span>${symbol}</span></div><div class="center-pip">${symbol}</div><div class="corner bottom-corner"><strong>${card.rank}</strong><span>${symbol}</span></div>`;
+    return el;
+  }
+
+  phaseText(state) {
+    if (state.gameOver) return 'Koniec partii';
+    const current = state.players[state.currentIndex];
+    const constraint = getTurnConstraint(state, state.currentIndex);
+    if (constraint.type === 'draw') return `${current.name}: obrona albo +${constraint.amount}`;
+    if (constraint.type === 'skip') return `${current.name}: obrona czwórką albo blokada`;
+    if (constraint.type === 'jack') return `${current.name}: żądana wartość ${constraint.rank}`;
+    if (constraint.type === 'ace') return `${current.name}: żądany kolor ${suitLabel(constraint.suit)}`;
+    if (state.drawnRescueCardId && state.currentIndex === this.localIndex(state)) return 'Pierwsza karta ratuje';
+    return `Ruch: ${current.name}`;
+  }
+
+  constraintShort(state) {
+    const c = getTurnConstraint(state, state.currentIndex);
+    if (c.type === 'draw') return `kara +${c.amount}`;
+    if (c.type === 'skip') return `blokada ${c.count}`;
+    if (c.type === 'jack') return `żądanie ${c.rank}`;
+    if (c.type === 'ace') return `kolor ${suitLabel(c.suit)}`;
+    return 'gra';
+  }
+
+  constraintDetail(state) {
+    return this.constraintDescription(getTurnConstraint(state, state.currentIndex));
+  }
+
+  constraintDescription(c) {
+    if (c.type === 'draw') return `Zagraj 2/3 albo dobierz ${c.amount} kart.`;
+    if (c.type === 'skip') return `Zagraj 4 albo przyjmij ${c.count} ${c.count === 1 ? 'blokadę' : 'blokady'}.`;
+    if (c.type === 'jack') return `Obowiązuje żądanie wartości ${c.rank}.`;
+    if (c.type === 'ace') return `Obowiązuje kolor ${suitLabel(c.suit)} dla tej tury.`;
+    return 'Zagraj kartę pasującą kolorem lub wartością albo dobierz.';
+  }
+
+  cardWord(count) {
+    if (count === 1) return 'KARTA';
+    if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) return 'KARTY';
+    return 'KART';
+  }
 }
 
 // ===== js/ux-effects.js =====
 // Visual-only UX layer: card flight animations and hand compression.
-// It deliberately does not contain Makao rules.
+// It deliberately does not contain Makao rules or networking authority.
 
 function installUxEffects(game, ui) {
   let previous = snapshot(game.state);
-  let humanPlayRects = [];
+  let localPlayRects = [];
 
   const playButton = document.getElementById('play-btn');
   const hand = document.getElementById('human-hand');
@@ -1340,38 +2976,32 @@ function installUxEffects(game, ui) {
   const opponents = document.getElementById('opponents');
   const motionToggle = document.getElementById('motion-toggle');
 
-  // Capture selected-card coordinates before the normal click handler mutates
-  // the hand and rerenders it.
   playButton?.addEventListener('click', () => {
-    humanPlayRects = [...hand.querySelectorAll('.hand-card.selected')]
+    localPlayRects = [...hand.querySelectorAll('.hand-card.selected')]
       .map((element) => element.getBoundingClientRect())
       .sort((a, b) => a.left - b.left);
   }, true);
 
-  const baseRender = (state) => ui.render(state);
+  // Preserve the bootstrap callback. In multiplayer it renders the state and,
+  // on the host, broadcasts a seat-filtered authoritative view.
+  const baseOnChange = game.onChange;
   game.onChange = (state) => {
     const before = previous;
-    baseRender(state);
-
-    // Choice controls are functional UI, not merely decoration. Enhance them
-    // synchronously so Jack's "Nic" and filtered rank choices exist in the
-    // same render frame as the modal itself.
-    enhanceChoicePanel(game, state);
+    baseOnChange(state);
+    enhanceChoicePanel(state);
 
     requestAnimationFrame(() => {
       compressHumanHand(hand);
-      animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects });
-      humanPlayRects = [];
+      animateStateChange({ before, state, game, ui, hand, drawPile, discard, opponents, motionToggle, localPlayRects });
+      localPlayRects = [];
     });
     previous = snapshot(state);
   };
 
-  // The initial render is invoked directly from main.js, so keep the hand
-  // responsive on resize as well.
   window.addEventListener('resize', () => requestAnimationFrame(() => compressHumanHand(hand)));
   requestAnimationFrame(() => {
     compressHumanHand(hand);
-    enhanceChoicePanel(game, game.state);
+    enhanceChoicePanel(game.state);
   });
 }
 
@@ -1380,7 +3010,7 @@ function snapshot(state) {
     started: Boolean(state.started),
     currentIndex: state.currentIndex,
     discardCount: state.discardPile?.length ?? 0,
-    playerHands: (state.players ?? []).map((player) => player.hand.map((card) => card.id)),
+    playerHands: (state.players ?? []).map((player) => player.hand.map((card) => card.id ?? null)),
   };
 }
 
@@ -1397,17 +3027,10 @@ function compressHumanHand(hand) {
   const available = Math.max(260, hand.clientWidth - 24);
   const sampleWidth = cards[0].getBoundingClientRect().width || 106;
   const idealStep = (available - sampleWidth) / Math.max(1, cards.length - 1);
-
-  // A card's default click point is near its centre. If the next card begins
-  // before roughly 62% of this card's width, that centre can be covered even
-  // though a visible strip remains. Switch to a non-overlapping rack before
-  // that happens instead of merely guaranteeing a narrow visible edge.
   const minCentreSafeStep = Math.max(62, sampleWidth * 0.64);
   const useScrollRack = window.innerWidth <= 560 || idealStep < minCentreSafeStep;
 
   if (useScrollRack) {
-    // Once a hand needs scrolling, do NOT overlap cards at all. Horizontal
-    // scrolling is preferable to ambiguous hitboxes.
     hand.classList.add('hand-scroll-mode');
     cards.forEach((card) => {
       card.style.marginLeft = '0px';
@@ -1426,7 +3049,7 @@ function compressHumanHand(hand) {
   });
 }
 
-function enhanceChoicePanel(game, state) {
+function enhanceChoicePanel(state) {
   const modal = document.getElementById('choice-modal');
   const options = document.getElementById('choice-options');
   const description = document.getElementById('choice-description');
@@ -1447,19 +3070,13 @@ function enhanceChoicePanel(game, state) {
 
     options.querySelectorAll('.rank-choice').forEach((button) => {
       const rank = button.textContent.trim();
-      const count = allowed.get(rank) ?? 0;
-      if (!count) {
-        button.remove();
+      if (rank === 'Nic') {
+        button.innerHTML = '<b>Nic</b><small>bez żądania</small>';
         return;
       }
-      button.innerHTML = `<b>${rank}</b><small>${count} ${count === 1 ? 'karta' : 'karty'} w ręce</small>`;
+      const count = allowed.get(rank) ?? 0;
+      if (count) button.innerHTML = `<b>${rank}</b><small>${count} ${count === 1 ? 'karta' : 'karty'} w ręce</small>`;
     });
-
-    const none = document.createElement('button');
-    none.className = 'choice-button no-demand-choice';
-    none.innerHTML = '<b>Nic</b><small>bez żądania</small>';
-    none.addEventListener('click', () => game.choosePending(null));
-    options.appendChild(none);
 
     if (description) {
       description.textContent = allowed.size
@@ -1475,11 +3092,11 @@ function enhanceChoicePanel(game, state) {
       const label = button.querySelector('span')?.textContent ?? '';
       button.innerHTML = `<b>${suitMap[suit]}</b><span>${label}<small>${counts[suit]} w ręce</small></span>`;
     });
-    if (description) description.textContent = 'Wybierz kolor dla następnego gracza. Twoja ręka pozostaje widoczna, a liczby pokazują ile kart danego koloru masz.';
+    if (description) description.textContent = 'Wybierz kolor dla następnego gracza. Liczby pokazują ile kart danego koloru masz.';
   }
 }
 
-function animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects }) {
+function animateStateChange({ before, state, game, ui, hand, drawPile, discard, opponents, motionToggle, localPlayRects }) {
   if (!before?.started || !state.started || !motionEnabled(motionToggle)) return;
 
   const newSnapshot = snapshot(state);
@@ -1490,25 +3107,21 @@ function animateStateChange({ before, state, ui, hand, drawPile, discard, oppone
   if (discardDelta > 0) {
     const played = state.discardPile.slice(-discardDelta);
     played.forEach((card, index) => {
-      const from = actorIndex === 0
-        ? humanPlayRects[index] ?? humanSourceRect(hand)
-        : botSourceRect(opponents, actorIndex);
+      const from = actorIndex === game.localSeat
+        ? localPlayRects[index] ?? humanSourceRect(hand)
+        : opponentSourceRect(opponents, state, game.localSeat, actorIndex);
       const to = discardTargetRect(discard);
-      if (from && to) {
-        window.setTimeout(() => flyFaceCard(ui, card, from, to), index * 95);
-      }
+      if (from && to) window.setTimeout(() => flyFaceCard(ui, card, from, to), index * 95);
     });
     baseDelay = discardDelta * 95;
   }
 
   newSnapshot.playerHands.forEach((ids, playerIndex) => {
     const beforeIds = new Set(before.playerHands[playerIndex] ?? []);
-    const addedIds = ids.filter((id) => !beforeIds.has(id));
+    const addedIds = ids.filter((id) => id && !beforeIds.has(id));
     if (!addedIds.length) return;
 
-    // Temporarily dim the actually-added human cards so the deck->hand flight
-    // reads as the arrival instead of an instant pop-in behind the animation.
-    if (playerIndex === 0) {
+    if (playerIndex === game.localSeat) {
       addedIds.forEach((id) => {
         const element = [...hand.querySelectorAll('[data-card-id]')].find((item) => item.dataset.cardId === id);
         element?.classList.add('ux-arriving-card');
@@ -1518,10 +3131,10 @@ function animateStateChange({ before, state, ui, hand, drawPile, discard, oppone
 
     addedIds.forEach((_, index) => {
       const from = drawPile?.getBoundingClientRect();
-      const to = playerIndex === 0 ? humanTargetRect(hand) : botTargetRect(opponents, playerIndex);
-      if (from && to) {
-        window.setTimeout(() => flyBackCard(from, to), baseDelay + index * 105);
-      }
+      const to = playerIndex === game.localSeat
+        ? humanTargetRect(hand)
+        : opponentTargetRect(opponents, state, game.localSeat, playerIndex);
+      if (from && to) window.setTimeout(() => flyBackCard(from, to), baseDelay + index * 105);
     });
   });
 }
@@ -1537,13 +3150,14 @@ function humanTargetRect(hand) {
   return cards.at(-1)?.getBoundingClientRect() ?? hand?.getBoundingClientRect() ?? null;
 }
 
-function botSeat(opponents, playerIndex) {
-  // Bots are players 1..N and rendered in the same order.
-  return opponents?.querySelectorAll('.opponent-seat')?.[playerIndex - 1] ?? null;
+function opponentSeat(opponents, state, localSeat, playerIndex) {
+  const opponentIndices = (state.players ?? []).map((_, index) => index).filter((index) => index !== localSeat);
+  const renderedIndex = opponentIndices.indexOf(playerIndex);
+  return renderedIndex >= 0 ? opponents?.querySelectorAll('.opponent-seat')?.[renderedIndex] ?? null : null;
 }
 
-function botSourceRect(opponents, playerIndex) {
-  const seat = botSeat(opponents, playerIndex);
+function opponentSourceRect(opponents, state, localSeat, playerIndex) {
+  const seat = opponentSeat(opponents, state, localSeat, playerIndex);
   const visibleBacks = seat ? [...seat.querySelectorAll('.mini-back')] : [];
   return visibleBacks.at(-1)?.getBoundingClientRect()
     ?? seat?.querySelector('.opponent-hand')?.getBoundingClientRect()
@@ -1551,8 +3165,8 @@ function botSourceRect(opponents, playerIndex) {
     ?? null;
 }
 
-function botTargetRect(opponents, playerIndex) {
-  return botSourceRect(opponents, playerIndex);
+function opponentTargetRect(opponents, state, localSeat, playerIndex) {
+  return opponentSourceRect(opponents, state, localSeat, playerIndex);
 }
 
 function discardTargetRect(discard) {
@@ -1606,16 +3220,23 @@ function prepareFlight(element, from, to, rotation, size = null) {
 
 // ===== js/main.js =====
 let ui;
+let multiplayer;
 const game = new MakaoGame({
-  onChange: (state) => ui?.render(state),
+  onChange: (state) => {
+    ui?.render(state);
+    multiplayer?.handleGameStateChange(state);
+  },
   onMessage: (message) => ui?.showToast(message),
 });
 
-ui = new MakaoUI(game);
+multiplayer = new MakaoMultiplayer(game);
+ui = new MakaoUI(game, multiplayer);
+multiplayer.attachUI(ui);
 installUxEffects(game, ui);
 ui.render(game.state);
 
 window.makaoGame = game;
+window.makaoMultiplayer = multiplayer;
 
   </script>
 </body>
