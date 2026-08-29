@@ -5,6 +5,7 @@ const jsFiles = [
   'js/rules.js',
   'js/bot.js',
   'js/game.js',
+  'js/multiplayer.js',
   'js/ui.js',
   'js/ux-effects.js',
   'js/main.js',
@@ -13,6 +14,7 @@ const jsFiles = [
 const cssFiles = [
   'css/styles.css',
   'css/ux-fixes.css',
+  'css/multiplayer.css',
 ];
 
 function stripModules(source) {
@@ -35,6 +37,7 @@ const js = jsFiles
 html = html
   .replace(/\s*<link rel="stylesheet" href="css\/styles\.css"\s*\/?>/, () => `\n  <style>\n${css}\n  </style>`)
   .replace(/\s*<link rel="stylesheet" href="css\/ux-fixes\.css"\s*\/?>/, '')
+  .replace(/\s*<link rel="stylesheet" href="css\/multiplayer\.css"\s*\/?>/, '')
   .replace(/\s*<script type="module" src="js\/main\.js"><\/script>/, () => `\n  <script>\n${js}\n  </script>`);
 
 if (html.includes('type="module"') || html.includes('src="js/main.js"')) {

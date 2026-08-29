@@ -1,9 +1,9 @@
 // Visual-only UX layer: card flight animations and hand compression.
-// It deliberately does not contain Makao rules.
+// It deliberately does not contain Makao rules or networking authority.
 
 export function installUxEffects(game, ui) {
   let previous = snapshot(game.state);
-  let humanPlayRects = [];
+  let localPlayRects = [];
 
   const playButton = document.getElementById('play-btn');
   const hand = document.getElementById('human-hand');
@@ -12,38 +12,32 @@ export function installUxEffects(game, ui) {
   const opponents = document.getElementById('opponents');
   const motionToggle = document.getElementById('motion-toggle');
 
-  // Capture selected-card coordinates before the normal click handler mutates
-  // the hand and rerenders it.
   playButton?.addEventListener('click', () => {
-    humanPlayRects = [...hand.querySelectorAll('.hand-card.selected')]
+    localPlayRects = [...hand.querySelectorAll('.hand-card.selected')]
       .map((element) => element.getBoundingClientRect())
       .sort((a, b) => a.left - b.left);
   }, true);
 
-  const baseRender = (state) => ui.render(state);
+  // Preserve the bootstrap callback. In multiplayer it renders the state and,
+  // on the host, broadcasts a seat-filtered authoritative view.
+  const baseOnChange = game.onChange;
   game.onChange = (state) => {
     const before = previous;
-    baseRender(state);
-
-    // Choice controls are functional UI, not merely decoration. Enhance them
-    // synchronously so Jack's "Nic" and filtered rank choices exist in the
-    // same render frame as the modal itself.
-    enhanceChoicePanel(game, state);
+    baseOnChange(state);
+    enhanceChoicePanel(state);
 
     requestAnimationFrame(() => {
       compressHumanHand(hand);
-      animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects });
-      humanPlayRects = [];
+      animateStateChange({ before, state, game, ui, hand, drawPile, discard, opponents, motionToggle, localPlayRects });
+      localPlayRects = [];
     });
     previous = snapshot(state);
   };
 
-  // The initial render is invoked directly from main.js, so keep the hand
-  // responsive on resize as well.
   window.addEventListener('resize', () => requestAnimationFrame(() => compressHumanHand(hand)));
   requestAnimationFrame(() => {
     compressHumanHand(hand);
-    enhanceChoicePanel(game, game.state);
+    enhanceChoicePanel(game.state);
   });
 }
 
@@ -52,7 +46,7 @@ function snapshot(state) {
     started: Boolean(state.started),
     currentIndex: state.currentIndex,
     discardCount: state.discardPile?.length ?? 0,
-    playerHands: (state.players ?? []).map((player) => player.hand.map((card) => card.id)),
+    playerHands: (state.players ?? []).map((player) => player.hand.map((card) => card.id ?? null)),
   };
 }
 
@@ -69,17 +63,10 @@ function compressHumanHand(hand) {
   const available = Math.max(260, hand.clientWidth - 24);
   const sampleWidth = cards[0].getBoundingClientRect().width || 106;
   const idealStep = (available - sampleWidth) / Math.max(1, cards.length - 1);
-
-  // A card's default click point is near its centre. If the next card begins
-  // before roughly 62% of this card's width, that centre can be covered even
-  // though a visible strip remains. Switch to a non-overlapping rack before
-  // that happens instead of merely guaranteeing a narrow visible edge.
   const minCentreSafeStep = Math.max(62, sampleWidth * 0.64);
   const useScrollRack = window.innerWidth <= 560 || idealStep < minCentreSafeStep;
 
   if (useScrollRack) {
-    // Once a hand needs scrolling, do NOT overlap cards at all. Horizontal
-    // scrolling is preferable to ambiguous hitboxes.
     hand.classList.add('hand-scroll-mode');
     cards.forEach((card) => {
       card.style.marginLeft = '0px';
@@ -98,7 +85,7 @@ function compressHumanHand(hand) {
   });
 }
 
-function enhanceChoicePanel(game, state) {
+function enhanceChoicePanel(state) {
   const modal = document.getElementById('choice-modal');
   const options = document.getElementById('choice-options');
   const description = document.getElementById('choice-description');
@@ -119,19 +106,13 @@ function enhanceChoicePanel(game, state) {
 
     options.querySelectorAll('.rank-choice').forEach((button) => {
       const rank = button.textContent.trim();
-      const count = allowed.get(rank) ?? 0;
-      if (!count) {
-        button.remove();
+      if (rank === 'Nic') {
+        button.innerHTML = '<b>Nic</b><small>bez żądania</small>';
         return;
       }
-      button.innerHTML = `<b>${rank}</b><small>${count} ${count === 1 ? 'karta' : 'karty'} w ręce</small>`;
+      const count = allowed.get(rank) ?? 0;
+      if (count) button.innerHTML = `<b>${rank}</b><small>${count} ${count === 1 ? 'karta' : 'karty'} w ręce</small>`;
     });
-
-    const none = document.createElement('button');
-    none.className = 'choice-button no-demand-choice';
-    none.innerHTML = '<b>Nic</b><small>bez żądania</small>';
-    none.addEventListener('click', () => game.choosePending(null));
-    options.appendChild(none);
 
     if (description) {
       description.textContent = allowed.size
@@ -147,11 +128,11 @@ function enhanceChoicePanel(game, state) {
       const label = button.querySelector('span')?.textContent ?? '';
       button.innerHTML = `<b>${suitMap[suit]}</b><span>${label}<small>${counts[suit]} w ręce</small></span>`;
     });
-    if (description) description.textContent = 'Wybierz kolor dla następnego gracza. Twoja ręka pozostaje widoczna, a liczby pokazują ile kart danego koloru masz.';
+    if (description) description.textContent = 'Wybierz kolor dla następnego gracza. Liczby pokazują ile kart danego koloru masz.';
   }
 }
 
-function animateStateChange({ before, state, ui, hand, drawPile, discard, opponents, motionToggle, humanPlayRects }) {
+function animateStateChange({ before, state, game, ui, hand, drawPile, discard, opponents, motionToggle, localPlayRects }) {
   if (!before?.started || !state.started || !motionEnabled(motionToggle)) return;
 
   const newSnapshot = snapshot(state);
@@ -162,25 +143,21 @@ function animateStateChange({ before, state, ui, hand, drawPile, discard, oppone
   if (discardDelta > 0) {
     const played = state.discardPile.slice(-discardDelta);
     played.forEach((card, index) => {
-      const from = actorIndex === 0
-        ? humanPlayRects[index] ?? humanSourceRect(hand)
-        : botSourceRect(opponents, actorIndex);
+      const from = actorIndex === game.localSeat
+        ? localPlayRects[index] ?? humanSourceRect(hand)
+        : opponentSourceRect(opponents, state, game.localSeat, actorIndex);
       const to = discardTargetRect(discard);
-      if (from && to) {
-        window.setTimeout(() => flyFaceCard(ui, card, from, to), index * 95);
-      }
+      if (from && to) window.setTimeout(() => flyFaceCard(ui, card, from, to), index * 95);
     });
     baseDelay = discardDelta * 95;
   }
 
   newSnapshot.playerHands.forEach((ids, playerIndex) => {
     const beforeIds = new Set(before.playerHands[playerIndex] ?? []);
-    const addedIds = ids.filter((id) => !beforeIds.has(id));
+    const addedIds = ids.filter((id) => id && !beforeIds.has(id));
     if (!addedIds.length) return;
 
-    // Temporarily dim the actually-added human cards so the deck->hand flight
-    // reads as the arrival instead of an instant pop-in behind the animation.
-    if (playerIndex === 0) {
+    if (playerIndex === game.localSeat) {
       addedIds.forEach((id) => {
         const element = [...hand.querySelectorAll('[data-card-id]')].find((item) => item.dataset.cardId === id);
         element?.classList.add('ux-arriving-card');
@@ -190,10 +167,10 @@ function animateStateChange({ before, state, ui, hand, drawPile, discard, oppone
 
     addedIds.forEach((_, index) => {
       const from = drawPile?.getBoundingClientRect();
-      const to = playerIndex === 0 ? humanTargetRect(hand) : botTargetRect(opponents, playerIndex);
-      if (from && to) {
-        window.setTimeout(() => flyBackCard(from, to), baseDelay + index * 105);
-      }
+      const to = playerIndex === game.localSeat
+        ? humanTargetRect(hand)
+        : opponentTargetRect(opponents, state, game.localSeat, playerIndex);
+      if (from && to) window.setTimeout(() => flyBackCard(from, to), baseDelay + index * 105);
     });
   });
 }
@@ -209,13 +186,14 @@ function humanTargetRect(hand) {
   return cards.at(-1)?.getBoundingClientRect() ?? hand?.getBoundingClientRect() ?? null;
 }
 
-function botSeat(opponents, playerIndex) {
-  // Bots are players 1..N and rendered in the same order.
-  return opponents?.querySelectorAll('.opponent-seat')?.[playerIndex - 1] ?? null;
+function opponentSeat(opponents, state, localSeat, playerIndex) {
+  const opponentIndices = (state.players ?? []).map((_, index) => index).filter((index) => index !== localSeat);
+  const renderedIndex = opponentIndices.indexOf(playerIndex);
+  return renderedIndex >= 0 ? opponents?.querySelectorAll('.opponent-seat')?.[renderedIndex] ?? null : null;
 }
 
-function botSourceRect(opponents, playerIndex) {
-  const seat = botSeat(opponents, playerIndex);
+function opponentSourceRect(opponents, state, localSeat, playerIndex) {
+  const seat = opponentSeat(opponents, state, localSeat, playerIndex);
   const visibleBacks = seat ? [...seat.querySelectorAll('.mini-back')] : [];
   return visibleBacks.at(-1)?.getBoundingClientRect()
     ?? seat?.querySelector('.opponent-hand')?.getBoundingClientRect()
@@ -223,8 +201,8 @@ function botSourceRect(opponents, playerIndex) {
     ?? null;
 }
 
-function botTargetRect(opponents, playerIndex) {
-  return botSourceRect(opponents, playerIndex);
+function opponentTargetRect(opponents, state, localSeat, playerIndex) {
+  return opponentSourceRect(opponents, state, localSeat, playerIndex);
 }
 
 function discardTargetRect(discard) {

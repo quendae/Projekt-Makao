@@ -1,95 +1,95 @@
 # Projekt Makao
 
-Offline'owa gra **Makao** w czystym HTML, CSS i JavaScript. Rozgrywka: **1 człowiek + 2 albo 3 boty**, bez backendu i bez zewnętrznych bibliotek.
+Przeglądarkowa gra **Makao** w czystym HTML, CSS i JavaScript. Można grać całkowicie offline przeciwko botom albo utworzyć prywatny stół **WebRTC P2P** dla 3–4 graczy, również w układzie mieszanym człowiek + boty.
+
+## Tryby gry
+
+### Offline
+
+- 1 lokalny gracz + 2 albo 3 boty;
+- bez backendu i bez połączenia z internetem;
+- `makao-single.html` nadal można otworzyć bezpośrednio z dysku.
+
+### Multiplayer P2P
+
+- prywatne pokoje z krótkim kodem;
+- 3 albo 4 miejsca przy stole;
+- host jest jedynym właścicielem autorytatywnego stanu gry;
+- goście wysyłają wyłącznie akcje, nigdy zmodyfikowany stan;
+- host waliduje akcję tym samym silnikiem zasad co tryb offline;
+- po zestawieniu połączenia ruchy idą przez niezawodny, uporządkowany WebRTC DataChannel;
+- każdy gość dostaje przefiltrowany widok: własna ręka jest jawna, ręce przeciwników i kolejność talii pozostają ukryte;
+- puste miejsca można przed startem zarezerwować dla istniejących botów; boty działają wyłącznie w przeglądarce hosta;
+- utrata połączenia podczas partii wstrzymuje grę i pokazuje czytelny komunikat zamiast pozostawiać stół w niespójnym stanie.
+
+Sygnalizacja WebRTC jest osobną, małą usługą Cloudflare Worker + Durable Object w katalogu `cloudflare-signaling/`. Nie zawiera zasad ani stanu partii. Instrukcja wdrożenia: [`DEPLOY_MULTIPLAYER.md`](DEPLOY_MULTIPLAYER.md).
 
 ## Uruchomienie
 
-### Jeden plik — bez instalacji
+### Jeden plik — offline
 
-Pobierz tylko `makao-single.html` i otwórz go dwuklikiem w przeglądarce. Cały CSS i JavaScript są osadzone w tym jednym pliku, więc nie wymaga on lokalnego serwera ani pobierania pozostałych plików repozytorium.
+Pobierz `makao-single.html` i otwórz go w przeglądarce. Tryb offline działa bez serwera. Multiplayer wymaga HTTPS i wdrożonej sygnalizacji `/api/`.
 
 ### Wersja deweloperska
-
-Pełną, modułową wersję projektu najprościej uruchomić przez dowolny lokalny serwer HTTP, np.:
 
 ```bash
 python -m http.server 8080
 ```
 
-Następnie otworzyć `http://localhost:8080`.
-
-> Modułowy `index.html` używa ES Modules, dlatego dla tej wersji zalecany jest serwer HTTP. `makao-single.html` działa bezpośrednio przez `file://`.
+Następnie otwórz `http://localhost:8080`.
 
 ## Ustalony wariant zasad
 
-Podstawą są wyłącznie dwa źródła wskazane dla projektu:
+Podstawą są dwa źródła wskazane dla projektu:
 
 - Wikipedia: https://pl.wikipedia.org/wiki/Makao_(gra_karciana)
 - Morele.net: https://www.morele.net/wiadomosc/gra-karciana-makao-jak-grac-zasady-i-praktyczne-porady-gry-karcianej/18363/
 
-Ponieważ oba teksty opisują regionalne warianty Makao, rozbieżności zostały rozstrzygnięte decyzjami autora projektu:
+Rozbieżności między regionalnymi wariantami są rozstrzygnięte przez kontrakt `rules/rules-contract.json`. Multiplayer nie ma osobnego silnika zasad — wszystkie lokalne i zdalne ruchy przechodzą przez tę samą warstwę gry.
 
-- 52 karty, bez jokerów;
-- 1 gracz + 2 lub 3 boty;
-- każdy dostaje 5 kart;
-- karta startowa nie może być funkcyjna;
-- podstawowe zagranie: ten sam kolor albo ta sama wartość;
-- można wyłożyć **1, 3 lub 4** karty tej samej wartości; pary i schodki są wyłączone;
-- działa zasada **„pierwsza karta ratuje”**;
-- 2 i 3 nakładają kary dobierania; przy aktywnej karze wolno odpowiedzieć wyłącznie 2/3 pasującą **kolorem albo wartością** do karty na wierzchu;
-- kary z kilku 2/3 sumują się według **łącznej liczby oczek** (np. trzy 2 = +6, trzy 3 = +9);
-- 4 blokuje kolejkę, a kolejna 4 może przenieść i zwiększyć blokadę;
-- walet żąda wartości 5–10, ale tylko takiej, którą zagrywający ma jeszcze w ręce; można też wybrać **„Nic”** i nie żądać żadnej wartości;
-- dama działa według „dama na wszystko, wszystko na damę”, ale **nie przełamuje aktywnej kary, blokady ani żądania**;
-- as żąda koloru dla następnego gracza;
-- K♥: +5 kart dla następnego gracza, bez dodatkowej utraty tury;
-- K♠: +5 kart dla poprzedniego gracza;
-- K♣ i K♦ nie mają funkcji specjalnej;
-- przy jednej karcie wymagana jest deklaracja **MAKAO**; brak deklaracji i STOP MAKAO = +5 kart;
-- po zejściu pierwszej osoby pozostali grają dalej o 2., 3. i 4. miejsce;
-- po wyczerpaniu talii stos odrzuconych jest tasowany ponownie z zachowaniem wierzchniej karty.
+Najważniejsze decyzje wariantu pozostają bez zmian: 52 karty bez jokerów, 5 kart na start, niefunkcyjna karta startowa, zagrania 1/3/4 kart tej samej wartości, „pierwsza karta ratuje”, kumulowane 2/3, blokady 4, Walet 5–10 lub „Nic”, żądanie koloru Asem, funkcje K♥/K♠, deklaracja MAKAO i dalsza gra o kolejne miejsca.
 
-## Warstwa wizualna
+## Architektura multiplayera
 
-UI jest adaptacją dostarczonego baseline'u SKAT: ciemny cyfrowy card-room, emeraldowy felt, ciepłe drewno, złoty akcent stanów, kremowe karty, Georgia dla elementów „stołowych”, systemowy sans-serif dla sterowania, tekstowe awatary i CSS-owe rewersy kart. Mechanika SKAT-a nie została przeniesiona.
+```text
+Cloudflare Worker / Durable Object
+        │  tylko pokój + SDP
+        │
+  ┌─────┴─────┐
+  │    HOST   │  autorytatywna symulacja + boty
+  └───┬───┬───┘
+      │   │
+ WebRTC   WebRTC
+      │   │
+   Guest Guest
+```
+
+Host przydziela stabilne numery miejsc. Pakiet akcji nie może wskazać innego miejsca — miejsce wynika z połączenia peer. Stan wysyłany do gości jest filtrowany per miejsce; kolejność talii i cudze karty nie trafiają do przeglądarki gościa.
 
 ## Struktura
 
-- `makao-single.html` — gotowa samowystarczalna wersja do pobrania i uruchomienia dwuklikiem;
-- `index.html` — ekran gry, menu i modale wersji modułowej;
-- `css/styles.css` — kompletna warstwa wizualna i responsywność;
-- `js/constants.js` — talia, kolory, konfiguracja;
-- `js/rules.js` — czysta walidacja zasad i grup kart;
-- `js/bot.js` — wybór ruchów botów;
-- `js/game.js` — stan partii, kolejki, kary, żądania, klasyfikacja;
-- `js/ui.js` — renderowanie DOM i obsługa interakcji;
-- `js/ux-effects.js` — kompresja dużej ręki i krótkie animacje ruchu kart;
-- `js/main.js` — bootstrap aplikacji;
-- `rules/rules-contract.json` — maszynowy kontrakt ustalonego wariantu zasad i jawnych rozbieżności między źródłami;
-- `scripts/rules-audit.mjs` — wykonywalny audyt zgodności implementacji z kontraktem zasad;
-- `scripts/stress.mjs` — headless stress-tester pełnych partii;
-- `tests/browser/` — testy Playwright prawdziwego UI i pełnych partii rozgrywanych przez przeglądarkę;
-- `scripts/build-single.mjs` — generator jednoplikowego HTML-a;
-- `tests/rules.test.js` — testy reguł i inicjalizacji partii.
+- `index.html` — ekran gry, menu i lobby multiplayera;
+- `css/styles.css`, `css/ux-fixes.css` — główny interfejs;
+- `css/multiplayer.css` — responsywne lobby i stany połączeń;
+- `js/game.js` — autorytatywny stan, kolejki, efekty kart i wspólny dispatcher akcji;
+- `js/multiplayer.js` — pokoje, miejsca, WebRTC, protokół wiadomości i filtrowanie stanu;
+- `js/rules.js` — czysta walidacja zasad;
+- `js/bot.js` — istniejąca AI używana offline i przez hosta w stole hybrydowym;
+- `js/ui.js` — renderowanie z perspektywy lokalnego miejsca;
+- `js/ux-effects.js` — wyłącznie efekty wizualne;
+- `cloudflare-signaling/` — sygnalizacja WebRTC;
+- `tests/multiplayer.test.js` — host authority, ukryte dane, routing i pełne gry hybrydowe;
+- `tests/browser/multiplayer-ui.spec.js` — lobby desktop/tablet/telefon pionowo i poziomo;
+- `makao-single.html` — automatycznie generowana wersja jednoplikowa.
 
-`makao-single.html` jest automatycznie regenerowany przez GitHub Actions po zmianie źródeł gry.
-
-## Testy i automatyczni gracze
+## Testy
 
 ```bash
 npm test
 npm run check
 npm run rules:audit
 npm run stress -- 1000
+npm run test:multiplayer
 ```
 
-`rules:audit` rozróżnia trzy rodzaje wyników:
-
-- **BUG** — implementacja łamie ustalony wariant gry; audyt kończy się błędem;
-- **SOURCE** — świadomie wybrany wariant różni się od jednego z dwóch zaakceptowanych źródeł; jest raportowany, ale nie traktowany jako bug;
-- **REVIEW** — źródła i dotychczasowe decyzje nie rozstrzygają konkretnej interakcji jednoznacznie; wymaga decyzji autora i nie jest automatycznie „naprawiany”.
-
-GitHub Actions uruchamia również:
-
-- **Stress-test Makao games** — setki/tysiące deterministycznych pełnych partii z kontrolą integralności stanu i legalności ruchów;
-- **Browser gameplay agent** — Chromium + Playwright: klika prawdziwe karty i przyciski, rozgrywa pełne partie oraz sprawdza m.in. dostępność dużej ręki, viewport, Waleta i Asa.
+Test multiplayera sprawdza m.in. ukrywanie kart, brak kolejności talii u gościa, odrzucanie ruchów spoza tury/cudzą kartą/na miejscu bota, rezerwację miejsc oraz ukończenie pełnych 3- i 4-osobowych gier hybrydowych. Osobny workflow Playwright sprawdza lobby na 1440×900, 1024×768, 390×844 i 844×390.
