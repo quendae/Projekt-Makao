@@ -1,4 +1,4 @@
-import { BOT_NAMES, JACK_DEMAND_RANKS, UI_DELAYS } from './constants.js';
+import { BOT_NAMES, JACK_DEMAND_RANKS, SUITS, UI_DELAYS } from './constants.js';
 import {
   cardLabel,
   createDeck,
@@ -18,6 +18,8 @@ export class MakaoGame {
   constructor({ onChange = () => {}, onMessage = () => {} } = {}) {
     this.onChange = onChange;
     this.onMessage = onMessage;
+    this.localSeat = 0;
+    this.readOnlyView = false;
     this.state = this.emptyState();
     this.timer = null;
   }
@@ -26,6 +28,8 @@ export class MakaoGame {
     return {
       started: false,
       gameOver: false,
+      multiplayer: false,
+      networkPaused: false,
       botCount: 2,
       players: [],
       dealerIndex: 0,
@@ -45,13 +49,76 @@ export class MakaoGame {
     };
   }
 
+  setLocalSeat(seat) {
+    this.localSeat = Number.isInteger(seat) ? seat : 0;
+    if (Array.isArray(this.state.players)) {
+      this.state.players.forEach((player, index) => {
+        player.isLocal = index === this.localSeat;
+      });
+    }
+  }
+
+  stop() {
+    clearTimeout(this.timer);
+    this.timer = null;
+    this.readOnlyView = false;
+    this.localSeat = 0;
+    this.state = this.emptyState();
+    this.emit();
+  }
+
   start(botCount = 2) {
     const safeBotCount = botCount === 3 ? 3 : 2;
+    this.localSeat = 0;
+    this.readOnlyView = false;
+    return this.startWithPlayers(this.createPlayers(safeBotCount), { multiplayer: false, localSeat: 0 });
+  }
+
+  startMultiplayer(seats, { localSeat = 0 } = {}) {
+    if (!Array.isArray(seats) || ![3, 4].includes(seats.length)) {
+      throw new Error('Makao multiplayer wymaga 3 albo 4 miejsc przy stole.');
+    }
+
+    const players = seats.map((seat, index) => {
+      const isBot = Boolean(seat?.isBot);
+      const fallbackName = isBot ? BOT_NAMES[(index - 1 + BOT_NAMES.length) % BOT_NAMES.length] : `Gracz ${index + 1}`;
+      const name = String(seat?.name || fallbackName).trim().slice(0, 20) || fallbackName;
+      return {
+        id: seat?.id || `seat-${index}`,
+        name,
+        isHuman: !isBot,
+        isBot,
+        isLocal: index === localSeat,
+        avatar: this.avatarForName(name, isBot ? 'B' : `G${index + 1}`),
+        hand: [],
+        finishPlace: null,
+        blockedTurns: 0,
+      };
+    });
+
+    this.localSeat = localSeat;
+    this.readOnlyView = false;
+    return this.startWithPlayers(players, { multiplayer: true, localSeat });
+  }
+
+  startWithPlayers(players, { multiplayer = false, localSeat = 0 } = {}) {
     clearTimeout(this.timer);
+    this.timer = null;
+    this.localSeat = localSeat;
+    this.readOnlyView = false;
     this.state = this.emptyState();
     this.state.started = true;
-    this.state.botCount = safeBotCount;
-    this.state.players = this.createPlayers(safeBotCount);
+    this.state.multiplayer = multiplayer;
+    this.state.players = players.map((player, index) => ({
+      ...player,
+      isBot: Boolean(player.isBot),
+      isHuman: !player.isBot,
+      isLocal: index === localSeat,
+      hand: [],
+      finishPlace: null,
+      blockedTurns: 0,
+    }));
+    this.state.botCount = this.state.players.filter((player) => player.isBot).length;
     this.state.drawPile = shuffle(createDeck());
     this.state.dealerIndex = Math.floor(Math.random() * this.state.players.length);
 
@@ -61,7 +128,6 @@ export class MakaoGame {
       }
     }
 
-    // Źródła wymagają, aby pierwsza odkryta karta nie była funkcyjna.
     do {
       const card = this.state.drawPile.pop();
       if (!card) break;
@@ -74,6 +140,7 @@ export class MakaoGame {
     this.addLog(`Zaczyna ${this.state.players[this.state.currentIndex].name}.`);
     this.emit();
     this.queueCurrentTurn();
+    return this.state;
   }
 
   createPlayers(botCount) {
@@ -82,6 +149,8 @@ export class MakaoGame {
         id: 'human',
         name: 'Ty',
         isHuman: true,
+        isBot: false,
+        isLocal: true,
         avatar: 'TY',
         hand: [],
         finishPlace: null,
@@ -94,6 +163,8 @@ export class MakaoGame {
         id: `bot-${i + 1}`,
         name: BOT_NAMES[i],
         isHuman: false,
+        isBot: true,
+        isLocal: false,
         avatar: BOT_NAMES[i].slice(0, 1).toUpperCase(),
         hand: [],
         finishPlace: null,
@@ -103,6 +174,26 @@ export class MakaoGame {
     return players;
   }
 
+  avatarForName(name, fallback = 'G') {
+    const chars = Array.from(String(name || '').trim()).filter((char) => /[\p{L}\p{N}]/u.test(char));
+    return (chars.slice(0, 2).join('') || fallback).toUpperCase();
+  }
+
+  applyRemoteState(view, localSeat) {
+    clearTimeout(this.timer);
+    this.timer = null;
+    this.readOnlyView = true;
+    this.localSeat = localSeat;
+    this.state = view;
+    this.state.multiplayer = true;
+    this.state.players?.forEach((player, index) => {
+      player.isLocal = index === localSeat;
+      player.isBot = Boolean(player.isBot);
+      player.isHuman = !player.isBot;
+    });
+    this.emit();
+  }
+
   emit() {
     this.onChange(this.state);
   }
@@ -110,6 +201,10 @@ export class MakaoGame {
   addLog(message) {
     this.state.log.unshift({ id: `${Date.now()}-${Math.random()}`, message });
     this.state.log = this.state.log.slice(0, 80);
+  }
+
+  isLocalNarration(player) {
+    return !this.state.multiplayer && Boolean(player?.isLocal);
   }
 
   activePlayerIndexes() {
@@ -143,7 +238,7 @@ export class MakaoGame {
 
   queueCurrentTurn() {
     clearTimeout(this.timer);
-    if (!this.state.started || this.state.gameOver || this.state.pendingChoice) return;
+    if (!this.state.started || this.state.gameOver || this.state.pendingChoice || this.state.networkPaused) return;
 
     const player = this.currentPlayer();
     if (!player || player.finishPlace != null) {
@@ -155,15 +250,13 @@ export class MakaoGame {
     if (player.blockedTurns > 0 && !this.isPendingSkipFor(this.state.currentIndex)) {
       player.blockedTurns -= 1;
 
-      // A zaległa blokada nie może sprawić, że kara 2/3 zniknie bez rozliczenia.
-      // Zablokowany gracz nie może się bronić kartą, ale nadal jest celem kary.
       if (this.isPendingDrawFor(this.state.currentIndex)) {
         const amount = this.state.pendingDraw.amount;
         this.state.pendingDraw = null;
         this.drawCards(this.state.currentIndex, amount);
-        this.addLog(player.isHuman ? `Tracisz kolejkę i dobierasz ${amount} kart za karę.` : `${player.name} traci kolejkę i dobiera ${amount} kart za karę.`);
+        this.addLog(this.isLocalNarration(player) ? `Tracisz kolejkę i dobierasz ${amount} kart za karę.` : `${player.name} traci kolejkę i dobiera ${amount} kart za karę.`);
       } else {
-        this.addLog(player.isHuman ? 'Tracisz kolejkę.' : `${player.name} traci kolejkę.`);
+        this.addLog(this.isLocalNarration(player) ? 'Tracisz kolejkę.' : `${player.name} traci kolejkę.`);
       }
 
       this.emit();
@@ -171,7 +264,7 @@ export class MakaoGame {
       return;
     }
 
-    if (!player.isHuman) {
+    if (player.isBot) {
       this.timer = setTimeout(() => this.runBotTurn(this.state.currentIndex), UI_DELAYS.botThink);
     }
   }
@@ -184,29 +277,77 @@ export class MakaoGame {
     return this.state.pendingSkip?.targetIndex === playerIndex;
   }
 
-  humanCanAct() {
-    const player = this.currentPlayer();
+  canPlayerAct(playerIndex) {
+    const player = this.state.players[playerIndex];
     return Boolean(
       this.state.started &&
         !this.state.gameOver &&
+        !this.state.networkPaused &&
         !this.state.pendingChoice &&
-        player?.isHuman &&
+        this.state.currentIndex === playerIndex &&
+        player &&
+        !player.isBot &&
         player.finishPlace == null &&
         player.blockedTurns === 0,
     );
   }
 
+  humanCanAct() {
+    return this.canPlayerAct(this.localSeat);
+  }
+
+  executePlayerAction(playerIndex, action, payload = {}) {
+    if (this.readOnlyView) return { ok: false, reason: 'Stan gościa jest tylko do odczytu.' };
+    if (!Number.isInteger(playerIndex) || !this.state.players[playerIndex]) {
+      return { ok: false, reason: 'Nieprawidłowe miejsce gracza.' };
+    }
+    if (this.state.players[playerIndex].isBot) {
+      return { ok: false, reason: 'Miejsce jest sterowane przez bota.' };
+    }
+
+    switch (action) {
+      case 'play-cards':
+        return this.playerPlay(playerIndex, payload.cardIds);
+      case 'draw':
+        return this.playerDraw(playerIndex);
+      case 'pass-after-draw':
+        return this.playerPassAfterDraw(playerIndex);
+      case 'toggle-makao':
+        return this.toggleMakaoFor(playerIndex);
+      case 'choose-pending':
+        return this.choosePendingFor(playerIndex, payload.value ?? null);
+      default:
+        return { ok: false, reason: 'Nieznana akcja gracza.' };
+    }
+  }
+
   toggleMakao() {
-    if (!this.humanCanAct()) return;
+    return this.executePlayerAction(this.localSeat, 'toggle-makao');
+  }
+
+  toggleMakaoFor(playerIndex) {
+    if (!this.canPlayerAct(playerIndex)) return { ok: false, reason: 'Teraz nie jest Twoja tura.' };
     this.state.makaoArmed = !this.state.makaoArmed;
     this.emit();
+    return { ok: true };
   }
 
   humanPlay(cardIds) {
-    if (!this.humanCanAct()) return { ok: false, reason: 'Teraz nie jest Twoja tura.' };
-    const playerIndex = this.state.currentIndex;
+    return this.executePlayerAction(this.localSeat, 'play-cards', { cardIds });
+  }
+
+  playerPlay(playerIndex, cardIds) {
+    if (!this.canPlayerAct(playerIndex)) return { ok: false, reason: 'Teraz nie jest Twoja tura.' };
+    if (!Array.isArray(cardIds) || cardIds.some((id) => typeof id !== 'string')) {
+      return { ok: false, reason: 'Nieprawidłowa lista kart.' };
+    }
+    if (new Set(cardIds).size !== cardIds.length) {
+      return { ok: false, reason: 'Ta sama karta nie może wystąpić w zagraniu kilka razy.' };
+    }
+
     const player = this.state.players[playerIndex];
     const cards = cardIds.map((id) => player.hand.find((card) => card.id === id)).filter(Boolean);
+    if (cards.length !== cardIds.length) return { ok: false, reason: 'Nie masz jednej z wybranych kart.' };
 
     if (this.state.drawnRescueCardId) {
       if (cards.length !== 1 || cards[0].id !== this.state.drawnRescueCardId) {
@@ -224,8 +365,11 @@ export class MakaoGame {
   }
 
   humanDraw() {
-    if (!this.humanCanAct()) return;
-    const playerIndex = this.state.currentIndex;
+    return this.executePlayerAction(this.localSeat, 'draw');
+  }
+
+  playerDraw(playerIndex) {
+    if (!this.canPlayerAct(playerIndex)) return { ok: false, reason: 'Teraz nie jest Twoja tura.' };
     const player = this.state.players[playerIndex];
     const constraint = getTurnConstraint(this.state, playerIndex);
 
@@ -233,48 +377,58 @@ export class MakaoGame {
       const amount = this.state.pendingDraw.amount;
       this.state.pendingDraw = null;
       this.drawCards(playerIndex, amount);
-      this.addLog(player.isHuman ? `Dobierasz ${amount} kart za karę.` : `${player.name} dobiera ${amount} kart za karę.`);
+      this.addLog(this.isLocalNarration(player) ? `Dobierasz ${amount} kart za karę.` : `${player.name} dobiera ${amount} kart za karę.`);
       this.endTurn(playerIndex);
-      return;
+      return { ok: true };
     }
 
     if (constraint.type === 'skip') {
       this.acceptSkip(playerIndex);
-      return;
+      return { ok: true };
     }
 
-    if (this.state.drawnRescueCardId) return;
+    if (this.state.drawnRescueCardId) return { ok: false, reason: 'Dobraną kartę trzeba zagrać albo spasować.' };
 
     const drawn = this.drawCards(playerIndex, 1)[0];
     if (!drawn) {
       this.endTurn(playerIndex);
-      return;
+      return { ok: true };
     }
 
-    this.addLog(player.isHuman ? 'Dobierasz kartę.' : `${player.name} dobiera kartę.`);
+    this.addLog(this.isLocalNarration(player) ? 'Dobierasz kartę.' : `${player.name} dobiera kartę.`);
     if (isCardLegal(drawn, this.state, playerIndex)) {
       this.state.drawnRescueCardId = drawn.id;
-      this.onMessage('Pierwsza karta ratuje — możesz zagrać dobraną kartę albo spasować.');
+      if (player.isLocal) this.onMessage('Pierwsza karta ratuje — możesz zagrać dobraną kartę albo spasować.');
       this.emit();
     } else {
       this.endTurn(playerIndex);
     }
+    return { ok: true };
   }
 
   humanPassAfterDraw() {
-    if (!this.humanCanAct() || !this.state.drawnRescueCardId) return;
-    this.addLog('Nie zagrywasz dobranej karty.');
-    this.endTurn(this.state.currentIndex);
+    return this.executePlayerAction(this.localSeat, 'pass-after-draw');
+  }
+
+  playerPassAfterDraw(playerIndex) {
+    if (!this.canPlayerAct(playerIndex) || !this.state.drawnRescueCardId) {
+      return { ok: false, reason: 'Nie ma dobranej karty do spasowania.' };
+    }
+    const player = this.state.players[playerIndex];
+    this.addLog(this.isLocalNarration(player) ? 'Nie zagrywasz dobranej karty.' : `${player.name} nie zagrywa dobranej karty.`);
+    this.endTurn(playerIndex);
+    return { ok: true };
   }
 
   acceptSkip(playerIndex) {
-    if (!this.isPendingSkipFor(playerIndex)) return;
+    if (!this.isPendingSkipFor(playerIndex)) return false;
     const player = this.state.players[playerIndex];
     const count = this.state.pendingSkip.count;
     this.state.pendingSkip = null;
     player.blockedTurns += Math.max(0, count - 1);
-    this.addLog(player.isHuman ? `Przyjmujesz blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.` : `${player.name} przyjmuje blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.`);
+    this.addLog(this.isLocalNarration(player) ? `Przyjmujesz blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.` : `${player.name} przyjmuje blokadę: ${count} ${count === 1 ? 'kolejka' : 'kolejki'}.`);
     this.endTurn(playerIndex);
+    return true;
   }
 
   playCards(playerIndex, cards, { fromRescue = false } = {}) {
@@ -283,13 +437,8 @@ export class MakaoGame {
     const ordered = fromRescue ? [...cards] : orderGroupForPlay(cards, this.state, playerIndex);
     const rank = ordered[0].rank;
 
-    // Spełnienie żądania waleta usuwa je. Walet może je zastąpić nowym.
-    if (constraintBefore.type === 'jack' && rank === this.state.jackDemand?.rank) {
-      this.state.jackDemand = null;
-    }
-    if (constraintBefore.type === 'jack' && rank === 'J') {
-      this.state.jackDemand = null;
-    }
+    if (constraintBefore.type === 'jack' && rank === this.state.jackDemand?.rank) this.state.jackDemand = null;
+    if (constraintBefore.type === 'jack' && rank === 'J') this.state.jackDemand = null;
 
     for (const card of ordered) {
       const handIndex = player.hand.findIndex((held) => held.id === card.id);
@@ -298,31 +447,27 @@ export class MakaoGame {
     }
 
     this.state.drawnRescueCardId = null;
-    this.addLog(player.isHuman ? `Zagrywasz ${ordered.map(cardLabel).join(', ')}.` : `${player.name} zagrywa ${ordered.map(cardLabel).join(', ')}.`);
+    this.addLog(this.isLocalNarration(player) ? `Zagrywasz ${ordered.map(cardLabel).join(', ')}.` : `${player.name} zagrywa ${ordered.map(cardLabel).join(', ')}.`);
 
     const makaoRequired = isMakaoRequired(player.hand.length);
-    const declared = !player.isHuman || this.state.makaoArmed;
+    const declared = player.isBot || this.state.makaoArmed;
 
     if (makaoRequired && declared) {
       this.addLog(player.hand.length === 0 ? `${player.name}: „Makao i po makale!”` : `${player.name}: „Makao!”`);
     } else if (makaoRequired && !declared) {
-      this.addLog(player.isHuman ? 'STOP MAKAO! Dobierasz 5 kart.' : `STOP MAKAO! ${player.name} dobiera 5 kart.`);
+      this.addLog(this.isLocalNarration(player) ? 'STOP MAKAO! Dobierasz 5 kart.' : `STOP MAKAO! ${player.name} dobiera 5 kart.`);
       this.drawCards(playerIndex, 5);
-      this.onMessage('STOP MAKAO — brak deklaracji. Dobierasz 5 kart.');
+      if (player.isLocal) this.onMessage('STOP MAKAO — brak deklaracji. Dobierasz 5 kart.');
     }
 
     this.applyCardEffects(playerIndex, ordered, constraintBefore);
 
-    if (player.hand.length === 0) {
-      this.finishPlayer(playerIndex);
-    }
+    if (player.hand.length === 0) this.finishPlayer(playerIndex);
 
     this.state.makaoArmed = false;
     this.emit();
 
-    if (!this.state.gameOver && !this.state.pendingChoice) {
-      this.endTurn(playerIndex);
-    }
+    if (!this.state.gameOver && !this.state.pendingChoice) this.endTurn(playerIndex);
   }
 
   applyCardEffects(playerIndex, cards, constraintBefore) {
@@ -355,12 +500,9 @@ export class MakaoGame {
 
     if (rank === 'J') {
       const player = this.state.players[playerIndex];
-      if (player.isHuman) {
+      if (!player.isBot) {
         this.state.pendingChoice = { type: 'jack', actorIndex: playerIndex };
       } else {
-        // Walet zagrany jako odpowiedź na aktywne żądanie kończy łańcuch
-        // wyborem „nic”. To jest dozwolona decyzja waleta i zapobiega
-        // nieskończonemu krążeniu czterech waletów między botami.
         const demand = constraintBefore.type === 'jack' ? null : chooseJackDemand(player.hand);
         if (demand) {
           this.state.jackDemand = { rank: demand, byIndex: playerIndex };
@@ -375,7 +517,7 @@ export class MakaoGame {
 
     if (rank === 'A') {
       const player = this.state.players[playerIndex];
-      if (player.isHuman) {
+      if (!player.isBot) {
         this.state.pendingChoice = { type: 'ace', actorIndex: playerIndex };
       } else {
         const suit = chooseAceSuit(player.hand);
@@ -408,10 +550,16 @@ export class MakaoGame {
   }
 
   choosePending(value) {
+    return this.executePlayerAction(this.localSeat, 'choose-pending', { value });
+  }
+
+  choosePendingFor(playerIndex, value) {
     const choice = this.state.pendingChoice;
-    if (!choice) return;
-    const actorIndex = choice.actorIndex;
-    const actor = this.state.players[actorIndex];
+    if (!choice || choice.actorIndex !== playerIndex) {
+      return { ok: false, reason: 'Ta decyzja nie należy do tego gracza.' };
+    }
+    const actor = this.state.players[playerIndex];
+    if (!actor || actor.isBot) return { ok: false, reason: 'Nieprawidłowy gracz.' };
 
     if (choice.type === 'jack') {
       if (value == null) {
@@ -419,24 +567,24 @@ export class MakaoGame {
         this.addLog(`${actor.name} nie żąda żadnej wartości.`);
       } else {
         const mayDemand = JACK_DEMAND_RANKS.includes(value) && actor.hand.some((card) => card.rank === value);
-        if (!mayDemand) {
-          this.onMessage('Walet może żądać tylko wartości 5–10, którą masz w ręce, albo niczego.');
-          return;
-        }
-        this.state.jackDemand = { rank: value, byIndex: actorIndex };
+        if (!mayDemand) return { ok: false, reason: 'Walet może żądać tylko wartości 5–10, którą masz w ręce, albo niczego.' };
+        this.state.jackDemand = { rank: value, byIndex: playerIndex };
         this.addLog(`${actor.name} żąda wartości ${value}.`);
       }
-    }
-
-    if (choice.type === 'ace') {
-      const targetIndex = this.nextActiveIndex(actorIndex);
-      this.state.aceDemand = { suit: value, targetIndex, byIndex: actorIndex };
+    } else if (choice.type === 'ace') {
+      const allowedSuit = SUITS.some((suit) => suit.key === value);
+      if (!allowedSuit) return { ok: false, reason: 'Nieprawidłowy kolor żądany asem.' };
+      const targetIndex = this.nextActiveIndex(playerIndex);
+      this.state.aceDemand = { suit: value, targetIndex, byIndex: playerIndex };
       this.addLog(`${actor.name} żąda koloru: ${suitLabel(value)}.`);
+    } else {
+      return { ok: false, reason: 'Nieznany typ decyzji.' };
     }
 
     this.state.pendingChoice = null;
     this.emit();
-    if (!this.state.gameOver) this.endTurn(actorIndex);
+    if (!this.state.gameOver) this.endTurn(playerIndex);
+    return { ok: true };
   }
 
   drawCards(playerIndex, count) {
@@ -452,9 +600,9 @@ export class MakaoGame {
   }
 
   runBotTurn(playerIndex) {
-    if (this.state.gameOver || this.state.pendingChoice || this.state.currentIndex !== playerIndex) return;
+    if (this.state.gameOver || this.state.pendingChoice || this.state.networkPaused || this.state.currentIndex !== playerIndex) return;
     const bot = this.state.players[playerIndex];
-    if (!bot || bot.isHuman || bot.finishPlace != null) return;
+    if (!bot || !bot.isBot || bot.finishPlace != null) return;
 
     const constraint = getTurnConstraint(this.state, playerIndex);
     const play = chooseBotPlay(bot, this.state, playerIndex);
@@ -485,7 +633,7 @@ export class MakaoGame {
 
     if (drawn && isCardLegal(drawn, this.state, playerIndex)) {
       this.timer = setTimeout(() => {
-        if (!this.state.gameOver && this.state.currentIndex === playerIndex) {
+        if (!this.state.gameOver && !this.state.networkPaused && this.state.currentIndex === playerIndex) {
           this.playCards(playerIndex, [drawn], { fromRescue: true });
         }
       }, UI_DELAYS.botAfterDraw);
@@ -499,7 +647,7 @@ export class MakaoGame {
     if (player.finishPlace != null) return;
     player.finishPlace = this.state.standings.length + 1;
     this.state.standings.push(playerIndex);
-    this.addLog(player.isHuman ? `Zajmujesz ${player.finishPlace}. miejsce.` : `${player.name} zajmuje ${player.finishPlace}. miejsce.`);
+    this.addLog(this.isLocalNarration(player) ? `Zajmujesz ${player.finishPlace}. miejsce.` : `${player.name} zajmuje ${player.finishPlace}. miejsce.`);
 
     const active = this.activePlayerIndexes();
     if (active.length === 1) {
@@ -507,7 +655,7 @@ export class MakaoGame {
       const last = this.state.players[lastIndex];
       last.finishPlace = this.state.standings.length + 1;
       this.state.standings.push(lastIndex);
-      this.addLog(last.isHuman ? `Zajmujesz ${last.finishPlace}. miejsce.` : `${last.name} zajmuje ${last.finishPlace}. miejsce.`);
+      this.addLog(this.isLocalNarration(last) ? `Zajmujesz ${last.finishPlace}. miejsce.` : `${last.name} zajmuje ${last.finishPlace}. miejsce.`);
       this.state.gameOver = true;
       this.state.pendingChoice = null;
       this.addLog('Koniec partii.');
@@ -520,11 +668,7 @@ export class MakaoGame {
       return;
     }
 
-    // Żądanie asa dotyczy wyłącznie następnego gracza. Jeśli nie zostało
-    // zastąpione kolejnym asem, wygasa wraz z końcem jego tury.
-    if (this.state.aceDemand?.targetIndex === actorIndex) {
-      this.state.aceDemand = null;
-    }
+    if (this.state.aceDemand?.targetIndex === actorIndex) this.state.aceDemand = null;
 
     this.state.drawnRescueCardId = null;
     this.state.makaoArmed = false;

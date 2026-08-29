@@ -4,15 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#08110d" />
-  <title>Makao — Offline</title>
+  <meta name="makao-signaling-url" content="" />
+  <title>Makao — Offline / P2P</title>
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/ux-fixes.css" />
+  <link rel="stylesheet" href="css/multiplayer.css" />
 </head>
 <body>
   <div id="app" class="app-shell">
     <header class="topbar">
       <div class="brand-block">
-        <div class="eyebrow">OFFLINE · 1 GRACZ + BOTY</div>
+        <div class="eyebrow">PRYWATNY STÓŁ · OFFLINE / P2P</div>
         <div class="logo">MAKAO</div>
       </div>
 
@@ -32,6 +34,7 @@
       </div>
 
       <div class="top-actions">
+        <span id="network-pill" class="network-pill">OFFLINE</span>
         <button class="btn ghost compact" id="rules-btn" type="button">Zasady</button>
         <button class="btn ghost compact" id="menu-btn" type="button">Menu</button>
       </div>
@@ -56,7 +59,7 @@
           <div class="felt-table" id="felt-table">
             <div class="felt-inner-line"></div>
             <div class="felt-watermark">MAKAO</div>
-            <div class="phase-ribbon" id="phase-ribbon">Wybierz liczbę botów i rozpocznij grę</div>
+            <div class="phase-ribbon" id="phase-ribbon">Wybierz tryb gry i rozpocznij partię</div>
 
             <div id="opponents" class="opponents"></div>
 
@@ -84,9 +87,9 @@
 
             <div class="human-area">
               <div id="human-seat" class="player-plate human-plate">
-                <div class="avatar human-avatar">TY</div>
+                <div id="human-avatar" class="avatar human-avatar">TY</div>
                 <div class="plate-copy">
-                  <strong>Ty</strong>
+                  <strong id="human-name">Ty</strong>
                   <span id="human-role">GRACZ</span>
                 </div>
                 <div class="card-counter" id="human-count">0 KART</div>
@@ -114,10 +117,10 @@
         <div class="brand-medal">♠</div>
         <div class="eyebrow">CYFROWY STÓŁ KARCIANY</div>
         <h1>MAKAO</h1>
-        <p class="menu-lead">Klasyczne Makao przeciwko botom, według ustalonego wariantu zasad.</p>
+        <p class="menu-lead">Graj offline z botami albo utwórz prywatny stół WebRTC P2P.</p>
 
         <div class="menu-section">
-          <span class="menu-label">LICZBA BOTÓW</span>
+          <span class="menu-label">TRYB OFFLINE · LICZBA BOTÓW</span>
           <div class="segmented" id="bot-selector">
             <button class="segment active" data-bots="2" type="button">2 boty</button>
             <button class="segment" data-bots="3" type="button">3 boty</button>
@@ -125,7 +128,10 @@
         </div>
 
         <button id="start-btn" class="menu-action primary-menu" type="button">
-          <span>▶</span><strong>Nowa gra</strong><span>→</span>
+          <span>▶</span><strong>Nowa gra offline</strong><span>→</span>
+        </button>
+        <button id="multiplayer-btn" class="menu-action multiplayer-menu" type="button">
+          <span>⌁</span><strong>Multiplayer P2P</strong><span>→</span>
         </button>
         <button id="resume-btn" class="menu-action hidden" type="button">
           <span>↩</span><strong>Wznów</strong><span>→</span>
@@ -139,6 +145,75 @@
           <span>Animacje kart</span>
         </label>
       </div>
+    </div>
+  </div>
+
+  <div id="multiplayer-modal" class="overlay modal-overlay multiplayer-overlay" aria-modal="true" role="dialog" aria-labelledby="mp-title">
+    <div class="modal-card multiplayer-card">
+      <button class="modal-close" id="mp-close" type="button" aria-label="Zamknij">×</button>
+
+      <section id="mp-entry" class="mp-panel">
+        <span class="eyebrow">PRYWATNY MULTIPLAYER</span>
+        <h2 id="mp-title">WebRTC P2P</h2>
+        <p class="mp-lead">Gospodarz prowadzi jedyny autorytatywny stan gry. Po zestawieniu połączeń ruchy idą bezpośrednio między przeglądarkami.</p>
+        <div class="mp-choice-grid">
+          <button id="mp-choose-host" class="mp-choice" type="button"><b>Utwórz stół</b><span>Hostujesz rozgrywkę i opcjonalne boty.</span></button>
+          <button id="mp-choose-guest" class="mp-choice" type="button"><b>Dołącz</b><span>Wpisujesz kod otrzymany od gospodarza.</span></button>
+        </div>
+        <p class="mp-footnote">Tryb offline nie wymaga usługi sieciowej i pozostaje dostępny niezależnie od sygnalizacji.</p>
+      </section>
+
+      <section id="mp-host-panel" class="mp-panel hidden">
+        <button id="mp-host-back" class="mp-back" type="button">← Wróć</button>
+        <span class="eyebrow">NOWY STÓŁ</span>
+        <h2>Hostuj grę</h2>
+        <label class="mp-field"><span>Twój nick</span><input id="mp-host-nick" maxlength="20" autocomplete="nickname" placeholder="np. Grzegorz" /></label>
+        <label class="mp-field"><span>Hasło pokoju <small>opcjonalnie</small></span><input id="mp-host-password" type="password" minlength="6" autocomplete="new-password" placeholder="minimum 6 znaków" /></label>
+        <div class="mp-field">
+          <span>Liczba miejsc</span>
+          <div id="mp-table-size" class="segmented mp-segmented">
+            <button class="segment active" data-mp-table-size="3" type="button">3 graczy</button>
+            <button class="segment" data-mp-table-size="4" type="button">4 graczy</button>
+          </div>
+        </div>
+        <button id="mp-create-room" class="btn primary wide" type="button">Utwórz prywatny pokój</button>
+        <p id="mp-host-status" class="mp-status" aria-live="polite"></p>
+      </section>
+
+      <section id="mp-guest-panel" class="mp-panel hidden">
+        <button id="mp-guest-back" class="mp-back" type="button">← Wróć</button>
+        <span class="eyebrow">DOŁĄCZ DO STOŁU</span>
+        <h2>Połącz z gospodarzem</h2>
+        <label class="mp-field"><span>Twój nick</span><input id="mp-guest-nick" maxlength="20" autocomplete="nickname" placeholder="np. Anna" /></label>
+        <label class="mp-field"><span>Kod pokoju</span><input id="mp-room-code" inputmode="text" maxlength="9" autocomplete="off" placeholder="ABCD-EFGH" /></label>
+        <label class="mp-field"><span>Hasło <small>jeśli gospodarz ustawił</small></span><input id="mp-guest-password" type="password" autocomplete="current-password" /></label>
+        <button id="mp-join-room" class="btn primary wide" type="button">Dołącz do pokoju</button>
+        <p id="mp-guest-status" class="mp-status" aria-live="polite"></p>
+      </section>
+
+      <section id="mp-lobby-panel" class="mp-panel hidden">
+        <span class="eyebrow">PRYWATNY STÓŁ</span>
+        <div class="mp-room-line">
+          <div><small>KOD POKOJU</small><strong id="mp-room-code-display">—</strong></div>
+          <button id="mp-copy-room" class="btn ghost compact" type="button">Kopiuj</button>
+        </div>
+        <div id="mp-seats" class="mp-seats"></div>
+        <p id="mp-lobby-status" class="mp-status" aria-live="polite"></p>
+        <div class="mp-lobby-actions">
+          <button id="mp-leave-room" class="btn ghost" type="button">Opuść pokój</button>
+          <button id="mp-start-game" class="btn primary" type="button" disabled>Rozpocznij grę</button>
+        </div>
+        <p class="mp-footnote">Boty działają wyłącznie u gospodarza. Zajęte przez bota miejsce nie może zostać przydzielone gościowi.</p>
+      </section>
+    </div>
+  </div>
+
+  <div id="mp-disconnect" class="overlay modal-overlay disconnect-overlay" aria-modal="true" role="alertdialog">
+    <div class="modal-card disconnect-card">
+      <span class="eyebrow">POŁĄCZENIE PRZERWANE</span>
+      <h2>Gra została wstrzymana</h2>
+      <p id="mp-disconnect-text">Utracono połączenie z graczem.</p>
+      <button id="mp-disconnect-leave" class="btn primary wide" type="button">Wróć do menu</button>
     </div>
   </div>
 

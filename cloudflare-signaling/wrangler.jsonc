@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "makao-p2p",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-30",
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "makao.qqnd.fyi/api/*",
+      "zone_name": "qqnd.fyi"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "ROOMS",
+        "class_name": "SignalingRoom"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["SignalingRoom"]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+name: Multiplayer regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'css/multiplayer.css'
+      - 'js/game.js'
+      - 'js/multiplayer.js'
+      - 'js/ui.js'
+      - 'js/ux-effects.js'
+      - 'js/main.js'
+      - 'tests/multiplayer.test.js'
+      - 'tests/browser/multiplayer-ui.spec.js'
+      - 'cloudflare-signaling/**'
+      - 'package.json'
+      - '.github/workflows/multiplayer-regression.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'css/multiplayer.css'
+      - 'js/game.js'
+      - 'js/multiplayer.js'
+      - 'js/ui.js'
+      - 'js/ux-effects.js'
+      - 'js/main.js'
+      - 'tests/multiplayer.test.js'
+      - 'tests/browser/multiplayer-ui.spec.js'
+      - 'cloudflare-signaling/**'
+      - 'package.json'
+      - '.github/workflows/multiplayer-regression.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  multiplayer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Syntax and multiplayer engine tests
+        run: |
+          npm run check
+          npm run test:multiplayer
+      - name: Install Playwright
+        run: npm install --no-save --no-package-lock @playwright/test@1.55.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Responsive multiplayer lobby
+        run: npm run test:multiplayer-ui
