@@ -550,7 +550,9 @@ export class MakaoGame {
   }
 
   choosePending(value) {
-    return this.executePlayerAction(this.localSeat, 'choose-pending', { value });
+    const result = this.executePlayerAction(this.localSeat, 'choose-pending', { value });
+    if (result && !result.ok && result.reason) this.onMessage(result.reason);
+    return result;
   }
 
   choosePendingFor(playerIndex, value) {
